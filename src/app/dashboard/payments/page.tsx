@@ -150,7 +150,8 @@ export default async function PaymentPage() {
   const data = await getData();
 
   return (
-    <div className="container h-screen mx-auto py-10">
+    <div className="container h-screen mx-auto">
+      <h1 className="text-2xl font-bold mb-5">Payments list</h1>
       <DataTable columns={columns} data={data} />
     </div>
   );

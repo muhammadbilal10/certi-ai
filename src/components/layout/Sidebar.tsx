@@ -35,12 +35,12 @@ const SidebarContent = () => {
     {
       title: "Instructors",
       icon: <UserRound size={24} />,
-      href: "/settings",
+      href: "/dashboard/instructors",
     },
     {
       title: "TestEnvironment",
       icon: <BookOpen size={24} />,
-      href: "/settings",
+      href: "/dashboard/test-environment",
     },
     {
       title: "Payments",

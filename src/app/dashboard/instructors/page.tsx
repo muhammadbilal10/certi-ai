@@ -1,9 +1,11 @@
 import StatCard from "@/components/common/StatCard";
 import { DataTable } from "@/components/ui/data-table";
-import { FilePen, HandCoins, PersonStandingIcon } from "lucide-react";
-import { TestTaker, columns } from "./columns";
+import { FilePen, HandCoins, PersonStandingIcon, PlusIcon } from "lucide-react";
+import { Instructor, columns } from "./columns";
+import { Button } from "@/components/ui/button";
+import Link from "next/link";
 
-async function getData(): Promise<TestTaker[]> {
+async function getData(): Promise<Instructor[]> {
   // Fetch data from your API here.
   return [
     {
@@ -124,7 +126,15 @@ export default async function TestTakerPage() {
 
   return (
     <div className="container h-screen mx-auto">
-      <h1 className="text-2xl font-bold mb-5">Test Takers list</h1>
+      <div className="flex justify-between mb-2">
+        <h1 className="text-2xl font-bold ">Instructors list</h1>
+        <Button asChild className="mb-5">
+          <Link href="#">
+            <PlusIcon className="mr-2 h-4 w-4" /> Add Instructor{" "}
+          </Link>
+        </Button>
+      </div>
+
       <DataTable columns={columns} data={data} />
     </div>
   );
