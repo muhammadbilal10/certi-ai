@@ -2,6 +2,7 @@ import StatCard from "@/components/common/StatCard";
 import { DataTable } from "@/components/ui/data-table";
 import { FilePen, HandCoins, PersonStandingIcon } from "lucide-react";
 import { TestTaker, columns } from "./columns";
+import { Modal } from "@/components/common/Modal";
 
 async function getData(): Promise<TestTaker[]> {
   // Fetch data from your API here.
@@ -124,7 +125,11 @@ export default async function TestTakerPage() {
 
   return (
     <div className="container h-screen mx-auto">
-      <h1 className="text-2xl font-bold mb-5">Test Takers list</h1>
+      <div className="flex justify-between mb-2">
+        <h1 className="text-2xl font-bold">Test Takers list</h1>
+        <Modal value="Add Test Taker" />
+      </div>
+
       <DataTable columns={columns} data={data} />
     </div>
   );

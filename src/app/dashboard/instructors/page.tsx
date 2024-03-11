@@ -4,6 +4,7 @@ import { FilePen, HandCoins, PersonStandingIcon, PlusIcon } from "lucide-react";
 import { Instructor, columns } from "./columns";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
+import { Modal } from "@/components/common/Modal";
 
 async function getData(): Promise<Instructor[]> {
   // Fetch data from your API here.
@@ -128,11 +129,7 @@ export default async function TestTakerPage() {
     <div className="container h-screen mx-auto">
       <div className="flex justify-between mb-2">
         <h1 className="text-2xl font-bold ">Instructors list</h1>
-        <Button asChild className="mb-5">
-          <Link href="#">
-            <PlusIcon className="mr-2 h-4 w-4" /> Add Instructor{" "}
-          </Link>
-        </Button>
+        <Modal value="Add Instructor" />
       </div>
 
       <DataTable columns={columns} data={data} />
