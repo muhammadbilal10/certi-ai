@@ -21,13 +21,13 @@ export default function Dashboardpage() {
     },
     {
       title: "Total Payment",
-      count: "₹ 10000",
+      count: "₹ 1000",
       icon: <HandCoins size={48} className=" text-[#757fef]" strokeWidth={1} />,
     },
   ];
   return (
-    <div className="min-h-screen ">
-      <div className="grid grid-cols-3 gap-4 max-w-4xl m-10">
+    <div className="min-h-screen mx-10 ">
+      <div className="grid md:grid-cols-2 xl:grid-cols-3 gap-4">
         {stats.map((stat, index) => (
           <StatCard
             key={index}

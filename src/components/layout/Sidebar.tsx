@@ -77,7 +77,7 @@ const SidebarContent = () => {
 
 const Sidebar = () => {
   return (
-    <div className="lg:shadow-md fixed w-80">
+    <div className="lg:shadow-md fixed w-full max-w-72 z-50">
       <ScrollArea className="lg:min-h-screen p-4">
         <Sheet>
           <SheetTrigger>

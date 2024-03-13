@@ -124,7 +124,7 @@ export default async function TestTakerPage() {
   const data = await getData();
 
   return (
-    <div className="container h-screen mx-auto">
+    <div className="container  mx-auto">
       <div className="flex justify-between mb-2">
         <h1 className="text-2xl font-bold">Test Takers list</h1>
         <Modal value="Add Test Taker" />

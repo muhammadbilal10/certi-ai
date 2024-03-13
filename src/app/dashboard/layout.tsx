@@ -14,13 +14,9 @@ export default function layout({
 }>) {
   return (
     <div className="">
-      <div className="max-lg:hidden">
-        <Sidebar />
-      </div>
-      <div className="lg:ml-80 flex flex-col">
-        <Topnav />
-        {children}
-      </div>
+      <Sidebar />
+      <Topnav />
+      <div className="pt-20 lg:ml-80">{children}</div>
     </div>
   );
 }
