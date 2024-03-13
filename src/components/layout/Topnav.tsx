@@ -1,6 +1,7 @@
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Bell } from "lucide-react";
 import Sidebar from "./Sidebar";
+import { UserButton } from "@clerk/nextjs";
 
 export default function Topnav() {
   return (
@@ -10,10 +11,11 @@ export default function Topnav() {
       </div>
       <div className="flex-1 flex items-center justify-end space-x-6 pr-10">
         <Bell size={24} />
-        <Avatar>
+        {/* <Avatar>
           <AvatarImage src="https://github.com/shadcn.png" alt="@shadcn" />
           <AvatarFallback>CN</AvatarFallback>
-        </Avatar>
+        </Avatar> */}
+        <UserButton afterSignOutUrl="/" />
       </div>
     </nav>
   );

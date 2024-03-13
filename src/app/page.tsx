@@ -1,8 +1,11 @@
 import Hero from "@/components/layout/Hero";
+import HomeNav from "@/components/layout/HomeNav";
+import Topnav from "@/components/layout/Topnav";
 
 export default function Home() {
   return (
-    <main className="flex min-h-screen flex-col items-center justify-between p-24">
+    <main className="relative">
+      <HomeNav />
       <Hero />
     </main>
   );
