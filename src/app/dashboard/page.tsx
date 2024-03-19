@@ -1,7 +1,9 @@
 import StatCard from "@/components/common/StatCard";
 import { FilePen, HandCoins, PersonStandingIcon } from "lucide-react";
-
+import { auth, currentUser } from "@clerk/nextjs";
 export default function Dashboardpage() {
+  const { userId } = auth();
+  console.log("clerk: ", userId);
   const stats = [
     {
       title: "Total Instructor",
