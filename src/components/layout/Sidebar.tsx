@@ -12,6 +12,7 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import {
   BookOpen,
   CreditCard,
+  File,
   GraduationCap,
   Home,
   Menu,
@@ -19,8 +20,31 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
+import { get } from "http";
 
 const SidebarContent = () => {
+  const InstructorSidebarContent = [
+    {
+      title: "Dashboard",
+      icon: <Home size={24} />,
+      href: "/dashboard",
+    },
+    {
+      title: "Upload Test",
+      icon: <GraduationCap size={24} />,
+      href: "/dashboard/upload-test",
+    },
+    {
+      title: "Manage Test",
+      icon: <File size={24} />,
+      href: "/dashboard/manage-test",
+    },
+    {
+      title: "Payments",
+      icon: <CreditCard size={24} />,
+      href: "/dashboard/payments",
+    },
+  ];
   const sidebarItems = [
     {
       title: "Dashboard",
@@ -75,7 +99,7 @@ const SidebarContent = () => {
   );
 };
 
-const Sidebar = () => {
+const Sidebar = async () => {
   return (
     <div className="lg:shadow-md fixed w-full max-w-72 z-50">
       <ScrollArea className="lg:min-h-screen p-4">
