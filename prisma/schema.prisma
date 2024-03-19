@@ -19,3 +19,20 @@ model User {
   name     String?
   role     String? 
 }
+model Test {
+  id          Int        @id @default(autoincrement())
+  name        String
+  duration    String
+  explanation String
+  teacherId   String
+  questions   Question[]
+}
+
+model Question {
+  id      Int    @id @default(autoincrement())
+  question String
+  options  String[]
+  answer   String
+  testId   Int
+  test     Test   @relation(fields: [testId], references: [id])
+}
