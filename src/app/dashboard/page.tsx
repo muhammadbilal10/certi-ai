@@ -39,6 +39,7 @@ export default function Dashboardpage() {
           />
         ))}
       </div>
+      <script async src="https://api.cronbot.ai/v1/widgets/app/app_dqxltxzqsal5"></script>
     </div>
   );
 }
