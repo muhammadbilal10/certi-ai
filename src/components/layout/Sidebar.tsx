@@ -23,7 +23,7 @@ import Image from "next/image";
 import { get } from "http";
 
 const SidebarContent = () => {
-  const InstructorSidebarContent = [
+  const sidebarItems = [
     {
       title: "Dashboard",
       icon: <Home size={24} />,
@@ -45,33 +45,33 @@ const SidebarContent = () => {
       href: "/dashboard/payments",
     },
   ];
-  const sidebarItems = [
-    {
-      title: "Dashboard",
-      icon: <Home size={24} />,
-      href: "/dashboard",
-    },
-    {
-      title: "TestTakers",
-      icon: <GraduationCap size={24} />,
-      href: "/dashboard/test-takers",
-    },
-    {
-      title: "Instructors",
-      icon: <UserRound size={24} />,
-      href: "/dashboard/instructors",
-    },
-    {
-      title: "TestEnvironment",
-      icon: <BookOpen size={24} />,
-      href: "/dashboard/test-environment",
-    },
-    {
-      title: "Payments",
-      icon: <CreditCard size={24} />,
-      href: "/dashboard/payments",
-    },
-  ];
+  // const sidebarItems = [
+  //   {
+  //     title: "Dashboard",
+  //     icon: <Home size={24} />,
+  //     href: "/dashboard",
+  //   },
+  //   {
+  //     title: "TestTakers",
+  //     icon: <GraduationCap size={24} />,
+  //     href: "/dashboard/test-takers",
+  //   },
+  //   {
+  //     title: "Instructors",
+  //     icon: <UserRound size={24} />,
+  //     href: "/dashboard/instructors",
+  //   },
+  //   {
+  //     title: "TestEnvironment",
+  //     icon: <BookOpen size={24} />,
+  //     href: "/dashboard/test-environment",
+  //   },
+  //   {
+  //     title: "Payments",
+  //     icon: <CreditCard size={24} />,
+  //     href: "/dashboard/payments",
+  //   },
+  // ];
   return (
     <div>
       <div className="max-w-28 h-20 mx-auto">

@@ -1,3 +1,4 @@
+"use client";
 import {
   Card,
   CardContent,
@@ -6,43 +7,58 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Calendar, Clock } from "lucide-react";
+
+import { Calendar, Clock, Delete, Edit, View } from "lucide-react";
+import ALertDialogModel from "./ALertDialogModel";
+import Link from "next/link";
 
 export default function TestCard({
-  name,
+  title,
   instructor,
-  time,
-  date,
+  description,
+  duration,
+  startAt,
+  id,
 }: {
-  name: string;
+  id: number;
+  title: string;
+  description: string | null;
   instructor: string;
-  time: string;
-  date: string;
+  duration: number;
+  startAt: Date;
 }) {
+  async function handleDelete(id: number) {
+    console.log(id);
+  }
   return (
     <Card>
       <CardHeader>
-        <CardTitle>{name}</CardTitle>
+        <CardTitle>{title}</CardTitle>
         <CardDescription>
           {instructor}
-          <div className="flex space-x-6 mt-2">
+          <span className="flex space-x-6 mt-2">
             <span className="flex items-center gap-2">
               <Calendar size={16} />
-              {date}
+              {startAt.toDateString()}
             </span>
             <span className="flex items-center gap-2">
               <Clock size={16} />
-              {time}
+              {duration}
             </span>
-          </div>
+          </span>
         </CardDescription>
       </CardHeader>
-      {/* <CardContent>
-        <p>Card Content</p>
-      </CardContent>
+
       <CardFooter>
-        <p>Card Footer</p>
-      </CardFooter> */}
+        <div className="flex space-x-8">
+          <View size={24} />
+          <Link href={`/dashboard/test/create-test?type=edit&id=${id}`}>
+            <Edit size={24} />
+          </Link>
+          {/* <Button onClick={handleDelete}>handle</Button> */}
+          <ALertDialogModel icon={<Delete size={24} />} text="test" id={id} />
+        </div>
+      </CardFooter>
     </Card>
   );
 }

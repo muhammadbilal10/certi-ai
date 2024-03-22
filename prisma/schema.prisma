@@ -18,13 +18,16 @@ model User {
   email    String   @unique
   name     String?
   role     String? 
+  test    Test[]
 }
 model Test {
   id          Int        @id @default(autoincrement())
-  name        String
-  duration    String
-  explanation String
-  teacherId   String
+  title        String
+  description String?
+  duration    Int
+  userId     String
+  startAt     DateTime
+  user User @relation(fields: [userId], references: [id])
   questions   Question[]
 }
 
@@ -32,7 +35,7 @@ model Question {
   id      Int    @id @default(autoincrement())
   question String
   options  String[]
-  answer   String
+  answer   Int
   testId   Int
   test     Test   @relation(fields: [testId], references: [id])
 }
