@@ -31,13 +31,8 @@ const SidebarContent = () => {
     },
     {
       title: "Test",
-      icon: <GraduationCap size={24} />,
-      href: "/dashboard/test",
-    },
-    {
-      title: "Manage Test",
       icon: <File size={24} />,
-      href: "/dashboard/manage-test",
+      href: "/dashboard/test",
     },
     {
       title: "Payments",
