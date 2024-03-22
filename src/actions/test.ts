@@ -102,6 +102,7 @@ export async function updateTest({
   } catch (error) {
     console.error(error);
   }
+  redirect("/dashboard/test");
 }
 
 // export async function deleteTest(test: number) {

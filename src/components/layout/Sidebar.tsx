@@ -30,9 +30,9 @@ const SidebarContent = () => {
       href: "/dashboard",
     },
     {
-      title: "Upload Test",
+      title: "Test",
       icon: <GraduationCap size={24} />,
-      href: "/dashboard/upload-test",
+      href: "/dashboard/test",
     },
     {
       title: "Manage Test",
