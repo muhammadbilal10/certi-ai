@@ -1,17 +1,9 @@
-import {
-  getAllTests,
-  getPublishedTests,
-  getSpecificTest,
-  getTestsByUserId,
-} from "@/actions/test";
-import testhandler from "@/actions/upload";
+import { getPublishedTests, getTestsByUserId } from "@/actions/test";
 import { getRole } from "@/actions/user";
 import TestCard from "@/components/common/TestCard";
-import TestDetailsForm from "@/components/common/test/TestDetailsForm";
-import TestPage from "@/components/layout/TestPage";
 import { Button } from "@/components/ui/button";
 import { auth, currentUser } from "@clerk/nextjs";
-import { get } from "http";
+
 import { Plus } from "lucide-react";
 import Link from "next/link";
 
@@ -63,7 +55,6 @@ export default async function CreateTestPage() {
           );
         })}
       </div>
-      <TestPage/>
     </div>
 
     // <form action={testhandler}>

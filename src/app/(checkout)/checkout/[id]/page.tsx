@@ -23,19 +23,23 @@ const fetchPaymentIntent = async (
 ) => {
   // const price = 800;
   // console.log(course?.price);
-  const res = await fetch(backendUrl, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({
-      currency: "inr",
-      amount: price,
-      description: description,
-    }),
-  });
-  const { client_secret: clientSecret } = await res.json();
-  return clientSecret;
+  //   const res = await fetch(backendUrl, {
+  //     method: "POST",
+  //     headers: {
+  //       "Content-Type": "application/json",
+  //     },
+  //     body: JSON.stringify({
+  //       currency: "usd",
+  //       amount: price,
+  //       description: description,
+  //     }),
+  //   });
+  //   const { client_secret: clientSecret } = await res.json();
+  //   return clientSecret;
+  // };
+  const res = await stripeapi(price, "inr", description, name, location);
+  return res;
+  console.log(res);
 };
 
 async function getTestDetails(id: number) {
@@ -46,7 +50,7 @@ async function getTestDetails(id: number) {
 export default async function page({ params }: any) {
   const user = await currentUser();
   const dbUser = await getUserById(user?.id as string);
-  console.log("--------------->", dbUser);
+
   const id = params.id;
   const testDetails = (await getTestDetails(Number(id))) as Test;
   console.log(testDetails);
