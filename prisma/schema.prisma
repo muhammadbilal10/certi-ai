@@ -23,6 +23,7 @@ model User {
   profileImage String?
   location String?
   test    Test[]
+  payment Payment[]
 }
 model Test {
   id          Int        @id @default(autoincrement())
@@ -31,9 +32,11 @@ model Test {
   duration    Int
   userId     String
   startAt     DateTime
+  published  Boolean    @default(false)
 
   user User @relation(fields: [userId], references: [id])
   questions   Question[]
+  payment     Payment[]
 }
 
 model Question {
@@ -43,4 +46,17 @@ model Question {
   answer   Int
   testId   Int
   test     Test   @relation(fields: [testId], references: [id])
+}
+
+
+// 
+model Payment {
+  id         Int      @id @default(autoincrement())
+  userId     String
+  testId     Int
+  amount     Float
+  status     String   // e.g., "pending", "completed", "failed"
+  createdAt  DateTime @default(now())
+  user       User     @relation(fields: [userId], references: [id])
+  test       Test     @relation(fields: [testId], references: [id])
 }

@@ -30,13 +30,13 @@ const SidebarContent = () => {
       href: "/dashboard",
     },
     {
-      title: "Test (studentSide)",
+      title: "Test (studenti & nstructor)",
       icon: <File size={24} />,
       href: "/dashboard/test",
     },
     {
-      title: "TestEnvironment (adminSide)",
-      icon: <BookOpen size={24} />,
+      title: "TestEnvironment (student & instructor)",
+      icon: <BookOpen size={28} />,
       href: "/dashboard/test-environment",
     },
     {

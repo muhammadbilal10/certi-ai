@@ -25,7 +25,7 @@ export type TestTaker = {
   email: string;
   name: string;
   joinedAt: Date;
-  profilePic?: string;
+  profileImage?: string;
   role?: string;
   location?: string;
   mobile?: string;
@@ -37,15 +37,15 @@ export const columns: ColumnDef<TestTaker>[] = [
     header: "Name",
     cell: ({ row }) => {
       const name = row.original.name;
-      const pic = row.original.profilePic;
+      const pic = row.original.profileImage;
       return (
         <Link href={`/dashboard/test-takers/${row.original.id}`}>
           <div className="flex items-center space-x-4">
             <Avatar className="rounded-md h-12 w-12">
               <AvatarImage
                 src={
-                  row.original.profilePic
-                    ? row.original.profilePic
+                  row.original.profileImage
+                    ? row.original.profileImage
                     : "https://github.com/shadcn.png"
                 }
                 alt="@shadcn"

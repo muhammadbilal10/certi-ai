@@ -11,6 +11,9 @@ import {
 import { Calendar, Clock, Delete, Edit, View } from "lucide-react";
 import ALertDialogModel from "./ALertDialogModel";
 import Link from "next/link";
+import { Button } from "../ui/button";
+import { publishTest } from "@/actions/test";
+import { redirect } from "next/dist/server/api-utils";
 
 export default function TestCard({
   title,
@@ -21,6 +24,9 @@ export default function TestCard({
   id,
   userId,
   isEdit = false,
+  role,
+  published,
+  isPurchased = false,
 }: {
   id: number;
   title: string;
@@ -30,11 +36,46 @@ export default function TestCard({
   startAt: Date;
   userId: string;
   isEdit?: boolean;
+  role?: string;
+  published: boolean;
+  isPurchased?: boolean;
 }) {
+  const updateTest = publishTest.bind(null, id);
+  console.log("published", published);
+  console.log(instructor);
+  console.log("role", role);
+
   return (
     <Card>
       <CardHeader>
-        <CardTitle>{title}</CardTitle>
+        <div className="flex justify-between">
+          <CardTitle>{title}</CardTitle>
+          {role === "instructor" && (
+            <form action={updateTest}>
+              <Button
+                type="submit"
+                disabled={published}
+                variant={published ? "secondary" : "default"}
+              >
+                {published ? "Published" : "Publish"}
+              </Button>
+            </form>
+          )}
+          {role === "student" && (
+            <form action={updateTest}>
+              <Button
+                asChild
+                type="submit"
+                disabled={isPurchased}
+                variant={isPurchased ? "secondary" : "default"}
+              >
+                <Link href={`/checkout/${id}`}>
+                  {isPurchased ? "Purchased" : "Purchase"}
+                </Link>
+              </Button>
+            </form>
+          )}
+        </div>
         <CardDescription>
           {instructor}
           <span className="flex space-x-6 mt-2">
@@ -50,7 +91,7 @@ export default function TestCard({
         </CardDescription>
       </CardHeader>
 
-      {isEdit && (
+      {role === "instructor" && (
         <CardFooter>
           <div className="flex space-x-8">
             <View size={24} />

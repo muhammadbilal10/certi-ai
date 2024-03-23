@@ -63,6 +63,7 @@ export default async function ProfileDetailsPage({
             startAt={test.startAt}
             id={test.id}
             userId={test.userId}
+            published={test.published}
           />
         ))}
       </div>

@@ -2,6 +2,7 @@
 
 import { db } from "@/lib/db";
 import { auth } from "@clerk/nextjs";
+import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 
 type Question = {
@@ -135,6 +136,7 @@ export async function getAllTests() {
   }
 }
 export async function getSpecificTest(testId: number) {
+  console.log(testId);
   try {
     const test = await db.test.findUnique({
       where: {
@@ -147,6 +149,7 @@ export async function getSpecificTest(testId: number) {
     console.log(test);
     return test;
   } catch (error) {
+    console.log("Error in fetching the test", error);
     console.error(error);
   }
 }
@@ -161,4 +164,34 @@ export async function getTestsByUserId(userId: string) {
     },
   });
   return userWithTests ? userWithTests.test : [];
+}
+
+export async function getPublishedTests() {
+  try {
+    const tests = await db.test.findMany({
+      where: {
+        published: true,
+      },
+      include: {
+        user: true,
+      },
+    });
+    return tests;
+  } catch (error) {
+    console.error(error);
+  }
+}
+
+export async function publishTest(testId: number, formData: FormData) {
+  console.log(testId);
+  try {
+    const updatedTest = await db.test.update({
+      where: { id: testId },
+      data: { published: true },
+    });
+    console.log(`Test ${testId} published successfully`);
+  } catch (error) {
+    console.error(`Error publishing test ${testId}`, error);
+  }
+  revalidatePath("/dashboard/test");
 }
