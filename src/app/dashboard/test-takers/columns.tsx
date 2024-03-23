@@ -20,13 +20,15 @@ import Link from "next/link";
 // You can use a Zod schema here if you want.
 export type TestTaker = {
   id: string;
-  amount: number;
-  status: "pending" | "processing" | "success" | "failed";
+  amount?: number;
+  status?: "pending" | "processing" | "success" | "failed";
   email: string;
   name: string;
-  date: string;
-  profilePic: string;
-  mobile: string;
+  joinedAt: Date;
+  profilePic?: string;
+  role?: string;
+  location?: string;
+  mobile?: string;
 };
 
 export const columns: ColumnDef<TestTaker>[] = [
@@ -40,8 +42,15 @@ export const columns: ColumnDef<TestTaker>[] = [
         <Link href={`/dashboard/test-takers/${row.original.id}`}>
           <div className="flex items-center space-x-4">
             <Avatar className="rounded-md h-12 w-12">
-              <AvatarImage src="https://github.com/shadcn.png" alt="@shadcn" />
-              <AvatarFallback>CN</AvatarFallback>
+              <AvatarImage
+                src={
+                  row.original.profilePic
+                    ? row.original.profilePic
+                    : "https://github.com/shadcn.png"
+                }
+                alt="@shadcn"
+              />
+              <AvatarFallback>{row.original.name[0]}</AvatarFallback>
             </Avatar>
             <div className="ml-2 flex-1">{name}</div>
           </div>
@@ -67,6 +76,10 @@ export const columns: ColumnDef<TestTaker>[] = [
   {
     accessorKey: "date",
     header: "Joining Date",
+    cell: ({ row }) => {
+      const date = new Date(row.original.joinedAt);
+      return <div>{date.toDateString()}</div>;
+    },
   },
 
   {
@@ -75,18 +88,24 @@ export const columns: ColumnDef<TestTaker>[] = [
   },
 
   {
-    accessorKey: "amount",
-    header: () => <div className="text-right">Amount</div>,
-    cell: ({ row }) => {
-      const amount = parseFloat(row.getValue("amount"));
-      const formatted = new Intl.NumberFormat("en-US", {
-        style: "currency",
-        currency: "USD",
-      }).format(amount);
-
-      return <div className="text-right font-medium">{formatted}</div>;
-    },
+    accessorKey: "location",
+    header: "Location",
   },
+
+  // {
+  //   accessorKey: "amount",
+  //   header: () => <div className="text-right">Amount</div>,
+  //   cell: ({ row }) => {
+  //     const amount = parseFloat(row.getValue("amount"));
+  //     const formatted = new Intl.NumberFormat("en-US", {
+  //       style: "currency",
+  //       currency: "USD",
+  //     }).format(amount);
+
+  //     return <div className="text-right font-medium">{formatted}</div>;
+  //   },
+  // },
+
   {
     id: "actions",
     cell: ({ row }) => {
@@ -108,7 +127,9 @@ export const columns: ColumnDef<TestTaker>[] = [
             </DropdownMenuItem>
             <DropdownMenuSeparator />
             <DropdownMenuItem
-              onClick={() => navigator.clipboard.writeText(payment.status)}
+              onClick={() =>
+                navigator.clipboard.writeText(payment?.status as string)
+              }
             >
               View customer
             </DropdownMenuItem>
