@@ -28,6 +28,7 @@ export default async function CreateTestPage() {
           <TestCard
             key={test.id}
             id={test.id}
+            userId={test.userId}
             title={test.title}
             instructor="Instructor Name"
             description={test.description}
