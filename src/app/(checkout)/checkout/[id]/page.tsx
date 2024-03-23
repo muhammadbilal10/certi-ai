@@ -21,7 +21,7 @@ const fetchPaymentIntent = async (description: string, price: number) => {
       "Content-Type": "application/json",
     },
     body: JSON.stringify({
-      currency: "inr",
+      currency: "gbp",
       amount: price,
       description: description,
     }),
