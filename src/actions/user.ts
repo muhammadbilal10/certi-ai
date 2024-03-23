@@ -1,6 +1,7 @@
 "use server";
 import { db } from "@/lib/db";
-import { auth } from "@clerk/nextjs";
+import { auth, currentUser } from "@clerk/nextjs";
+import { redirect } from "next/navigation";
 
 export async function getRole() {
   const { userId } = auth();
@@ -15,4 +16,32 @@ export async function getRole() {
   } catch (e) {
     console.log("Error", e);
   }
+}
+
+export async function createUser(formData: FormData) {
+  const user = await currentUser();
+  const { userId } = auth();
+  const email = user?.emailAddresses[0].emailAddress;
+
+  const role = formData.get("role") as string;
+  console.log("Role", role);
+  const location = formData.get("location") as string;
+  const mobile = formData.get("mobile") as string;
+
+  try {
+    const res = await db.user.create({
+      data: {
+        id: userId as string,
+        name: user?.firstName + " " + user?.lastName,
+        email: email as string,
+        role: role,
+        profileImage: user?.imageUrl,
+        location: location,
+        mobile: mobile,
+      },
+    });
+  } catch (e) {
+    console.log("Error", e);
+  }
+  redirect("/dashboard");
 }

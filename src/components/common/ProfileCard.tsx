@@ -11,28 +11,24 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Check, HandCoins, Mail, Map, MapPin, User } from "lucide-react";
 import Image from "next/image";
 
-type ProfileDetails = {
+interface ProfileDetails {
   id: string;
-  name: string;
-  gender: string;
-  age: number;
   email: string;
-  phone: string;
-  joinedDate: string;
-  address: string;
-  role: string;
-  profilePic: string;
-};
+  name: string | null;
+  role: string | null;
+  mobile: string | null;
+  joinedAt: Date; // or string if you prefer to work with date as string
+  profileImage: string | null;
+  location: string | null;
+}
+
 export default function ProfileCard({
   name,
   email,
-  phone,
-  joinedDate,
-  address,
-  id,
-  gender,
+  mobile,
   role,
-  profilePic,
+  profileImage,
+  location,
 }: ProfileDetails) {
   const userDescription = [
     {
@@ -40,7 +36,7 @@ export default function ProfileCard({
       icon: <User size={20} />,
     },
     {
-      value: address,
+      value: location,
       icon: <MapPin size={20} />,
     },
     {
@@ -64,7 +60,7 @@ export default function ProfileCard({
         <CardContent className="p-6">
           <Image
             src="https://preview.keenthemes.com/metronic8/react/demo1//media/avatars/300-1.jpg"
-            alt={name}
+            alt={name || "profile image"}
             height={160}
             width={160}
             className="h-40 w-40 rounded-md object-cover"
@@ -77,7 +73,7 @@ export default function ProfileCard({
               <Check size={20} className="p-1 rounded-full bg-secondary" />
             </div>
           </CardTitle>
-          <CardDescription>
+          <div className="text-sm text-muted-foreground">
             <div className="flex gap-6 max-sm:flex-col max-sm:gap-2">
               {userDescription.map((item, index) => (
                 <div key={index} className="flex gap-1 items-center">
@@ -86,7 +82,7 @@ export default function ProfileCard({
                 </div>
               ))}
             </div>
-          </CardDescription>
+          </div>
           <div>
             <div>
               <div className="flex space-x-4 mt-4">

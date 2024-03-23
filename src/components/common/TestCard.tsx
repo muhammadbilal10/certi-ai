@@ -19,6 +19,8 @@ export default function TestCard({
   duration,
   startAt,
   id,
+  userId,
+  isEdit = false,
 }: {
   id: number;
   title: string;
@@ -26,10 +28,9 @@ export default function TestCard({
   instructor: string;
   duration: number;
   startAt: Date;
+  userId: string;
+  isEdit?: boolean;
 }) {
-  async function handleDelete(id: number) {
-    console.log(id);
-  }
   return (
     <Card>
       <CardHeader>
@@ -49,16 +50,18 @@ export default function TestCard({
         </CardDescription>
       </CardHeader>
 
-      <CardFooter>
-        <div className="flex space-x-8">
-          <View size={24} />
-          <Link href={`/dashboard/test/create-test?type=edit&id=${id}`}>
-            <Edit size={24} />
-          </Link>
-          {/* <Button onClick={handleDelete}>handle</Button> */}
-          <ALertDialogModel icon={<Delete size={24} />} text="test" id={id} />
-        </div>
-      </CardFooter>
+      {isEdit && (
+        <CardFooter>
+          <div className="flex space-x-8">
+            <View size={24} />
+            <Link href={`/dashboard/test/create-test?type=edit&id=${id}`}>
+              <Edit size={24} />
+            </Link>
+            {/* <Button onClick={handleDelete}>handle</Button> */}
+            <ALertDialogModel icon={<Delete size={24} />} text="test" id={id} />
+          </div>
+        </CardFooter>
+      )}
     </Card>
   );
 }

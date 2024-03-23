@@ -12,6 +12,8 @@ import {
 } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+import { FormField } from "@/components/ui/form";
+import CreateUserForm from "@/components/user/CreateUserForm";
 
 export default async function RolePage() {
   const user = await currentUser();
@@ -33,6 +35,8 @@ export default async function RolePage() {
 
     console.log("Form Data", formData);
     const role = formData.get("role") as string;
+    const location = formData.get("location") as string;
+    const mobile = formData.get("mobile") as string;
 
     try {
       const res = await db.user.create({
@@ -41,6 +45,9 @@ export default async function RolePage() {
           name: user?.firstName + " " + user?.lastName,
           email: email as string,
           role: role,
+          profileImage: user?.imageUrl,
+          location: location,
+          mobile: mobile,
         },
       });
     } catch (e) {
@@ -51,7 +58,9 @@ export default async function RolePage() {
 
   return (
     <div>
-      <form action={createUser}>
+      <CreateUserForm />
+      {/* <form action={createUser}>
+       
         <Select name="role">
           <SelectTrigger className="w-[280px]">
             <SelectValue placeholder="Select a role" />
@@ -66,7 +75,7 @@ export default async function RolePage() {
         </Select>
 
         <Button className={cn("mt-5")}>Submit</Button>
-      </form>
+      </form> */}
     </div>
   );
 }

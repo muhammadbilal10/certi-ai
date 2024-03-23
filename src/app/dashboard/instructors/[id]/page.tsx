@@ -1,35 +1,45 @@
+import { getInstructorById } from "@/actions/instructor";
+import { getAllTests, getSpecificTest, getTestsByUserId } from "@/actions/test";
 import ProfileCard from "@/components/common/ProfileCard";
 import TestCard from "@/components/common/TestCard";
 import { useRouter } from "next/router";
+import test from "node:test";
 import React from "react";
 
-export default function ProfileDetailsPage({
+interface ProfileDetails {
+  id: string;
+  email: string;
+  name: string | null;
+  role: string | null;
+  mobile: string | null;
+  joinedAt: Date;
+  profileImage: string | null;
+  location: string | null;
+}
+
+async function getALlTest(id: string) {
+  const data = await getTestsByUserId(id);
+  return data;
+}
+
+async function getInstructor(id: string) {
+  console.log(id);
+  const data = await getInstructorById(id);
+  return data;
+}
+
+export default async function ProfileDetailsPage({
   params,
 }: {
   params: { id: string };
 }) {
   const id = params?.id;
 
-  const profileDetials = {
-    id: id,
-    name: "Babar Azam",
-    gender: "female",
-    age: 25,
-    email: "mb0587494@gmail.com",
-    phone: "1234567890",
-    joinedDate: "2021-08-01",
-    address: "Lahore, Pakistan",
-    role: "admin",
-    profilePic: "https://randomuser.me/api/portraits",
-  };
+  const profileDetials = (await getInstructor(id as string)) as ProfileDetails;
+  console.log(profileDetials);
 
-  const TestDetails = {
-    id: "1",
-    name: "OCPJP 8 Test",
-    instructor: "MR Anwar Shah",
-    time: "12:00 PM",
-    date: "12/12/2021",
-  };
+  const testDetails = await getALlTest(id as string);
+  console.log(testDetails);
 
   return (
     <div className="px-10">
@@ -40,21 +50,21 @@ export default function ProfileDetailsPage({
         <ProfileCard {...profileDetials} />
       </div>
       <div>
-        <h1 className="text-xl font-bold mt-5">Test Purchased</h1>
+        <h1 className="text-xl font-bold mt-5">Test Created</h1>
       </div>
       <div className="grid grid-cols-3 gap-5 mt-4">
-        <TestCard {...TestDetails} />
-        <TestCard {...TestDetails} />
-        <TestCard {...TestDetails} />
-        <TestCard {...TestDetails} />
-        <TestCard {...TestDetails} />
-        <TestCard {...TestDetails} />
-        <TestCard {...TestDetails} />
-        <TestCard {...TestDetails} />
-        <TestCard {...TestDetails} />
-        <TestCard {...TestDetails} />
-        <TestCard {...TestDetails} />
-        <TestCard {...TestDetails} />
+        {testDetails?.map((test) => (
+          <TestCard
+            key={test.id}
+            title={test.title}
+            instructor={profileDetials.name as string}
+            description={test.description}
+            duration={test.duration}
+            startAt={test.startAt}
+            id={test.id}
+            userId={test.userId}
+          />
+        ))}
       </div>
     </div>
   );

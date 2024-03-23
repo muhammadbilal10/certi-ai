@@ -1,14 +1,14 @@
-import StatCard from "@/components/common/StatCard";
 import { DataTable } from "@/components/ui/data-table";
-import { FilePen, HandCoins, PersonStandingIcon, PlusIcon } from "lucide-react";
 import { Instructor, columns } from "./columns";
-import { Button } from "@/components/ui/button";
-import Link from "next/link";
 import { Modal } from "@/components/common/Modal";
+import { getAllInstructors } from "@/actions/instructor";
+import { currentUser } from "@clerk/nextjs";
 
 async function getData(): Promise<Instructor[]> {
   // Fetch data from your API here.
-  return [
+  const data = (await getAllInstructors()) as Instructor[];
+  console.log(data);
+  const dummyData = [
     {
       id: "728ed52f",
       amount: 1000,
@@ -120,10 +120,14 @@ async function getData(): Promise<Instructor[]> {
       mobile: "1234567800",
     },
   ];
+  return data;
 }
 
 export default async function TestTakerPage() {
   const data = await getData();
+  console.log(data);
+  const user = await currentUser();
+  console.log(user);
 
   return (
     <div className="container h-screen mx-auto">
@@ -131,7 +135,6 @@ export default async function TestTakerPage() {
         <h1 className="text-2xl font-bold ">Instructors list</h1>
         <Modal value="Add Instructor" />
       </div>
-
       <DataTable columns={columns} data={data} />
     </div>
   );

@@ -105,18 +105,6 @@ export async function updateTest({
   redirect("/dashboard/test");
 }
 
-// export async function deleteTest(test: number) {
-//   console.log(id);
-//   // try {
-//   //   await db.test.delete({
-//   //     where: { id: testId },
-//   //   });
-//   // } catch (error) {
-//   //   console.error(error);
-//   // }
-//   return id;
-// }
-
 export async function deleteTest(id: number) {
   console.log(id);
   try {
@@ -161,4 +149,16 @@ export async function getSpecificTest(testId: number) {
   } catch (error) {
     console.error(error);
   }
+}
+
+export async function getTestsByUserId(userId: string) {
+  const userWithTests = await db.user.findUnique({
+    where: {
+      id: userId,
+    },
+    include: {
+      test: true,
+    },
+  });
+  return userWithTests ? userWithTests.test : [];
 }

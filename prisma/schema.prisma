@@ -18,6 +18,10 @@ model User {
   email    String   @unique
   name     String?
   role     String? 
+  mobile   String?
+  joinedAt DateTime @default(now())
+  profileImage String?
+  location String?
   test    Test[]
 }
 model Test {
@@ -27,6 +31,7 @@ model Test {
   duration    Int
   userId     String
   startAt     DateTime
+
   user User @relation(fields: [userId], references: [id])
   questions   Question[]
 }
