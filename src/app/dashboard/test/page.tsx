@@ -1,16 +1,19 @@
-import { getAllTests } from "@/actions/test";
+import { getAllTests, getSpecificTest, getTestsByUserId } from "@/actions/test";
 import testhandler from "@/actions/upload";
 import TestCard from "@/components/common/TestCard";
 import { Button } from "@/components/ui/button";
+import { auth, currentUser } from "@clerk/nextjs";
 import { Plus } from "lucide-react";
 import Link from "next/link";
 
-async function getTests() {
-  const data = await getAllTests();
+async function getTests(id: string) {
+  const data = await getTestsByUserId(id);
   return data;
 }
 export default async function CreateTestPage() {
-  const tests = await getTests();
+  const { userId } = auth();
+  console.log(userId);
+  const tests = await getTests(userId as string);
   console.log(tests);
   return (
     <div>
@@ -38,6 +41,7 @@ export default async function CreateTestPage() {
         ))}
       </div>
     </div>
+
     // <form action={testhandler}>
     //   <input type="text" name="testname" placeholder="Test Name" />
     //   <input type="file" name="file" />

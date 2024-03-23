@@ -20,6 +20,8 @@ interface ProfileDetails {
   joinedAt: Date; // or string if you prefer to work with date as string
   profileImage: string | null;
   location: string | null;
+  totalEarning?: number;
+  totalTest?: number;
 }
 
 export default function ProfileCard({
@@ -29,6 +31,8 @@ export default function ProfileCard({
   role,
   profileImage,
   location,
+  totalEarning,
+  totalTest,
 }: ProfileDetails) {
   const userDescription = [
     {
@@ -50,8 +54,8 @@ export default function ProfileCard({
       value: "600$",
     },
     {
-      title: "Test Taken",
-      value: "15",
+      title: `Test ${role === "student" ? "Purchased" : "Created"}`,
+      value: totalTest || "0",
     },
   ];
   return (
@@ -59,7 +63,10 @@ export default function ProfileCard({
       <Card className="flex max-md:flex-col">
         <CardContent className="p-6">
           <Image
-            src="https://preview.keenthemes.com/metronic8/react/demo1//media/avatars/300-1.jpg"
+            src={
+              profileImage ||
+              "https://preview.keenthemes.com/metronic8/react/demo1//media/avatars/300-1.jpg"
+            }
             alt={name || "profile image"}
             height={160}
             width={160}

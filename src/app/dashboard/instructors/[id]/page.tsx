@@ -47,7 +47,7 @@ export default async function ProfileDetailsPage({
         <h1 className="text-xl font-bold mb-4">Profile Details</h1>
       </div>
       <div>
-        <ProfileCard {...profileDetials} />
+        <ProfileCard {...profileDetials} totalTest={testDetails?.length} />
       </div>
       <div>
         <h1 className="text-xl font-bold mt-5">Test Created</h1>

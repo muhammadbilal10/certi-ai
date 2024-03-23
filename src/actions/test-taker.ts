@@ -14,7 +14,7 @@ export async function getAllTestTakers() {
 
     if (!testTakers) {
       console.log("No TestTakers found");
-      return null;
+      return [];
     }
     console.log(testTakers);
     return testTakers;

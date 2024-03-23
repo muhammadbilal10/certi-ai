@@ -18,13 +18,7 @@ export default async function ProfileDetailsPage({
 
   const profileDetials = await getProfileDetails(id);
 
-  const TestDetails = {
-    id: "1",
-    name: "OCPJP 8 Test",
-    instructor: "MR Anwar Shah",
-    time: "12:00 PM",
-    date: "12/12/2021",
-  };
+  const testDetails = [];
 
   return (
     <div className="px-10">
@@ -41,6 +35,7 @@ export default async function ProfileDetailsPage({
           profileImage={profileDetials?.profileImage || ""}
           location={profileDetials?.location || ""}
           joinedAt={profileDetials?.joinedAt || new Date()}
+          totalTest={testDetails?.length || 0}
         />
       </div>
       <div>
