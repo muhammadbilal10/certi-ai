@@ -16,7 +16,7 @@ const stripePromise = loadStripe(
 
 const backendUrl = `https://uctqy6nhdk.us.aircode.run/payment`;
 
-const fetchPaymentIntent = async (description: string, price: number) => {
+const fetchPaymentIntent = async (description: string, price: number,name :string, location:string) => {
  // const price = 800;
   // console.log(course?.price);
 //   const res = await fetch(backendUrl, {
@@ -33,7 +33,7 @@ const fetchPaymentIntent = async (description: string, price: number) => {
 //   const { client_secret: clientSecret } = await res.json();
 //   return clientSecret;
 // };
-const res= await stripeapi(price, "inr", description);
+const res= await stripeapi(price, "inr", description, name, location);
 return res;
 console.log(res);
 };
@@ -53,7 +53,9 @@ const dbUser= await  getUserById(user?.id as string);
 
   const clientSecret = (await fetchPaymentIntent(
     testDetails?.title as string,
-    100
+    100,
+    dbUser?.name as string,
+    dbUser?.location as string
   )) as any;
 
   console.log(clientSecret);
