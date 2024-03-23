@@ -45,3 +45,17 @@ export async function createUser(formData: FormData) {
   }
   redirect("/dashboard");
 }
+
+//get user by id
+export async function getUserById(id: string) {
+  try {
+    const user = await db.user.findUnique({
+      where: {
+        id: id,
+      },
+    });
+    return user;
+  } catch (e) {
+    console.log("Error", e);
+  }
+}
