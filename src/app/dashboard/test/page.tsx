@@ -7,6 +7,8 @@ import {
 import testhandler from "@/actions/upload";
 import { getRole } from "@/actions/user";
 import TestCard from "@/components/common/TestCard";
+import TestDetailsForm from "@/components/common/test/TestDetailsForm";
+import TestPage from "@/components/layout/TestPage";
 import { Button } from "@/components/ui/button";
 import { auth, currentUser } from "@clerk/nextjs";
 import { get } from "http";
@@ -61,6 +63,7 @@ export default async function CreateTestPage() {
           );
         })}
       </div>
+      <TestPage/>
     </div>
 
     // <form action={testhandler}>
