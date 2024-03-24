@@ -49,7 +49,7 @@ export default async function page({ params }: any) {
 
   const clientSecret = (await fetchPaymentIntent(
     testDetails?.title as string,
-    100,
+    testDetails?.price as number,
     dbUser?.name as string,
     dbUser?.location as string
   )) as any;

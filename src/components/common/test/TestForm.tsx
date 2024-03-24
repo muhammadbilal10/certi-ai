@@ -45,17 +45,22 @@ const formSchema = z.object({
   }),
   duration: z.coerce
     .number({
-      required_error: "duration is required",
+      required_error: "Duration is required",
+      invalid_type_error: "Duration is required",
     })
-    .int()
+    .positive("Duration must be a positive number")
+    .min(5, "Duration must be at least 5 minutes")
+    .max(180, "Duration cannot exceed 180 minutes"),
+  price: z.coerce
+    .number({
+      required_error: "price is required",
+      invalid_type_error: "price is required",
+    })
     .positive({
-      message: "Duration must be a positive integer.",
+      message: "Price must be a positive integer.",
     })
-    .min(5, {
-      message: "Duration must be at least 5 minutes.",
-    })
-    .max(180, {
-      message: "Duration cannot exceed 180 minutes.",
+    .min(1, {
+      message: "Price must be at least 1 dollar.",
     }),
   startAt: z.date({
     required_error: "A test date is required.",
@@ -75,6 +80,7 @@ type TestDetails = {
   title: string;
   description: string;
   duration: number;
+  price: number;
   startAt: Date;
   userId: string;
   questions: Question[];
@@ -100,6 +106,7 @@ export default function TestForm({
       description: testDetails?.description,
       duration: testDetails?.duration,
       startAt: testDetails?.startAt,
+      price: testDetails?.price,
     },
   });
 
@@ -179,7 +186,24 @@ export default function TestForm({
                       <Input placeholder="30 min" {...field} type="number" />
                     </FormControl>
                     <FormDescription>
-                      This is your public test display title.
+                      This is your public test display duration.
+                    </FormDescription>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="price"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Price($)</FormLabel>
+                    <FormControl>
+                      <Input placeholder="100 $" {...field} type="number" />
+                    </FormControl>
+                    <FormDescription>
+                      This is your public test display price.
                     </FormDescription>
                     <FormMessage />
                   </FormItem>

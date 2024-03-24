@@ -30,6 +30,7 @@ type TestDetails = {
   title: string;
   description: string;
   duration: number;
+  price: number;
   startAt: Date;
   userId: string;
   questions: Question[];

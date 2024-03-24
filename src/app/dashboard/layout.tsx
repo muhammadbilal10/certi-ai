@@ -16,7 +16,7 @@ export default async function layout({
     <div className="">
       <Sidebar role={role} />
       <Topnav />
-      <div className="pt-20 lg:ml-80">{children}</div>
+      <div className="pt-20 lg:ml-80 lg:pl-5 pl-10 pr-10">{children}</div>
     </div>
   );
 }

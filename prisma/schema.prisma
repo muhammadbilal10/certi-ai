@@ -30,6 +30,7 @@ model Test {
   title        String
   description String?
   duration    Int
+  price       Int
   userId     String
   startAt     DateTime
   published  Boolean    @default(false)

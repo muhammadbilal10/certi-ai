@@ -38,16 +38,25 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { createTest, updateTest } from "@/actions/test";
-import { get } from "http";
-import { set } from "date-fns";
 
-const formSchema = z.object({
-  question: z.string().min(2, {
-    message: "questions must be at least 2 characters.",
-  }),
-  options: z.array(z.string()),
-  answer: z.number(),
-});
+const formSchema = z
+  .object({
+    question: z.string().min(2, {
+      message: "Question must be at least 2 characters.",
+    }),
+    options: z.array(z.string()),
+    answer: z.coerce
+      .number({
+        required_error: "Answer is required",
+        invalid_type_error: "Answer must be a number",
+      })
+      .positive({
+        message: "Answer must be a positive integer.",
+      }),
+  })
+  .refine((data) => data.answer <= data.options.length, {
+    message: "Answer must not be greater than the number of options.",
+  });
 
 type Question = {
   id: number;
@@ -62,6 +71,7 @@ type TestDetails = {
   title: string;
   description: string;
   duration: number;
+  price: number;
   startAt: Date;
   userId: string;
   questions: Question[];
@@ -81,7 +91,7 @@ export default function TestQuestionForm({
   type: string;
 }) {
   console.log(type);
-
+  const [loading, setLoading] = useState(false);
   const [options, setOptions] = useState<string[]>([]);
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -125,6 +135,7 @@ export default function TestQuestionForm({
     console.log(testDetails);
     form.reset();
     setOptions([]);
+    setLoading(false);
   }
 
   const addOption = () => {
@@ -205,6 +216,20 @@ export default function TestQuestionForm({
                         <FormDescription>
                           This is your public question display.
                         </FormDescription>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  <FormField
+                    control={form.control}
+                    name="answer"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Correct Option</FormLabel>
+                        <FormControl>
+                          <Input placeholder="0" {...field} type="number" />
+                        </FormControl>
                         <FormMessage />
                       </FormItem>
                     )}

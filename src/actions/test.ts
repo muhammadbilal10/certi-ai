@@ -18,8 +18,10 @@ type TestDetails = {
   title: string;
   description: string;
   duration: number;
+  price: number;
   startAt: Date;
   userId: string;
+
   questions: Question[];
 };
 
@@ -41,6 +43,7 @@ export async function createTest({
           duration: testDetails.duration,
           startAt: testDetails.startAt,
           userId: userId as string,
+          price: testDetails?.price,
           questions: {
             create: testDetails.questions.map((question) => ({
               question: question.question,

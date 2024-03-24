@@ -23,10 +23,13 @@ import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { Button } from "../ui/button";
-import React from "react";
+import React, { use } from "react";
+import { auth } from "@clerk/nextjs";
 
 const SidebarContent = ({ role }: { role: string }) => {
   const pathName = usePathname();
+  const profileRoute = role === "student" ? "test-takers" : "instructors";
+  const { userId } = auth();
 
   const roleBasedItems = {
     admin: [
@@ -38,9 +41,14 @@ const SidebarContent = ({ role }: { role: string }) => {
     instructor: [
       "/dashboard",
       "/dashboard/test",
-      "/dashboard/test-environment",
+      `/dashboard/${profileRoute}/${userId}`,
     ],
-    student: ["/dashboard", "/dashboard/test", "/dashboard/test-environment"],
+    student: [
+      "/dashboard",
+      "/dashboard/test",
+      "/dashboard/test-environment",
+      `/dashboard/${profileRoute}/${userId}`,
+    ],
   } as Record<string, string[]>;
   const sidebarItems = [
     {
@@ -74,6 +82,11 @@ const SidebarContent = ({ role }: { role: string }) => {
       title: "Payments",
       icon: <CreditCard size={24} />,
       href: "/dashboard/payments",
+    },
+    {
+      title: "Profile",
+      icon: <UserRound size={24} />,
+      href: `/dashboard/${profileRoute}/${userId}`,
     },
   ];
   const filteredItems = sidebarItems.filter((item) =>
@@ -127,7 +140,7 @@ const SidebarContent = ({ role }: { role: string }) => {
             variant={pathName === item.href ? "default" : "ghost"}
           >
             <Link href={item.href}>
-              {React.cloneElement(item.icon, { className: "mr-2 h-4 w-4" })}
+              {React.cloneElement(item.icon, { className: "mr-2 h-5 w-5" })}
               {item.title}
             </Link>
           </Button>

@@ -3,6 +3,7 @@ import { getRole } from "@/actions/user";
 import TestCard from "@/components/common/TestCard";
 
 import { auth } from "@clerk/nextjs";
+import { notFound } from "next/navigation";
 
 interface Test {
   id: number;
@@ -25,12 +26,12 @@ export default async function TestEnvironmentPage() {
   const { userId } = auth();
   const role = await getRole();
   const testList = await getPurchasedTestsbyUser(userId as string);
+  console.log(testList);
 
-  function canStartTest(testStartDate: Date | string) {
+  function StartTest(testStartDate: Date | string) {
     const currentDate = new Date();
     const startDate = new Date(testStartDate);
 
-    // Normalize dates to start of day for comparison (ignoring time)
     const normalizedCurrentDate = new Date(
       currentDate.getFullYear(),
       currentDate.getMonth(),
@@ -42,7 +43,6 @@ export default async function TestEnvironmentPage() {
       startDate.getDate()
     );
 
-    // Check if the normalized dates are equal
     return normalizedCurrentDate.getTime() === normalizedStartDate.getTime();
   }
 
@@ -67,7 +67,7 @@ export default async function TestEnvironmentPage() {
             published={test.published}
             isPurchased={true}
             role={role as string}
-            canStartTest={canStartTest(test.startAt)}
+            canStartTest={true}
           />
         ))}
       </div>

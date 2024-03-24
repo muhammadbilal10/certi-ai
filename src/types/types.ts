@@ -22,6 +22,7 @@ export interface Test {
   title: string;
   description?: string; // Optional as per your Prisma schema
   duration: number;
+  price: number;
   userId: string;
   startAt: Date;
   published: boolean;

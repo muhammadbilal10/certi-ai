@@ -55,6 +55,26 @@ export default function TestCard({
 }) {
   const updateTest = publishTest.bind(null, id);
 
+  function StartTest(testStartDate: Date | string) {
+    const currentDate = new Date();
+    const startDate = new Date(testStartDate);
+
+    const normalizedCurrentDate = new Date(
+      currentDate.getFullYear(),
+      currentDate.getMonth(),
+      currentDate.getDate()
+    );
+    const normalizedStartDate = new Date(
+      startDate.getFullYear(),
+      startDate.getMonth(),
+      startDate.getDate()
+    );
+
+    return normalizedCurrentDate.getTime() === normalizedStartDate.getTime();
+  }
+
+  const start = canStartTest ? StartTest(startAt) : false;
+
   return (
     <Card>
       <CardHeader>
@@ -71,19 +91,20 @@ export default function TestCard({
               </Button>
             </form>
           )}
+
           {role === "student" &&
             (canStartTest ? (
               <Button
                 asChild
-                disabled={canStartTest}
-                variant={!canStartTest ? "secondary" : "default"}
+                disabled={start}
+                variant={!start ? "secondary" : "default"}
               >
-                {canStartTest ? (
+                {start ? (
                   <Link href={`/dashboard/test-environment/${id}`}>
                     Start Test
                   </Link>
                 ) : (
-                  "Unable to Start"
+                  <span>Unable</span>
                 )}
               </Button>
             ) : (
@@ -92,9 +113,13 @@ export default function TestCard({
                 disabled={isPurchased}
                 variant={isPurchased ? "secondary" : "default"}
               >
-                <Link href={`/checkout/${id}`}>
-                  {isPurchased ? "Purchased" : "Purchase"}
-                </Link>
+                {isPurchased ? (
+                  <span>Purchased</span>
+                ) : (
+                  <Link href={`/checkout/${id}`}>
+                    {isPurchased ? "Purchased" : "Purchase"}
+                  </Link>
+                )}
               </Button>
             ))}
         </div>
