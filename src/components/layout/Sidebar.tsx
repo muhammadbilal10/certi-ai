@@ -121,11 +121,12 @@ const SidebarContent = ({ role }: { role: string }) => {
       <div className="flex flex-col space-y-8 ml-4">
         {filteredItems.map((item, index) => (
           <Button
+            key={index}
             className=" w-48 justify-start"
             asChild
             variant={pathName === item.href ? "default" : "ghost"}
           >
-            <Link key={index} href={item.href}>
+            <Link href={item.href}>
               {React.cloneElement(item.icon, { className: "mr-2 h-4 w-4" })}
               {item.title}
             </Link>
