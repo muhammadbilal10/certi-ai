@@ -55,6 +55,7 @@ export default async function testhandler(formData: FormData) {
         description: "This is a test",
         userId: teacherId as string,
         startAt: new Date(),
+        price: 100,
       },
     });
 
