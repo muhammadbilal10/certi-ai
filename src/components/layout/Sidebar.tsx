@@ -24,12 +24,10 @@ import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { Button } from "../ui/button";
 import React, { use } from "react";
-import { auth } from "@clerk/nextjs";
 
-const SidebarContent = ({ role }: { role: string }) => {
+const SidebarContent = ({ role, userId }: { role: string; userId: string }) => {
   const pathName = usePathname();
   const profileRoute = role === "student" ? "test-takers" : "instructors";
-  const { userId } = auth();
 
   const roleBasedItems = {
     admin: [
@@ -150,7 +148,7 @@ const SidebarContent = ({ role }: { role: string }) => {
   );
 };
 
-const Sidebar = async ({ role }: { role: string }) => {
+const Sidebar = async ({ role, userId }: { role: string; userId: string }) => {
   return (
     <div className="lg:shadow-md fixed w-full max-w-72 z-50">
       <ScrollArea className="lg:min-h-screen p-4">
@@ -163,11 +161,11 @@ const Sidebar = async ({ role }: { role: string }) => {
               <SheetTitle></SheetTitle>
               <SheetDescription></SheetDescription>
             </SheetHeader>
-            <SidebarContent role={role} />
+            <SidebarContent role={role} userId={userId} />
           </SheetContent>
         </Sheet>
         <div className="hidden lg:block">
-          <SidebarContent role={role} />
+          <SidebarContent role={role} userId={userId} />
         </div>
       </ScrollArea>
     </div>
