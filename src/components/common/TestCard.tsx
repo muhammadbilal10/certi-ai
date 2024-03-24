@@ -15,6 +15,17 @@ import { Button } from "../ui/button";
 import { publishTest } from "@/actions/test";
 import { redirect } from "next/dist/server/api-utils";
 
+interface User {
+  id: string;
+  email: string;
+  name: string;
+  role: string;
+  mobile?: string;
+  joinedAt: Date;
+  profileImage?: string;
+  location?: string;
+}
+
 export default function TestCard({
   title,
   instructor,
@@ -31,7 +42,7 @@ export default function TestCard({
   id: number;
   title: string;
   description: string | null;
-  instructor: string;
+  instructor: string | null;
   duration: number;
   startAt: Date;
   userId: string;

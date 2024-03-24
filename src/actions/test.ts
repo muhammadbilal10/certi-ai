@@ -166,7 +166,7 @@ export async function getTestsByUserId(userId: string) {
   return userWithTests ? userWithTests.test : [];
 }
 
-export async function getPublishedTests() {
+export async function getPublishedTests(userId: string) {
   try {
     const tests = await db.test.findMany({
       where: {
@@ -176,7 +176,27 @@ export async function getPublishedTests() {
         user: true,
       },
     });
-    return tests;
+
+    const payments = await db.payment.findMany({
+      where: {
+        userId: userId,
+        status: "completed",
+      },
+      select: {
+        testId: true,
+      },
+    });
+
+    const purchasedTestIds = new Set(payments.map((payment) => payment.testId));
+
+    const testsWithPurchaseStatus = tests.map((test) => {
+      return {
+        ...test,
+        purchased: purchasedTestIds.has(test.id),
+      };
+    });
+
+    return testsWithPurchaseStatus;
   } catch (error) {
     console.error(error);
   }

@@ -1,17 +1,10 @@
 import React from "react";
-import { Elements } from "@stripe/react-stripe-js";
-import { loadStripe } from "@stripe/stripe-js";
-import CheckoutForm from "@/components/common/CheckoutFom";
 import { getSpecificTest } from "@/actions/test";
 import Checkout from "@/components/common/Checkout";
 import { Test } from "@/types/types";
 import stripeapi from "@/actions/stripe";
 import { currentUser } from "@clerk/nextjs";
 import { getUserById } from "@/actions/user";
-
-const stripePromise = loadStripe(
-  process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY as string
-);
 
 const backendUrl = `https://uctqy6nhdk.us.aircode.run/payment`;
 
@@ -39,7 +32,6 @@ const fetchPaymentIntent = async (
   // };
   const res = await stripeapi(price, "inr", description, name, location);
   return res;
-  console.log(res);
 };
 
 async function getTestDetails(id: number) {
@@ -64,5 +56,9 @@ export default async function page({ params }: any) {
 
   console.log(clientSecret);
 
-  return <Checkout clientSecret={clientSecret} testDetails={testDetails} />;
+  return (
+    <div>
+      <Checkout clientSecret={clientSecret} testDetails={testDetails} />
+    </div>
+  );
 }

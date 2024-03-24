@@ -28,6 +28,7 @@ export interface Test {
   user?: User; // Assuming you might sometimes include user details
   questions: Question[];
   payment: Payment[];
+  purchased?: boolean;
 }
 
 export interface User {

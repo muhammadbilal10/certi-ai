@@ -35,7 +35,7 @@ const CheckoutForm = ({ testDetails }: { testDetails: any }) => {
     const result = await stripe.confirmPayment({
       elements,
       confirmParams: {
-        return_url: `http://localhost:5173/payment-confirmation/${testDetails?.id}`,
+        return_url: `${process.env.NEXT_PUBLIC_SUCCESS_URL}${testDetails?.id}`,
       },
     });
 
