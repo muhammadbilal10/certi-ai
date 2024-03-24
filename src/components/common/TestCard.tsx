@@ -38,6 +38,7 @@ export default function TestCard({
   role,
   published,
   isPurchased = false,
+  canStartTest = false,
 }: {
   id: number;
   title: string;
@@ -50,11 +51,9 @@ export default function TestCard({
   role?: string;
   published: boolean;
   isPurchased?: boolean;
+  canStartTest?: boolean;
 }) {
   const updateTest = publishTest.bind(null, id);
-  console.log("published", published);
-  console.log(instructor);
-  console.log("role", role);
 
   return (
     <Card>
@@ -72,11 +71,24 @@ export default function TestCard({
               </Button>
             </form>
           )}
-          {role === "student" && (
-            <form action={updateTest}>
+          {role === "student" &&
+            (canStartTest ? (
               <Button
                 asChild
-                type="submit"
+                disabled={canStartTest}
+                variant={!canStartTest ? "secondary" : "default"}
+              >
+                {canStartTest ? (
+                  <Link href={`/dashboard/test-environment/${id}`}>
+                    Start Test
+                  </Link>
+                ) : (
+                  "Unable to Start"
+                )}
+              </Button>
+            ) : (
+              <Button
+                asChild
                 disabled={isPurchased}
                 variant={isPurchased ? "secondary" : "default"}
               >
@@ -84,8 +96,7 @@ export default function TestCard({
                   {isPurchased ? "Purchased" : "Purchase"}
                 </Link>
               </Button>
-            </form>
-          )}
+            ))}
         </div>
         <CardDescription>
           {instructor}

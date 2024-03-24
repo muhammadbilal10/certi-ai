@@ -29,7 +29,7 @@ export default async function CreateTestPage() {
   return (
     <div>
       <div className="flex justify-between pr-4">
-        <h1>My Test</h1>
+        <h1 className="text-2xl font-semibold mb-10">Test List</h1>
         {role === "instructor" && (
           <Button asChild>
             <Link href="/dashboard/test/create-test">

@@ -1,3 +1,4 @@
+"use client";
 import {
   Sheet,
   SheetContent,
@@ -20,9 +21,27 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
-import { get } from "http";
+import { usePathname } from "next/navigation";
+import { Button } from "../ui/button";
+import React from "react";
 
-const SidebarContent = () => {
+const SidebarContent = ({ role }: { role: string }) => {
+  const pathName = usePathname();
+
+  const roleBasedItems = {
+    admin: [
+      "/dashboard",
+      "/dashboard/instructors",
+      "/dashboard/test-takers",
+      "/dashboard/payments",
+    ],
+    instructor: [
+      "/dashboard",
+      "/dashboard/test",
+      "/dashboard/test-environment",
+    ],
+    student: ["/dashboard", "/dashboard/test", "/dashboard/test-environment"],
+  } as Record<string, string[]>;
   const sidebarItems = [
     {
       title: "Dashboard",
@@ -30,23 +49,23 @@ const SidebarContent = () => {
       href: "/dashboard",
     },
     {
-      title: "Test (studenti & nstructor)",
+      title: "Test",
       icon: <File size={24} />,
       href: "/dashboard/test",
     },
     {
-      title: "TestEnvironment (student & instructor)",
+      title: "Test Environment",
       icon: <BookOpen size={28} />,
       href: "/dashboard/test-environment",
     },
     {
-      title: "Instructors (adminSide)",
+      title: "Instructors",
       icon: <UserRound size={24} />,
       href: "/dashboard/instructors",
     },
 
     {
-      title: "TestTakers (adminSide)",
+      title: "Test Takers",
       icon: <GraduationCap size={24} />,
       href: "/dashboard/test-takers",
     },
@@ -57,6 +76,10 @@ const SidebarContent = () => {
       href: "/dashboard/payments",
     },
   ];
+  const filteredItems = sidebarItems.filter((item) =>
+    roleBasedItems[role]?.includes(item.href)
+  );
+
   // const sidebarItems = [
   //   {
   //     title: "Dashboard",
@@ -96,22 +119,24 @@ const SidebarContent = () => {
       </div>
       <Separator className="my-10" />
       <div className="flex flex-col space-y-8 ml-4">
-        {sidebarItems.map((item, index) => (
-          <Link
-            key={index}
-            href={item.href}
-            className="flex items-center space-x-4 "
+        {filteredItems.map((item, index) => (
+          <Button
+            className=" w-48 justify-start"
+            asChild
+            variant={pathName === item.href ? "default" : "ghost"}
           >
-            {item.icon}
-            <span>{item.title}</span>
-          </Link>
+            <Link key={index} href={item.href}>
+              {React.cloneElement(item.icon, { className: "mr-2 h-4 w-4" })}
+              {item.title}
+            </Link>
+          </Button>
         ))}
       </div>
     </div>
   );
 };
 
-const Sidebar = async () => {
+const Sidebar = async ({ role }: { role: string }) => {
   return (
     <div className="lg:shadow-md fixed w-full max-w-72 z-50">
       <ScrollArea className="lg:min-h-screen p-4">
@@ -124,11 +149,11 @@ const Sidebar = async () => {
               <SheetTitle></SheetTitle>
               <SheetDescription></SheetDescription>
             </SheetHeader>
-            <SidebarContent />
+            <SidebarContent role={role} />
           </SheetContent>
         </Sheet>
         <div className="hidden lg:block">
-          <SidebarContent />
+          <SidebarContent role={role} />
         </div>
       </ScrollArea>
     </div>

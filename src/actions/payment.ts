@@ -44,3 +44,51 @@ export async function getPurchasedTestsStatus(testId: number, userId: string) {
     console.error(error);
   }
 }
+
+export async function getAllPayments() {
+  const payments = await db.payment.findMany({
+    include: {
+      user: true,
+    },
+  });
+  return payments.map((payment) => ({
+    ...payment,
+    userName: payment.user?.name,
+    userEmail: payment.user?.email,
+    userMobile: payment.user?.mobile,
+    userLocation: payment.user?.location,
+  }));
+}
+
+export async function getPurchasedTestsByUserId(userId: string) {
+  try {
+    const purchasedTests = await db.payment
+      .findMany({
+        where: {
+          userId: userId,
+          status: "completed",
+        },
+        include: {
+          test: {
+            include: {
+              user: true,
+            },
+          },
+        },
+      })
+      .then((payments) =>
+        payments.map((payment) => {
+          return {
+            ...payment.test,
+            creatorName: payment.test.user.name,
+          };
+        })
+      );
+
+    return purchasedTests;
+  } catch (error) {
+    console.log("Error getting purchased tests by user", error);
+    console.error(error);
+    return []; // Return an empty array or handle the error as appropriate
+  }
+}

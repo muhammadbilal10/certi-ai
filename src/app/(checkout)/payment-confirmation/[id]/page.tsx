@@ -38,7 +38,7 @@ export default async function PaymentConfirmationPage({
             <Link href="/dashboard">Go to Dashboard</Link>
           </Button>
           <Button asChild>
-            <Link href={`dashboard/tests`}>Go to My Tests</Link>
+            <Link href={`/dashboard/test-environment`}>Go to My Tests</Link>
           </Button>
         </CardFooter>
       </Card>

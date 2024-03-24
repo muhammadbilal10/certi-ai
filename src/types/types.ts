@@ -25,7 +25,7 @@ export interface Test {
   userId: string;
   startAt: Date;
   published: boolean;
-  user?: User; // Assuming you might sometimes include user details
+  user?: User;
   questions: Question[];
   payment: Payment[];
   purchased?: boolean;
