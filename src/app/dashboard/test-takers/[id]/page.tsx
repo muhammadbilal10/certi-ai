@@ -1,11 +1,18 @@
+import { getPublishedTests } from "@/actions/test";
 import { getTestTakersById } from "@/actions/test-taker";
 import ProfileCard from "@/components/common/ProfileCard";
 import TestCard from "@/components/common/TestCard";
-import { useRouter } from "next/router";
+import { Test } from "@/types/types";
 import React from "react";
 
 async function getProfileDetails(id: string) {
   const data = await getTestTakersById(id);
+  console.log(data);
+  return data;
+}
+
+async function getTests(id: string) {
+  const data = await getPublishedTests(id);
   console.log(data);
   return data;
 }
@@ -18,7 +25,8 @@ export default async function ProfileDetailsPage({
 
   const profileDetials = await getProfileDetails(id);
 
-  const testDetails = [];
+  const testDetails = (await getTests(id)) as Test[];
+  console.log(testDetails);
 
   return (
     <div className="px-10">
@@ -41,7 +49,22 @@ export default async function ProfileDetailsPage({
       <div>
         <h1 className="text-xl font-bold mt-5">Test Purchased</h1>
       </div>
-      <div className="grid grid-cols-3 gap-5 mt-4"></div>
+      <div className="grid grid-cols-3 gap-5 mt-4">
+        {testDetails?.map((test) => (
+          <TestCard
+            key={test.id}
+            id={test.id}
+            title={test.title}
+            description={test.description as string}
+            duration={test.duration}
+            userId={test.userId}
+            startAt={test.startAt}
+            published={test.published}
+            instructor={test.user?.name as string}
+            isPurchased={test.purchased}
+          />
+        ))}
+      </div>
     </div>
   );
 }

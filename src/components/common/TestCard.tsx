@@ -79,7 +79,7 @@ export default function TestCard({
     <Card>
       <CardHeader>
         <div className="flex justify-between">
-          <CardTitle className="line-clamp-1">{title}</CardTitle>
+          <CardTitle className="line-clamp-2 mr-1">{title}</CardTitle>
           {role === "instructor" && (
             <form action={updateTest}>
               <Button
