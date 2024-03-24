@@ -30,7 +30,7 @@ const fetchPaymentIntent = async (
   //   const { client_secret: clientSecret } = await res.json();
   //   return clientSecret;
   // };
-  const res = await stripeapi(price, "inr", description, name, location);
+  const res = await stripeapi(price, "usd", description, name, location);
   return res;
 };
 
