@@ -48,6 +48,10 @@ const formSchema = z.object({
   role: z.string({
     required_error: "Role is required",
   }),
+  name: z.string({
+    required_error: "Name is required",
+  }),
+
 
   location: z.string({
     required_error: "Location is required",
@@ -57,7 +61,8 @@ const formSchema = z.object({
   }),
 });
 
-export default function CreateUserForm({}: {}) {
+export default function CreateUserForm({ fname,lname}: {fname:String,lname:String}) {
+  console.log(fname,lname );
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {},
@@ -80,6 +85,22 @@ export default function CreateUserForm({}: {}) {
       <CardContent>
         <Form {...form}>
           <form action={createUser} className="space-y-8 w-full">
+          {!fname&&<FormField
+              control={form.control}
+              name="name"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Name</FormLabel>
+                  <FormControl>
+                    <Input placeholder="Name" {...field} />
+                  </FormControl>
+                  <FormDescription>
+                    This is your public display Name.
+                  </FormDescription>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />}
             <FormField
               control={form.control}
               name="role"

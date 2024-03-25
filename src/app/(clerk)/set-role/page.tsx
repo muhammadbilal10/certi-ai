@@ -20,6 +20,10 @@ export default async function RolePage() {
   const { userId } = auth();
   const email = user?.emailAddresses[0].emailAddress;
 
+  const fname  = user?.firstName as string;
+  const lname = user?.lastName as string;
+
+
   const existingUser = await db.user.findUnique({
     where: {
       id: userId as string,
@@ -58,7 +62,7 @@ export default async function RolePage() {
 
   return (
     <div>
-      <CreateUserForm />
+      <CreateUserForm fname={fname} lname={lname}/>
       {/* <form action={createUser}>
        
         <Select name="role">
