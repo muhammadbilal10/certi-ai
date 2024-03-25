@@ -15,9 +15,11 @@ export default async function PaymentConfirmationPage({
   params,
   searchParams,
 }: any) {
-  const testId = params.id;
+  const testId = params?.id;
   console.log("testId", testId);
-  await createPayment(Number(testId), 100);
+  const price = searchParams?.price;
+  console.log("price", price);
+  await createPayment(Number(testId), price);
   return (
     <div className="flex flex-col items-center justify-center min-h-screen">
       <Card className={cn("max-w-md w-full")}>

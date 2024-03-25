@@ -35,13 +35,12 @@ const CheckoutForm = ({ testDetails }: { testDetails: any }) => {
     const result = await stripe.confirmPayment({
       elements,
       confirmParams: {
-        return_url: `${process.env.NEXT_PUBLIC_SUCCESS_URL}${testDetails?.id}`,
+        return_url: `${process.env.NEXT_PUBLIC_SUCCESS_URL}${testDetails?.id}?price=${testDetails?.price}`,
       },
     });
 
     if (result.error) {
       console.log(result.error.message);
-      alert(result.error.message);
       setLoading(false);
     } else {
       alert("Payment Successfull");

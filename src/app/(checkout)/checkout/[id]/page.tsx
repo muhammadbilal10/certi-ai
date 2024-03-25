@@ -6,8 +6,6 @@ import stripeapi from "@/actions/stripe";
 import { currentUser } from "@clerk/nextjs";
 import { getUserById } from "@/actions/user";
 
-const backendUrl = `https://uctqy6nhdk.us.aircode.run/payment`;
-
 const fetchPaymentIntent = async (
   description: string,
   price: number,
