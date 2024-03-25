@@ -133,7 +133,7 @@ export default async function TestTakerPage() {
     <div className="container h-screen mx-auto">
       <div className="flex justify-between mb-2">
         <h1 className="text-2xl font-bold ">Instructors list</h1>
-        <Modal value="Add Instructor" />
+        {/* <Modal value="Add Instructor" /> */}
       </div>
       <DataTable columns={columns} data={data} />
     </div>

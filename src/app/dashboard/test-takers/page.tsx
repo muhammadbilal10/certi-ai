@@ -19,7 +19,7 @@ export default async function TestTakerPage() {
     <div className="container  mx-auto">
       <div className="flex justify-between mb-2">
         <h1 className="text-2xl font-bold">Test Takers list</h1>
-        <Modal value="Add Test Taker" />
+        {/* <Modal value="Add Test Taker" /> */}
       </div>
 
       <DataTable columns={columns} data={data} />

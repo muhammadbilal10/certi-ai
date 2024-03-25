@@ -1,9 +1,22 @@
+import { getPurchasedTestsByUserId } from "@/actions/payment";
 import { getPublishedTests } from "@/actions/test";
 import { getTestTakersById } from "@/actions/test-taker";
 import ProfileCard from "@/components/common/ProfileCard";
 import TestCard from "@/components/common/TestCard";
-import { Test } from "@/types/types";
+
 import React from "react";
+
+interface Test {
+  id: number;
+  title: string;
+  description?: string;
+  duration: number;
+  userId: string;
+  startAt: Date;
+  published: boolean;
+  purchased?: boolean;
+  creatorName: string;
+}
 
 async function getProfileDetails(id: string) {
   const data = await getTestTakersById(id);
@@ -12,7 +25,7 @@ async function getProfileDetails(id: string) {
 }
 
 async function getTests(id: string) {
-  const data = await getPublishedTests(id);
+  const data = await getPurchasedTestsByUserId(id);
   console.log(data);
   return data;
 }
@@ -60,7 +73,7 @@ export default async function ProfileDetailsPage({
             userId={test.userId}
             startAt={test.startAt}
             published={test.published}
-            instructor={test.user?.name as string}
+            instructor={test.creatorName}
             isPurchased={test.purchased}
           />
         ))}

@@ -1,6 +1,5 @@
 import { getSpecificTest } from "@/actions/test";
 import TestPage from "@/components/layout/TestPage";
-import test from "node:test";
 
 async function getAttemptedTestsData(id: number) {
   const data = await getSpecificTest(id);
