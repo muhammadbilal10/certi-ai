@@ -19,6 +19,8 @@ import {
 import { Loader2 } from "lucide-react";
 
 const CheckoutForm = ({ testDetails }: { testDetails: any }) => {
+  console.log(testDetails?.price);
+
   const stripe = useStripe();
   const elements = useElements();
   const [loading, setLoading] = useState(false);
