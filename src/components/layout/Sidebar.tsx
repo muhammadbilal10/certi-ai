@@ -122,7 +122,7 @@ const SidebarContent = ({ role, userId }: { role: string; userId: string }) => {
     <div>
       <div className="max-w-28 h-20 mx-auto">
         <Image
-          src="https://s3-alpha-sig.figma.com/img/106a/d7e2/91cc33fdeb6e0feb9ca20a2303150c5f?Expires=1710720000&Key-Pair-Id=APKAQ4GOSFWCVNEHN3O4&Signature=BxVeKLUuSU3Nb1KE47U-~nceGa-rO~k9J1-BkenCLWijBXcVY83gfSM~CXGOWPbReT87G2BBtPWxRTtj65QVnl7oA3jGvKPYDajveGDqExpspWstKG~1P7rAXs~OUBjdjkilCDxx1ZfuxOF~SnEu3~8naQjgVP3FsiHQPRf2H0UHo-6fAOaSOASmYHQVYI1ErAwzT3qDvc8mVKIFEKUv9yVeBtGnvW8szitP2wGRWv6-DQWXGZh-iLpUe33RIFfzfx8jMWZiCKsBDyVxieBXcHqKyCjrZv9CLfX9OvnR5UKr52CY9p9kFppAAIrnl148hPsD1NPL5hMufaytddClww__"
+          src="https://i.postimg.cc/vTZy62X0/certi-ai.webp"
           alt="Logo"
           width={326}
           height={77}
