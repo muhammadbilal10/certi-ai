@@ -60,7 +60,7 @@ export default function ProfileCard({
   ];
   return (
     <div>
-      <Card className="flex max-md:flex-col">
+      <Card className="flex max-md:flex-col min-w-52">
         <CardContent className="p-6">
           <Image
             src={
@@ -92,11 +92,11 @@ export default function ProfileCard({
           </div>
           <div>
             <div>
-              <div className="flex space-x-4 mt-4">
+              <div className="flex max-sm:flex-col max-sm:space-y-2 sm:space-x-4 mt-4 ">
                 {userStats.map((item, index) => (
                   <div
                     key={index}
-                    className="flex flex-col items-center p-2 border border-dashed rounded-md w-1/2"
+                    className="flex flex-col items-center p-2 border border-dashed rounded-md w-full sm:w-1/2"
                   >
                     <span className="text-2xl font-bold">{item.value}</span>
                     <span className="text-md text-gray-600 font-semibold">
