@@ -39,6 +39,7 @@ export default function TestCard({
   published,
   isPurchased = false,
   canStartTest = false,
+  price = 30,
 }: {
   id: number;
   title: string;
@@ -52,6 +53,7 @@ export default function TestCard({
   published: boolean;
   isPurchased?: boolean;
   canStartTest?: boolean;
+  price?: number;
 }) {
   const updateTest = publishTest.bind(null, id);
 
@@ -138,18 +140,21 @@ export default function TestCard({
         </CardDescription>
       </CardHeader>
 
-      {role === "instructor" && (
-        <CardFooter>
+      <CardFooter>
+        {role === "instructor" && (
           <div className="flex space-x-8">
-            <View size={24} />
+            {/* <View size={24} /> */}
             <Link href={`/dashboard/test/create-test?type=edit&id=${id}`}>
               <Edit size={24} />
             </Link>
             {/* <Button onClick={handleDelete}>handle</Button> */}
             <ALertDialogModel icon={<Delete size={24} />} text="test" id={id} />
           </div>
-        </CardFooter>
-      )}
+        )}
+        <div className="text-end flex-1 text-blue-300 text-md font-semibold ">
+          ${price}
+        </div>
+      </CardFooter>
     </Card>
   );
 }

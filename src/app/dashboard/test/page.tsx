@@ -59,6 +59,7 @@ export default async function CreateTestPage() {
               role={role as string}
               published={test.published}
               isPurchased={test.purchased}
+              price={test.price}
             />
           );
         })}

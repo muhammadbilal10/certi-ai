@@ -64,6 +64,7 @@ export default async function ProfileDetailsPage({
             id={test.id}
             userId={test.userId}
             published={test.published}
+            price={test.price}
           />
         ))}
       </div>
