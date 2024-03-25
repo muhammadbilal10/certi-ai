@@ -126,6 +126,7 @@ export default function TestCard({
             ))}
         </div>
         <CardDescription>
+          <span className="mb-4 line-clamp-2">{description}</span>
           {instructor}
           <span className="flex space-x-6 mt-2">
             <span className="flex items-center gap-2">
@@ -140,7 +141,10 @@ export default function TestCard({
         </CardDescription>
       </CardHeader>
 
-      <CardFooter>
+      <CardFooter className="flex-col space-y-4 items-start">
+        <div className="text-start flex-1 text-blue-300 text-md font-semibold ">
+          ${price}
+        </div>
         {role === "instructor" && (
           <div className="flex space-x-8">
             {/* <View size={24} /> */}
@@ -151,9 +155,6 @@ export default function TestCard({
             <ALertDialogModel icon={<Delete size={24} />} text="test" id={id} />
           </div>
         )}
-        <div className="text-end flex-1 text-blue-300 text-md font-semibold ">
-          ${price}
-        </div>
       </CardFooter>
     </Card>
   );

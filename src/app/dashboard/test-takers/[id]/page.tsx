@@ -49,7 +49,7 @@ export default async function ProfileDetailsPage({
       <div>
         <h1 className="text-xl font-bold mt-5">Test Purchased</h1>
       </div>
-      <div className="grid grid-cols-3 gap-5 mt-4">
+      <div className="grid xl:grid-cols-3 lg:grid-cols-2 grid-cols-1 gap-4 mt-4">
         {testDetails?.map((test) => (
           <TestCard
             key={test.id}
