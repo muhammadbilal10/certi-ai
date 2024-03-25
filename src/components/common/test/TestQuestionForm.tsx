@@ -98,7 +98,7 @@ export default function TestQuestionForm({
     defaultValues: {
       question: "",
       options: [],
-      answer: 0,
+      answer: 1,
     },
   });
 
@@ -155,32 +155,44 @@ export default function TestQuestionForm({
   return (
     <Card className="w-full">
       <CardHeader>
-        <CardTitle>Test Details</CardTitle>
-        <CardDescription>Card Description</CardDescription>
+        <CardTitle>Craft Your Questions</CardTitle>
+        <CardDescription>
+          Tailor engaging tests with ease. Add questions, set options, and
+          specify correct answers in a few clicks. Ready to create an impactful
+          learning experience?
+        </CardDescription>
       </CardHeader>
       <CardContent>
-        <div>
+        <div className="mb-2">
           {testDetails?.questions?.map((question, index) => (
-            <div key={index}>
-              <h4>{question.question}</h4>
-              <ul>
-                {question.options.map((option, optionIndex) => (
-                  <li key={optionIndex}>{option}</li>
-                ))}
-              </ul>
+            <div key={index} className="">
+              <div className="bg-white mb-4">
+                <div className="text-xl font-medium text-gray-900 mb-4 flex space-x-2">
+                  <span>{index + 1}.</span>
+                  <span>{question.question}</span>
+                </div>
+
+                <div className="space-y-2 ml-4">
+                  {question.options.map((option, optionIndex) => (
+                    <div key={optionIndex} className="space-x-2">
+                      <span>{optionIndex + 1}.</span>
+                      <span
+                        className={`${
+                          optionIndex + 1 === question.answer
+                            ? "text-green-600 font-medium"
+                            : "text-gray-900"
+                        }`}
+                      >
+                        {option}
+                      </span>
+                    </div>
+                  ))}
+                </div>
+              </div>
             </div>
           ))}
         </div>
-        <Button onClick={prevStep}>Prev</Button>
-        <Button
-          onClick={() =>
-            type !== "edit"
-              ? createTest({ testDetails })
-              : updateTest({ testDetails })
-          }
-        >
-          {type !== "edit" ? "Submit" : "edit"}
-        </Button>
+
         <Dialog>
           <DialogTrigger asChild>
             <Button type="button">
@@ -230,6 +242,9 @@ export default function TestQuestionForm({
                         <FormControl>
                           <Input placeholder="0" {...field} type="number" />
                         </FormControl>
+                        <FormDescription>
+                          Add correct option of a question.
+                        </FormDescription>
                         <FormMessage />
                       </FormItem>
                     )}
@@ -267,6 +282,20 @@ export default function TestQuestionForm({
             </div>
           </DialogContent>
         </Dialog>
+
+        <div className="flex justify-between mt-4">
+          <Button onClick={prevStep}>Prev</Button>
+          <Button
+            disabled={testDetails?.questions?.length === 0}
+            onClick={() =>
+              type !== "edit"
+                ? createTest({ testDetails })
+                : updateTest({ testDetails })
+            }
+          >
+            {type !== "edit" ? "Submit" : "edit"}
+          </Button>
+        </div>
       </CardContent>
     </Card>
   );

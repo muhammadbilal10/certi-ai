@@ -131,8 +131,11 @@ export default function TestForm({
   return (
     <Card className="w-full">
       <CardHeader>
-        <CardTitle>Test Details</CardTitle>
-        <CardDescription>Card Description</CardDescription>
+        <CardTitle>Design Your Test Adventure</CardTitle>
+        <CardDescription>
+          Craft the perfect quiz: Set titles, detail descriptions, determine
+          duration, price, and schedule. Begin creating your engaging quiz now!
+        </CardDescription>
       </CardHeader>
       <CardContent>
         <Form {...form}>
@@ -256,7 +259,11 @@ export default function TestForm({
               />
             </div>
 
-            <Button type="submit">Next</Button>
+            <div className="flex justify-end ">
+              <Button type="submit" className="w-20">
+                Next
+              </Button>
+            </div>
           </form>
         </Form>
       </CardContent>
