@@ -218,3 +218,40 @@ export async function publishTest(testId: number, formData: FormData) {
   }
   revalidatePath("/dashboard/test");
 }
+
+
+//payments total countss
+
+export async function getTotalEarningsByInstructor(userId: string) {
+  try {
+    const payments = await db.payment.findMany({
+      where: {
+        test: {
+          userId: userId,
+        },
+        status: "completed",
+      },
+    });
+
+    const totalEarnings = payments.reduce((total, payment) => total + payment.amount, 0);
+    return totalEarnings;
+  } catch (error) {
+    console.error(error);
+  }
+}
+
+export async function getTotalSpentByStudent(userId: string) {
+  try {
+    const payments = await db.payment.findMany({
+      where: {
+        userId: userId,
+        status: "completed",
+      },
+    });
+
+    const totalSpent = payments.reduce((total, payment) => total + payment.amount, 0);
+    return totalSpent;
+  } catch (error) {
+    console.error(error);
+  }
+}

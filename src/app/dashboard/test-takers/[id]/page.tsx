@@ -1,5 +1,5 @@
 import { getPurchasedTestsByUserId } from "@/actions/payment";
-import { getPublishedTests } from "@/actions/test";
+import { getPublishedTests ,getTotalSpentByStudent} from "@/actions/test";
 import { getTestTakersById } from "@/actions/test-taker";
 import ProfileCard from "@/components/common/ProfileCard";
 import TestCard from "@/components/common/TestCard";
@@ -40,7 +40,8 @@ export default async function ProfileDetailsPage({
 
   const testDetails = (await getTests(id)) as Test[];
   console.log(testDetails);
-
+  const totalSpent = await getTotalSpentByStudent(id as string);
+  console.log(totalSpent);
   return (
     <div className="px-10">
       <div>

@@ -47,7 +47,7 @@ export default async function Dashboardpage() {
   ];
   return (
     <div className="min-h-screen mx-10 ">
-      <PaymentGraphCard />
+      {/* <PaymentGraphCard /> */}
 
       <div className="grid md:grid-cols-2 xl:grid-cols-3 gap-4">
         {stats.map((stat, index) => (

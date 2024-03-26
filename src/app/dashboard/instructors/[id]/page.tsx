@@ -1,5 +1,6 @@
 import { getInstructorById } from "@/actions/instructor";
 import { getAllTests, getSpecificTest, getTestsByUserId } from "@/actions/test";
+import { getTotalEarningsByInstructor } from "@/actions/test";
 import ProfileCard from "@/components/common/ProfileCard";
 import TestCard from "@/components/common/TestCard";
 import { useRouter } from "next/router";
@@ -40,6 +41,11 @@ export default async function ProfileDetailsPage({
 
   const testDetails = await getALlTest(id as string);
   console.log(testDetails);
+
+  const totalEarnings = await getTotalEarningsByInstructor(id as string);
+  console.log(totalEarnings);
+
+
 
   return (
     <div className="px-10">
