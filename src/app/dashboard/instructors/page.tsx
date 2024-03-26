@@ -135,7 +135,7 @@ export default async function TestTakerPage() {
         <h1 className="text-2xl font-bold ">Instructors list</h1>
         {/* <Modal value="Add Instructor" /> */}
       </div>
-      <DataTable columns={columns} data={data} />
+      <DataTable columns={columns} data={data} filterColumn="email" />
     </div>
   );
 }

@@ -48,16 +48,21 @@ const formSchema = z.object({
   role: z.string({
     required_error: "Role is required",
   }),
-  name: z.string({
-    required_error: "Name is required",
+  name: z.string().nonempty({ message: "Name is required" }).refine(value => /^[A-Za-z\s]+$/.test(value), {
+    message: "Invalid name. Only alphabetic characters are allowed",
+    params: {},
   }),
 
 
   location: z.string({
     required_error: "Location is required",
+  }).refine(value => /^[A-Za-z0-9\s]+$/.test(value), {
+    message: "Invalid location. Only alphabets, numbers, and spaces are allowed",
+    params: {},
   }),
-  mobile: z.string({
-    required_error: "Mobile is required",
+  mobile: z.string().nonempty({ message: "Number is required" }).refine(value => /^[0-9\b+]+$/.test(value), {
+    message: "Invalid mobile number. Only numbers and '+' are allowed",
+    params: {},
   }),
 });
 
@@ -66,6 +71,7 @@ export default function CreateUserForm({ fname,lname}: {fname:String,lname:Strin
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {},
+    mode: 'onChange',
   });
 
   function onSubmit(values: z.infer<typeof formSchema>) {
@@ -84,7 +90,25 @@ export default function CreateUserForm({ fname,lname}: {fname:String,lname:Strin
       </CardHeader>
       <CardContent>
         <Form {...form}>
-          <form action={createUser} className="space-y-8 w-full">
+          <form
+            onSubmit={async (e) => {
+              e.preventDefault();
+              try {
+                const formData = new FormData();
+                formData.append('role', form.getValues().role);
+                formData.append('name', form.getValues().name);
+                formData.append('location', form.getValues().location);
+                formData.append('mobile', form.getValues().mobile);
+
+                await createUser(formData);
+                // Handle successful user creation...
+              } catch (error) {
+                // Show notification or popup with error message
+                alert((error as Error).message);
+              }
+            }}
+            className="space-y-8 w-full"
+          >
           {!fname&&<FormField
               control={form.control}
               name="name"
@@ -92,7 +116,8 @@ export default function CreateUserForm({ fname,lname}: {fname:String,lname:Strin
                 <FormItem>
                   <FormLabel>Name</FormLabel>
                   <FormControl>
-                    <Input placeholder="Name" {...field} />
+                    <Input placeholder="Name" {...field}
+                     />
                   </FormControl>
                   <FormDescription>
                     This is your public display Name.

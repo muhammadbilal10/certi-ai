@@ -49,10 +49,14 @@ export default function ProfileCard({
     },
   ];
   const userStats = [
-    {
-      title: "Earning",
-      value: "600$",
-    },
+    ...(role !== "student"
+      ? [
+          {
+            title: "Earning",
+            value: totalEarning || "0$",
+          },
+        ]
+      : []),
     {
       title: `Test ${role === "student" ? "Purchased" : "Created"}`,
       value: totalTest || "0",

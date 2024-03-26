@@ -6,11 +6,11 @@ import Link from "next/link";
 export default function HomeNav() {
   return (
     <div className="pl-8  absolute lg:w-1/2 w-full">
-      <div className="flex items-start justify-between ">
+      <div className="flex items-start justify-between mt-5">
         <Image
-          src="https://i.postimg.cc/vTZy62X0/certi-ai.webp"
+          src="https://i.postimg.cc/nLFKWJ5z/Rectangle-1.png"
           alt="hero image"
-          width={120}
+          width={220}
           height={120}
           className="object-cover"
         />

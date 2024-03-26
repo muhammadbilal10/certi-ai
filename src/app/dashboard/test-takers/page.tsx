@@ -22,7 +22,7 @@ export default async function TestTakerPage() {
         {/* <Modal value="Add Test Taker" /> */}
       </div>
 
-      <DataTable columns={columns} data={data} />
+      <DataTable columns={columns} data={data} filterColumn="email"/>
     </div>
   );
 }

@@ -40,7 +40,7 @@ export default async function Dashboardpage() {
     },
     {
       title: "Total Payment",
-      count: "₹ 1000",
+      count: "$ 1000",
       icon: <HandCoins size={48} className=" text-[#757fef]" strokeWidth={1} />,
     },
   ];

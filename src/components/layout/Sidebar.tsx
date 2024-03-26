@@ -120,9 +120,9 @@ const SidebarContent = ({ role, userId }: { role: string; userId: string }) => {
   // ];
   return (
     <div>
-      <div className="max-w-28 h-20 mx-auto">
+      <div className=" h-20 mx-auto">
         <Image
-          src="https://i.postimg.cc/vTZy62X0/certi-ai.webp"
+          src="https://i.postimg.cc/nLFKWJ5z/Rectangle-1.png"
           alt="Logo"
           width={326}
           height={77}
