@@ -36,12 +36,12 @@ export async function createUser(formData: FormData) {
 
   // Validate mobile number
   const mobileRegex = /^[0-9\b+]+$/;
-  if (!mobileRegex.test(mobile as string)) {
+  if (!mobileRegex.test(mobile as string) || (mobile as string).length > 13) {
     throw new Error("Invalid mobile number.");
   }
 
   // Validate location
-  const locationRegex = /^[A-Za-z0-9\s]+$/;
+  const locationRegex = /^[A-Za-z0-9\s,]+$/;
   if (!locationRegex.test(location as string)) {
     throw new Error("Invalid location. Only alphabets, numbers, and spaces are allowed");
   }

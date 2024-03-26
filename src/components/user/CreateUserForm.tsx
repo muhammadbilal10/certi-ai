@@ -56,12 +56,17 @@ const formSchema = z.object({
 
   location: z.string({
     required_error: "Location is required",
-  }).refine(value => /^[A-Za-z0-9\s]+$/.test(value), {
+  }).refine(value => /^[A-Za-z0-9\s,]+$/.test(value), {
     message: "Invalid location. Only alphabets, numbers, and spaces are allowed",
     params: {},
   }),
-  mobile: z.string().nonempty({ message: "Number is required" }).refine(value => /^[0-9\b+]+$/.test(value), {
+  mobile: z.string().nonempty({ message: "Number is required" })
+  .refine(value => /^[0-9\b+]+$/.test(value), {
     message: "Invalid mobile number. Only numbers and '+' are allowed",
+    params: {},
+  })
+  .refine(value => value.length <= 13, {
+    message: "Mobile number cannot exceed 13 digits",
     params: {},
   }),
 });
