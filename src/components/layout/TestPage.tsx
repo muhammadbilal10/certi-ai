@@ -1,5 +1,8 @@
 "use client";
 import React, { useState, useEffect } from "react";
+
+import { Progress } from "@/components/ui/progress"
+
 import { Button } from "../ui/button";
 
 interface Question {
@@ -26,22 +29,32 @@ const TestPage: React.FC<TestPageProps> = ({
   title,
 }) => {
   const [time, setTime] = useState<number>(0);
+  const [stoppedtime, setStoppedTime] = useState<string>("");
   const [answers, setAnswers] = useState<number[]>(
     new Array(questions.length).fill(-1)
   );
+  const [result, setResult] = useState<any>({}); // [timeTaken,questionsAttempted,correctAnswers,overallResult,wrongAnswers
   const [showResult, setShowResult] = useState<boolean>(false);
-
+  const [progress, setProgress] = useState<number>(0);
+  useEffect(() => {
+    const attemptedQuestions = answers.filter((answer) => answer !== -1).length;
+    setProgress((attemptedQuestions / questions.length) * 100);
+  }, [answers, questions.length]);
+  
   useEffect(() => {
     const timer = setInterval(() => {
-      if (time >= testTime) {
-        handleSubmit();
-        clearInterval(timer);
-      } else {
-        setTime((prevTime) => prevTime + 1);
-      }
+      setTime((prevTime) => {
+        if (prevTime >= testTime) {
+          handleSubmit();
+          clearInterval(timer);
+          return prevTime;
+        } else {
+          return prevTime + 1;
+        }
+      });
     }, 1000);
     return () => clearInterval(timer);
-  }, [time, testTime]);
+  }, [testTime]);
 
   const formatTime = (totalSeconds: number) => {
     const hours = Math.floor(totalSeconds / 3600);
@@ -61,6 +74,20 @@ const TestPage: React.FC<TestPageProps> = ({
 
   const handleSubmit = () => {
     if (!showResult) {
+      const {timeTaken,questionsAttempted,correctAnswers,overallResult,wrongAnswers} = calculateResult();
+      console.log("timeTaken", timeTaken );
+      console.log("questionsAttempted", questionsAttempted);
+      console.log("correctAnswers", correctAnswers);
+      console.log("overallResult", overallResult);
+      console.log("wrongAnswers", wrongAnswers);
+      
+      setResult({
+        timeTaken,
+        questionsAttempted,
+        correctAnswers,
+        overallResult,
+        wrongAnswers,
+      });
       setShowResult(true);
     }
   };
@@ -68,14 +95,14 @@ const TestPage: React.FC<TestPageProps> = ({
   const calculateResult = () => {
     const correctAnswers = answers.reduce(
       (total, answer, index) =>
-        answer === questions[index].answer ? total + 1 : total,
+        answer === questions[index].answer-1 ? total + 1 : total,
       0
     );
 
     const overallResult = ((correctAnswers / questions.length) * 100).toFixed(
       2
     );
-
+    
     return {
       timeTaken: formatTime(time),
       questionsAttempted: answers.filter((answer) => answer !== -1).length,
@@ -121,13 +148,13 @@ const TestPage: React.FC<TestPageProps> = ({
                 {renderResultCircle()}
               </div>
               <p>Test : {title}</p>
-              <p>Time taken : {calculateResult()?.timeTaken}</p>
+              <p>Time taken : {result?.timeTaken}</p>
               <p>
-                Questions attempted : {calculateResult()?.questionsAttempted}
+                Questions attempted : {result?.questionsAttempted}/{questions.length}
               </p>
-              <p>Correct answers : {calculateResult()?.correctAnswers}</p>
-              <p>Wrong answers : {calculateResult()?.wrongAnswers}</p>
-              <p>Overall result : {calculateResult()?.overallResult}%</p>
+              <p>Correct answers : {result?.correctAnswers}</p>
+              <p>Wrong answers : {result?.wrongAnswers}</p>
+              <p>Overall result : {result?.overallResult}%</p>
             </>
           )}
           <Button onClick={resetQuiz} className=" mt-4">
@@ -136,7 +163,10 @@ const TestPage: React.FC<TestPageProps> = ({
         </div>
       ) : (
         <div className="grid gap-6">
+          
+          <Progress value={progress} max={100} />
           <h1 className="text-3xl font-semibold mb-1">{title}</h1>
+          
           <p className="mb-8">{description}</p>
           {questions.map((questionData, index) => (
             <div key={index} className="bg-white shadow-md p-6 rounded-lg">
@@ -172,7 +202,7 @@ const TestPage: React.FC<TestPageProps> = ({
             )} hr ${Math.floor((time % 3600) / 60)} min ${time % 60} sec`}</p>
             <p className="text-gray-600">Duration: {duration} min</p>
           </div>
-
+         
           <Button onClick={handleSubmit}>Submit</Button>
         </div>
       )}

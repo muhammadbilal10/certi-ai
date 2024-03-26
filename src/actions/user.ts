@@ -18,39 +18,39 @@ export async function getRole() {
   }
 }
 
-export async function createUser(formData: FormData) {
+export async function createUser(name: string, role: string, location: string, mobile: string) {
   const user = await currentUser();
   const { userId } = auth();
   const email = user?.emailAddresses[0].emailAddress;
-  const newName = formData.get("name") ? formData.get('name') : user?.firstName + " " + user?.lastName;
-  const role = formData.get("role");
-  const location = formData.get("location");
-  const mobile = formData.get("mobile");
+   const newName = name ? name : user?.firstName + " " + user?.lastName;
+  // const role = formData.get("role");
+  // const location = formData.get("location");
+//const mobile = formData.get("mobile");
 
   // Validate that name, mobile, role, and location are not empty
 
-   if (!newName || newName === "" || newName === "undefined" || !mobile || mobile === "" || mobile === "undefined" || !role || role === "" || role === "undefined" || !location || location === "" || location === "undefined") {
-    throw new Error("All fields are required");
-  }
+  //  if (!newName || newName === "" || newName === "undefined" || !mobile || mobile === "" || mobile === "undefined" || !role || role === "" || role === "undefined" || !location || location === "" || location === "undefined") {
+  //   throw new Error("All fields are required");
+  // }
 
 
-  // Validate mobile number
-  const mobileRegex = /^[0-9\b+]+$/;
-  if (!mobileRegex.test(mobile as string) || (mobile as string).length > 13) {
-    throw new Error("Invalid mobile number.");
-  }
+  // // Validate mobile number
+  // const mobileRegex = /^[0-9\b+]+$/;
+  // if (!mobileRegex.test(mobile as string) || (mobile as string).length > 13) {
+  //   throw new Error("Invalid mobile number.");
+  // }
 
-  // Validate location
-  const locationRegex = /^[A-Za-z0-9\s,]+$/;
-  if (!locationRegex.test(location as string)) {
-    throw new Error("Invalid location. Only alphabets, numbers, and spaces are allowed");
-  }
+  // // Validate location
+  // const locationRegex = /^[A-Za-z0-9\s,]+$/;
+  // if (!locationRegex.test(location as string)) {
+  //   throw new Error("Invalid location. Only alphabets, numbers, and spaces are allowed");
+  // }
 
-  // Validate name
-  const nameRegex = /^[A-Za-z\s]+$/;
-  if (!nameRegex.test(newName as string)) {
-    throw new Error("Invalid name. Only alphabetic characters are allowed");
-  }
+  // // Validate name
+  // const nameRegex = /^[A-Za-z\s]+$/;
+  // if (!nameRegex.test(newName as string)) {
+  //   throw new Error("Invalid name. Only alphabetic characters are allowed");
+  // }
 
   try {
     const res = await db.user.create({

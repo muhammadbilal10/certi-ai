@@ -81,6 +81,7 @@ export default function CreateUserForm({ fname,lname}: {fname:String,lname:Strin
 
   function onSubmit(values: z.infer<typeof formSchema>) {
     console.log(values);
+    createUser(values.name, values.role, values.location, values.mobile);
   }
 
   return (
@@ -95,25 +96,7 @@ export default function CreateUserForm({ fname,lname}: {fname:String,lname:Strin
       </CardHeader>
       <CardContent>
         <Form {...form}>
-          <form
-            onSubmit={async (e) => {
-              e.preventDefault();
-              try {
-                const formData = new FormData();
-                formData.append('role', form.getValues().role);
-                formData.append('name', form.getValues().name);
-                formData.append('location', form.getValues().location);
-                formData.append('mobile', form.getValues().mobile);
-
-                await createUser(formData);
-                // Handle successful user creation...
-              } catch (error) {
-                // Show notification or popup with error message
-                alert((error as Error).message);
-              }
-            }}
-            className="space-y-8 w-full"
-          >
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8 w-full" >
           {!fname&&<FormField
               control={form.control}
               name="name"

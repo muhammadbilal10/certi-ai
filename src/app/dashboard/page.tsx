@@ -3,6 +3,7 @@ import { FilePen, HandCoins, PersonStandingIcon } from "lucide-react";
 import { auth, currentUser } from "@clerk/nextjs";
 import { getAllTestTakers } from "@/actions/test-taker";
 import { getAllInstructors } from "@/actions/instructor";
+import { PaymentGraphCard } from "@/components/common/PaymentGraphCard";
 
 async function getTestTakers() {
   const data = await getAllTestTakers();
@@ -46,6 +47,8 @@ export default async function Dashboardpage() {
   ];
   return (
     <div className="min-h-screen mx-10 ">
+      <PaymentGraphCard />
+
       <div className="grid md:grid-cols-2 xl:grid-cols-3 gap-4">
         {stats.map((stat, index) => (
           <StatCard
