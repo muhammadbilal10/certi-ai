@@ -15,9 +15,11 @@ export default async function layout({
 
   return (
     <div className="">
-      <Sidebar role={role} userId={user?.id as string} />
-      <Topnav />
-      <div className="pt-20 lg:ml-80 lg:pl-5 pl-10 pr-10">{children}</div>
+      {/* <Sidebar role={role} userId={user?.id as string} />
+      <Topnav /> */}
+      {/* <div className="pt-20 lg:ml-80 lg:pl-5 pl-10 pr-10">{children}</div>
+       */}
+        <div className="">{children}</div>
     </div>
   );
 }

@@ -4,6 +4,7 @@ import { auth, currentUser } from "@clerk/nextjs";
 import { getAllTestTakers } from "@/actions/test-taker";
 import { getAllInstructors } from "@/actions/instructor";
 import { PaymentGraphCard } from "@/components/common/PaymentGraphCard";
+import { DashboardPage } from "@/components/layout/DashboardPage";
 
 async function getTestTakers() {
   const data = await getAllTestTakers();
@@ -49,7 +50,7 @@ export default async function Dashboardpage() {
     <div className="min-h-screen mx-10 ">
       {/* <PaymentGraphCard /> */}
 
-      <div className="grid md:grid-cols-2 xl:grid-cols-3 gap-4">
+      {/* <div className="grid md:grid-cols-2 xl:grid-cols-3 gap-4">
         {stats.map((stat, index) => (
           <StatCard
             key={index}
@@ -58,7 +59,9 @@ export default async function Dashboardpage() {
             icon={stat.icon}
           />
         ))}
-      </div>
+      </div> */}
+      <DashboardPage />
+
       <script
         async
         src="https://api.cronbot.ai/v1/widgets/app/app_dqxltxzqsal5"
