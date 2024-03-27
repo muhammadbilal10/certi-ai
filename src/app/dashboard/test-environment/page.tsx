@@ -4,6 +4,7 @@ import TestCard from "@/components/common/TestCard";
 
 import { auth } from "@clerk/nextjs";
 import { notFound } from "next/navigation";
+import NotFound from "./not-found";
 
 interface Test {
   id: number;
@@ -46,11 +47,13 @@ export default async function TestEnvironmentPage() {
     return normalizedCurrentDate.getTime() === normalizedStartDate.getTime();
   }
 
+  
+
   return (
     <div>
       <h1 className="text-2xl font-semibold">Test List</h1>
       <p className="text-gray-600 text-sm">
-        Here you can view all the tests you have purchased.
+        Here you can view all the tests you have purchaseds.
       </p>
 
       <div className="grid lg:grid-cols-3 md:grid-cols-2 gap-4 mt-10">
