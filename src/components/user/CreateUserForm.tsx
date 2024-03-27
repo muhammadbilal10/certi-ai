@@ -48,35 +48,48 @@ const formSchema = z.object({
   role: z.string({
     required_error: "Role is required",
   }),
-  name: z.string().nonempty({ message: "Name is required" }).refine(value => /^[A-Za-z\s]+$/.test(value), {
-    message: "Invalid name. Only alphabetic characters are allowed",
-    params: {},
-  }),
+  name: z
+    .string()
+    .nonempty({ message: "Name is required" })
+    .refine((value) => /^[A-Za-z\s]+$/.test(value), {
+      message: "Invalid name. Only alphabetic characters are allowed",
+      params: {},
+    }),
 
-
-  location: z.string({
-    required_error: "Location is required",
-  }).refine(value => /^[A-Za-z0-9\s,]+$/.test(value), {
-    message: "Invalid location. Only alphabets, numbers, and spaces are allowed",
-    params: {},
-  }),
-  mobile: z.string().nonempty({ message: "Number is required" })
-  .refine(value => /^[0-9\b+]+$/.test(value), {
-    message: "Invalid mobile number. Only numbers and '+' are allowed",
-    params: {},
-  })
-  .refine(value => value.length <= 13, {
-    message: "Mobile number cannot exceed 13 digits",
-    params: {},
-  }),
+  location: z
+    .string({
+      required_error: "Location is required",
+    })
+    .refine((value) => /^[A-Za-z0-9\s,]+$/.test(value), {
+      message:
+        "Invalid location. Only alphabets, numbers, and spaces are allowed",
+      params: {},
+    }),
+  mobile: z
+    .string()
+    .nonempty({ message: "Number is required" })
+    .refine((value) => /^[0-9\b+]+$/.test(value), {
+      message: "Invalid mobile number. Only numbers and '+' are allowed",
+      params: {},
+    })
+    .refine((value) => value.length <= 13, {
+      message: "Mobile number cannot exceed 13 digits",
+      params: {},
+    }),
 });
 
-export default function CreateUserForm({ fname,lname}: {fname:String,lname:String}) {
-  console.log(fname,lname );
+export default function CreateUserForm({
+  fname,
+  lname,
+}: {
+  fname: String;
+  lname: String;
+}) {
+  console.log(fname, lname);
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {},
-    mode: 'onChange',
+    mode: "onChange",
   });
 
   function onSubmit(values: z.infer<typeof formSchema>) {
@@ -96,24 +109,28 @@ export default function CreateUserForm({ fname,lname}: {fname:String,lname:Strin
       </CardHeader>
       <CardContent>
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8 w-full" >
-          {!fname&&<FormField
-              control={form.control}
-              name="name"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Name</FormLabel>
-                  <FormControl>
-                    <Input placeholder="Name" {...field}
-                     />
-                  </FormControl>
-                  <FormDescription>
-                    This is your public display Name.
-                  </FormDescription>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />}
+          <form
+            onSubmit={form.handleSubmit(onSubmit)}
+            className="space-y-8 w-full"
+          >
+            {!fname && (
+              <FormField
+                control={form.control}
+                name="name"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Name</FormLabel>
+                    <FormControl>
+                      <Input placeholder="Name" {...field} />
+                    </FormControl>
+                    <FormDescription>
+                      This is your public display Name.
+                    </FormDescription>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            )}
             <FormField
               control={form.control}
               name="role"

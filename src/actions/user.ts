@@ -18,21 +18,26 @@ export async function getRole() {
   }
 }
 
-export async function createUser(name: string, role: string, location: string, mobile: string) {
+export async function createUser(
+  name: string,
+  role: string,
+  location: string,
+  mobile: string
+) {
+  console.log(name);
   const user = await currentUser();
   const { userId } = auth();
   const email = user?.emailAddresses[0].emailAddress;
-   const newName = name ? name : user?.firstName + " " + user?.lastName;
+  const newName = name ? name : user?.firstName + " " + user?.lastName;
   // const role = formData.get("role");
   // const location = formData.get("location");
-//const mobile = formData.get("mobile");
+  //const mobile = formData.get("mobile");
 
   // Validate that name, mobile, role, and location are not empty
 
   //  if (!newName || newName === "" || newName === "undefined" || !mobile || mobile === "" || mobile === "undefined" || !role || role === "" || role === "undefined" || !location || location === "" || location === "undefined") {
   //   throw new Error("All fields are required");
   // }
-
 
   // // Validate mobile number
   // const mobileRegex = /^[0-9\b+]+$/;
