@@ -157,9 +157,14 @@ const TestPage: React.FC<TestPageProps> = ({
               <p>Overall result : {result?.overallResult}%</p>
             </>
           )}
+          
           <Button onClick={resetQuiz} className=" mt-4">
             Retake Test
           </Button>
+          <script
+        async
+        src="https://api.cronbot.ai/v1/widgets/app/app_dqxltxzqsal5"
+      ></script>
         </div>
       ) : (
         <div className="grid gap-6">

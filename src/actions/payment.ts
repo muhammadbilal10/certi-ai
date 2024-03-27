@@ -92,3 +92,52 @@ export async function getPurchasedTestsByUserId(userId: string) {
     return []; // Return an empty array or handle the error as appropriate
   }
 }
+
+
+export async function getLastFivePaymentsByUserId(userId: string) {
+  try {
+    const payments = await db.payment.findMany({
+      where: {
+        userId: userId,
+      },
+      orderBy: {
+        createdAt: 'desc',
+      },
+      take: 5,
+      include: {
+        user: true,
+        test: true,
+      },
+    });
+
+    return payments.map((payment) => ({
+      ...payment,
+      userName: payment.user?.name,
+      userEmail: payment.user?.email,
+      userMobile: payment.user?.mobile,
+      userLocation: payment.user?.location,
+      testName: payment.test?.title,
+      testDescription: payment.test?.description,
+    }));
+  } catch (error) {
+    console.log("Error getting last five payments by user", error);
+    console.error(error);
+    return []; // Return an empty array or handle the error as appropriate
+  }
+}
+
+export async function getTotalPayments() {
+  try {
+    const total = await db.payment.aggregate({
+      _sum: {
+        amount: true,
+      },
+    });
+
+    return total._sum.amount;
+  } catch (error) {
+    console.log("Error getting total payments", error);
+    console.error(error);
+    return 0; // Return 0 or handle the error as appropriate
+  }
+}

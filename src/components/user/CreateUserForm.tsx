@@ -88,7 +88,7 @@ export default function CreateUserForm({
   console.log(fname, lname);
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
-    defaultValues: {},
+    defaultValues: {name:fname?fname+" "+lname:""},
     mode: "onChange",
   });
 

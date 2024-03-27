@@ -169,6 +169,7 @@ export async function getTestsByUserId(userId: string) {
   return userWithTests ? userWithTests.test : [];
 }
 
+
 export async function getPublishedTests(userId: string) {
   try {
     const tests = await db.test.findMany({
@@ -241,6 +242,7 @@ export async function getTotalEarningsByInstructor(userId: string) {
 }
 
 export async function getTotalSpentByStudent(userId: string) {
+  console.log(userId);
   try {
     const payments = await db.payment.findMany({
       where: {
@@ -248,6 +250,7 @@ export async function getTotalSpentByStudent(userId: string) {
         status: "completed",
       },
     });
+    console.log(payments);
 
     const totalSpent = payments.reduce((total, payment) => total + payment.amount, 0);
     return totalSpent;
