@@ -140,7 +140,7 @@ export async function DashboardPage() {
     
       {
         text: "Active Test",
-        amount: "+"+ totalTestByTestTaker?.length,
+        amount: "+"+ totalTestByInstructor?.length,
         percentage: "+1 since last hour",
         icon: <Activity className="h-4 w-4 text-muted-foreground" />,
       },
