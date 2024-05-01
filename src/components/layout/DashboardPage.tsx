@@ -45,35 +45,39 @@ import {
 } from "@/components/ui/table";
 import DashboardStatCard from "../common/DashboardStatCard";
 import { text } from "stream/consumers";
-import { getAllTests, getPublishedTests, getSpecificTest, getTestsByUserId, getTotalEarningsByInstructor, getTotalSpentByStudent } from "@/actions/test";
+import { getAllTests, getPublishedTests, getSpecificTest, getTestsByUserId, getTotalEarningsByInstructor, getTotalSpentByStudent, getTotalTestsPurchasedByStudent, getRecentlyPurchasedTestsByStudent } from "@/actions/test";
 import { getRole } from "@/actions/user";
 import { getLastFivePaymentsByUserId, getTotalPayments } from "@/actions/payment";
 import { getAllInstructors } from "@/actions/instructor";
 
 export async function DashboardPage() {
-  const user =await currentUser();
+  const user = await currentUser();
 
   console.log(user?.id);
 
-  const role= await getRole();
-  const teacherEarning=  await getTotalEarningsByInstructor(user?.id);
-   const studentSpent= await getTotalSpentByStudent(user?.id);
-   const lastFivePayments= await getLastFivePaymentsByUserId(user?.id);
-   const totalPayments= await getTotalPayments();
-   const totalTestByInstructor = await getTestsByUserId(user?.id);
-   const totalTestByTestTaker= await getPublishedTests(user?.id);
-   const  totaltest= await getAllTests();
-   console.log("totalTestByInstructor",totalTestByInstructor);
-    console.log("totalTestByTestTaker",totalTestByTestTaker);
-   const totalInstructor= await getAllInstructors().then((data)=>data?.length);
-   console.log("totalInstructor",totalInstructor);
-  console.log("teacherEarning",teacherEarning);
-  console.log("studentEarning",studentSpent);
-  console.log("lastFivePayments",lastFivePayments);
-  console.log("totalPayments",totalPayments);
- 
-  
- 
+  const role = await getRole();
+  const teacherEarning = await getTotalEarningsByInstructor(user?.id);
+  const studentSpent = await getTotalSpentByStudent(user?.id);
+  const lastFivePayments = await getLastFivePaymentsByUserId(user?.id);
+  const totalPayments = await getTotalPayments();
+  const totalTestByInstructor = await getTestsByUserId(user?.id);
+  const totalTestByTestTaker = await getPublishedTests(user?.id);
+  const totalTestPurchasedByStudent = await getTotalTestsPurchasedByStudent(user?.id);
+  const totaltest = await getAllTests();
+  console.log("totalTestByInstructor", totalTestByInstructor);
+  console.log("totalTestByTestTaker", totalTestByTestTaker);
+  const totalInstructor = await getAllInstructors().then((data) => data?.length);
+  console.log("totalInstructor", totalInstructor);
+  console.log("teacherEarning", teacherEarning);
+  console.log("studentEarning", studentSpent);
+  console.log("lastFivePayments", lastFivePayments);
+  console.log("totalPayments", totalPayments);
+  const recentPurchasedTestbyStudentData = await getRecentlyPurchasedTestsByStudent(user?.id);
+  console.log("recentPurchasedTestbyStudentData", recentPurchasedTestbyStudentData);
+
+
+
+
 
   // let cardItem = [
   //   {
@@ -101,74 +105,74 @@ export async function DashboardPage() {
   //     icon: <Activity className="h-4 w-4 text-muted-foreground" />,
   //   },
   // ];
- let cardItem = [] as any;
-  if (role==='student'){
+  let cardItem = [] as any;
+  if (role === 'student') {
     cardItem = [
       {
         text: "Total Spent",
-        amount: "$"+studentSpent,
-        percentage: "+2 from last month",
-        icon: <DollarSign className="h-4 w-4 text-muted-foreground" />,
-      },
-      {
-        text: "Total Tests",
-        amount: totalTestByTestTaker?.length,
-        percentage: "+1 from last month",
-        icon: <File className="h-4 w-4 text-muted-foreground" />,
-      },
-      {
-        text: "Purchased Test",
-        amount: "+"+totalTestByTestTaker?.length,
-        percentage: "+1 since last hour",
-        icon: <File className="h-4 w-4 text-muted-foreground" />,
-      },
-    ];
-  } else if (role==='instructor'){
-    cardItem = [
-      {
-        text: "Total Earnings",
-        amount: "$"+teacherEarning,
-        percentage: "+12 from last month",
-        icon: <DollarSign className="h-4 w-4 text-muted-foreground" />,
-      },
-      {
-        text: "Total Tests",
-        amount: totalTestByInstructor?.length,
-        percentage: "+1 from last month",
-        icon: <File className="h-4 w-4 text-muted-foreground" />,
-      },
-    
-      {
-        text: "Active Test",
-        amount: "+"+ totalTestByInstructor?.length,
-        percentage: "+1 since last hour",
-        icon: <Activity className="h-4 w-4 text-muted-foreground" />,
-      },
-    ];
-  } else { 
-    cardItem = [
-      {
-        text: "Total Revenue",
-        amount: "$"+totalPayments,
-        percentage: "+20.1% from last month",
+        amount: "$" + studentSpent,
+        percentage: "from last month",
         icon: <DollarSign className="h-4 w-4 text-muted-foreground" />,
       },
       {
         text: "Total Tests",
         amount: totaltest?.length,
-        percentage: "+180.1% from last month",
+        percentage: "from last month",
+        icon: <File className="h-4 w-4 text-muted-foreground" />,
+      },
+      {
+        text: "Purchased Test",
+        amount: "+" + totalTestPurchasedByStudent,
+        percentage: "since last hour",
+        icon: <File className="h-4 w-4 text-muted-foreground" />,
+      },
+    ];
+  } else if (role === 'instructor') {
+    cardItem = [
+      {
+        text: "Total Earnings",
+        amount: "$" + teacherEarning,
+        percentage: "from last month",
+        icon: <DollarSign className="h-4 w-4 text-muted-foreground" />,
+      },
+      {
+        text: "Total Tests",
+        amount: totalTestByInstructor?.length,
+        percentage: "from last month",
+        icon: <File className="h-4 w-4 text-muted-foreground" />,
+      },
+
+      {
+        text: "Active Test",
+        amount: "+" + totalTestByInstructor?.length,
+        percentage: "since last hour",
+        icon: <Activity className="h-4 w-4 text-muted-foreground" />,
+      },
+    ];
+  } else {
+    cardItem = [
+      {
+        text: "Total Revenue",
+        amount: "$" + totalPayments,
+        percentage: " from last month",
+        icon: <DollarSign className="h-4 w-4 text-muted-foreground" />,
+      },
+      {
+        text: "Total Tests",
+        amount: totaltest?.length,
+        percentage: "from last month",
         icon: <File className="h-4 w-4 text-muted-foreground" />,
       },
       {
         text: "Total Instructor",
         amount: totalInstructor,
-        percentage: "+2 since last hour",
+        percentage: "since last hour",
         icon: < User2 className="h-4 w-4 text-muted-foreground" />,
       },
       {
         text: "Total Test Takers",
         amount: totalTestByTestTaker?.length,
-        percentage: "+201 since last hour",
+        percentage: "since last hour",
         icon: <Users className="h-4 w-4 text-muted-foreground" />,
       }
     ];
@@ -194,9 +198,9 @@ export async function DashboardPage() {
           <Card className="xl:col-span-2">
             <CardHeader className="flex flex-row items-center">
               <div className="grid gap-2">
-                <CardTitle>Transactions</CardTitle>
+                <CardTitle>Recent Attempted test </CardTitle>
                 <CardDescription>
-                  Recent transactions from your store.
+                  Recent Mock Test from your Environment.
                 </CardDescription>
               </div>
               <Button asChild size="sm" className="ml-auto gap-1">
@@ -210,7 +214,7 @@ export async function DashboardPage() {
               <Table>
                 <TableHeader>
                   <TableRow>
-                    <TableHead>Customer</TableHead>
+                    <TableHead>Test</TableHead>
                     <TableHead className="hidden xl:table-column">
                       Type
                     </TableHead>
@@ -330,7 +334,37 @@ export async function DashboardPage() {
           </Card>
           <Card>
             <CardHeader>
-              <CardTitle>Recent Sales</CardTitle>
+              <CardTitle>Recent Purchased Test</CardTitle>
+              <Button asChild size="sm" className="ml-auto gap-1">
+                <Link href="/dashboard/test-environment">
+                  View All
+                  <ArrowUpRight className="h-4 w-4" />
+                </Link>
+              </Button>
+            </CardHeader>
+            <CardContent className="grid gap-8">
+              {recentPurchasedTestbyStudentData?.map((purchase, index) => (
+                <div key={purchase.id} className="flex items-center gap-4">
+                  <Avatar className="hidden h-9 w-9 sm:flex">
+                    <AvatarImage src={`/avatars/0${index + 1}.png`} alt="Avatar" />
+                    <AvatarFallback>{purchase.test.title.slice(0, 2).toUpperCase()}</AvatarFallback>
+                  </Avatar>
+                  <div className="grid gap-1">
+                    <p className="text-sm font-medium leading-none">
+                      {purchase.test.title}
+                    </p>
+                    <p className="text-sm text-muted-foreground" style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                      {purchase.test.description}
+                    </p>
+                  </div>
+                  <div className="ml-auto font-medium">+${purchase.test.price.toFixed(2)}</div>
+                </div>
+              ))}
+            </CardContent>
+          </Card>
+          {/* <Card>
+            <CardHeader>
+              <CardTitle>Recent Purchased</CardTitle>
             </CardHeader>
             <CardContent className="grid gap-8">
               <div className="flex items-center gap-4">
@@ -409,7 +443,7 @@ export async function DashboardPage() {
                 <div className="ml-auto font-medium">+$39.00</div>
               </div>
             </CardContent>
-          </Card>
+          </Card> */}
         </div>
       </main>
     </div>

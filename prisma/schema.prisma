@@ -24,6 +24,7 @@ model User {
   location String?
   test    Test[]
   payment Payment[]
+   testResults TestResult[]
 }
 model Test {
   id          Int        @id @default(autoincrement())
@@ -38,6 +39,7 @@ model Test {
   user User @relation(fields: [userId], references: [id])
   questions   Question[]
   payment     Payment[]
+   testResults TestResult[]
 }
 
 model Question {
@@ -60,4 +62,18 @@ model Payment {
   createdAt  DateTime @default(now())
   user       User     @relation(fields: [userId], references: [id])
   test       Test     @relation(fields: [testId], references: [id])
+}
+
+model TestResult {
+  id                Int      @id @default(autoincrement())
+  userId            String
+  testId            Int
+  timeTaken         String
+  questionsAttempted Int
+  correctAnswers    Int
+  wrongAnswers      Int
+  overallResult     Float
+  createdAt         DateTime @default(now())
+  user              User     @relation(fields: [userId], references: [id])
+  test              Test     @relation(fields: [testId], references: [id])
 }

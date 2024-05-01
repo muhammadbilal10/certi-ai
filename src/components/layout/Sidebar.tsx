@@ -111,15 +111,41 @@ const SidebarContent = ({ role, userId }: { role: string; userId: string }) => {
     roleBasedItems[role]?.includes(item.href)
   );
 
- 
+  // const sidebarItems = [
+  //   {
+  //     title: "Dashboard",
+  //     icon: <Home size={24} />,
+  //     href: "/dashboard",
+  //   },
+  //   {
+  //     title: "TestTakers",
+  //     icon: <GraduationCap size={24} />,
+  //     href: "/dashboard/test-takers",
+  //   },
+  //   {
+  //     title: "Instructors",
+  //     icon: <UserRound size={24} />,
+  //     href: "/dashboard/instructors",
+  //   },
+  //   {
+  //     title: "TestEnvironment",
+  //     icon: <BookOpen size={24} />,
+  //     href: "/dashboard/test-environment",
+  //   },
+  //   {
+  //     title: "Payments",
+  //     icon: <CreditCard size={24} />,
+  //     href: "/dashboard/payments",
+  //   },
+  // ];
   return (
     <div>
       <div className=" h-20 mx-auto">
         <Image
           src="https://i.postimg.cc/nLFKWJ5z/Rectangle-1.png"
           alt="Logo"
-          width={300}
-          height={75}
+          width={326}
+          height={77}
         />
       </div>
       <Separator className="my-10" />
@@ -152,17 +178,20 @@ const Sidebar = async ({ role, userId }: { role: string; userId: string }) => {
       "/dashboard/instructors",
       "/dashboard/test-takers",
       "/dashboard/payments",
+      "/about",
     ],
     instructor: [
       "/dashboard",
       "/dashboard/test",
       `/dashboard/${profileRoute}/${userId}`,
+      "/about",
     ],
     student: [
       "/dashboard",
       "/dashboard/test",
       "/dashboard/test-environment",
       `/dashboard/${profileRoute}/${userId}`,
+      "/about",
     ],
   } as Record<string, string[]>;
   const sidebarItems = [
@@ -203,6 +232,11 @@ const Sidebar = async ({ role, userId }: { role: string; userId: string }) => {
       icon: <UserRound size={24} />,
       href: `/dashboard/${profileRoute}/${userId}`,
     },
+    {
+      title: "About",
+      icon: <Activity size={24} />,
+      href: "/about",
+    }
   ];
   const filteredItems = sidebarItems.filter((item) =>
     roleBasedItems[role]?.includes(item.href)
@@ -218,8 +252,8 @@ const Sidebar = async ({ role, userId }: { role: string; userId: string }) => {
           <Image
             src="https://i.postimg.cc/nLFKWJ5z/Rectangle-1.png"
             alt="Logo"
-            width={290}
-            height={83}
+            width={300}
+            height={85}
           />
           <Package2 className="h-6 w-6 sr-only" />
           <span className="sr-only">Acme Inc</span>
@@ -281,16 +315,49 @@ const Sidebar = async ({ role, userId }: { role: string; userId: string }) => {
             <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
             <Input
               type="search"
-              placeholder="Search products..."
+              placeholder="Search..."
               className="pl-8 sm:w-[300px] md:w-[200px] lg:w-[300px]"
             />
           </div>
         </form>
         <UserButton afterSignOutUrl="/" />
-       
+        {/* <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="secondary" size="icon" className="rounded-full">
+                <CircleUser className="h-5 w-5" />
+                <span className="sr-only">Toggle user menu</span>
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              <DropdownMenuLabel>My Account</DropdownMenuLabel>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem>Settings</DropdownMenuItem>
+              <DropdownMenuItem>Support</DropdownMenuItem>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem>Logout</DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu> */}
       </div>
     </header>
-    
+    // <div className="lg:shadow-md fixed w-full max-w-72 z-50">
+    //   <ScrollArea className="lg:min-h-screen p-4">
+    //     <Sheet>
+    //       <SheetTrigger>
+    //         <Menu size={24} className="lg:hidden" />
+    //       </SheetTrigger>
+    //       <SheetContent side={"left"} className="w-[300px]">
+    //         <SheetHeader>
+    //           <SheetTitle></SheetTitle>
+    //           <SheetDescription></SheetDescription>
+    //         </SheetHeader>
+    //         <SidebarContent role={role} userId={userId} />
+    //       </SheetContent>
+    //     </Sheet>
+    //     <div className="hidden lg:block">
+    //       <SidebarContent role={role} userId={userId} />
+    //     </div>
+    //   </ScrollArea>
+    // </div>
   );
 };
 

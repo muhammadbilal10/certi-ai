@@ -5,6 +5,7 @@ import { getAllTestTakers } from "@/actions/test-taker";
 import { getAllInstructors } from "@/actions/instructor";
 import { PaymentGraphCard } from "@/components/common/PaymentGraphCard";
 import { DashboardPage } from "@/components/layout/DashboardPage";
+import Footer from "@/components/layout/Footer";
 
 async function getTestTakers() {
   const data = await getAllTestTakers();
@@ -62,7 +63,7 @@ export default async function Dashboardpage() {
       </div> */}
       <DashboardPage />
 
-     
+     <Footer />
     </div>
   );
 }

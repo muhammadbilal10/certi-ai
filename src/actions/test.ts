@@ -258,3 +258,71 @@ export async function getTotalSpentByStudent(userId: string) {
     console.error(error);
   }
 }
+
+//get total test purchased by student
+export async function getTotalTestsPurchasedByStudent(userId: string) {
+  try {
+    const payments = await db.payment.findMany({
+      where: {
+        userId: userId,
+        status: "completed",
+      },
+    });
+
+    return payments.length;
+  } catch (error) {
+    console.error(error);
+  }
+}
+
+
+//recently purchased test by student
+export async function getRecentlyPurchasedTestsByStudent(userId: string) {
+  try {
+    const payments = await db.payment.findMany({
+      where: {
+        userId: userId,
+        status: "completed",
+      },
+      orderBy: {
+        createdAt: "desc",
+      },
+      take: 5,
+      include: {
+        test: true,
+      },
+    });
+
+    return payments;
+  } catch (error) {
+    console.error(error);
+  }
+}
+
+
+export async function storeTestResult(result: {
+  userId: string;
+  testId: number;
+  timeTaken: string;
+  questionsAttempted: number;
+  correctAnswers: number;
+  wrongAnswers: number;
+  overallResult: number;
+}) {
+  const { userId, testId, timeTaken, questionsAttempted, correctAnswers, wrongAnswers, overallResult } = result;
+
+  const testResult = await db.testResult.create({
+    data: {
+      userId,
+      testId,
+      timeTaken,
+      questionsAttempted,
+      correctAnswers,
+      wrongAnswers,
+      overallResult,
+    },
+  });
+
+  return testResult;
+}
+
