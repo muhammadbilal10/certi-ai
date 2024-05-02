@@ -74,7 +74,7 @@ export default async function DashboardPage() {
   console.log("studentEarning", studentSpent);
   console.log("lastFivePayments", lastFivePayments);
   console.log("totalPayments", totalPayments);
-  const recentPurchasedTestbyStudentData = await getRecentlyPurchasedTestsByStudent(user?.id);
+  const recentPurchasedTestbyStudentData = await getRecentlyPurchasedTestsByStudent(user?.id as string);
   console.log("recentPurchasedTestbyStudentData", recentPurchasedTestbyStudentData);
 
   let cardItem = [] as any;
