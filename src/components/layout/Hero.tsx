@@ -5,8 +5,8 @@ import Link from "next/link";
 
 export default function Hero() {
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-12 lg:px-8 mx-auto gap-8 h-screen">
-      <div className="max-w-2xl pt-60 lg:col-span-6  px-6 mx-auto">
+    <div className="grid grid-cols-12  mx-auto gap-8">
+      <div className="max-w-2xl pt-60 col-span-12 lg:col-span-6  px-6 mx-auto">
         <h1 className="text-4xl sm:text-6xl font-bold mt-40px ">
           The Best Way For Your Learning
         </h1>
@@ -23,14 +23,16 @@ export default function Hero() {
           </Button>
         </div>
       </div>
-      <div className="lg:col-span-6 inset-0 lg:absolute  lg:left-[50%] lg:right-0">
+      <div className="col-span-12 lg:col-span-6 min-h-screen">
+        <div className="h-screen">
         <Image
-          src="https://images.unsplash.com/photo-1498758536662-35b82cd15e29?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=2102&q=80"
+          src="https://images.unsplash.com/photo-1499750310107-5fef28a66643?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
           alt="hero image"
           width={500}
           height={500}
-          className="object-cover h-full w-full"
+          className=" h-full w-full"
         />
+        </div>
       </div>
     </div>
   );

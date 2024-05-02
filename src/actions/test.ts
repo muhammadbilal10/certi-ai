@@ -326,3 +326,21 @@ export async function storeTestResult(result: {
   return testResult;
 }
 
+export async function getAllPublishedTests() {
+  try {
+    const tests = await db.test.findMany({
+      where: {
+        published: true,
+      },
+      include: {
+        questions: true,  // Include questions if needed
+        user: true         // Include user details if needed
+      }
+    });
+    return tests;
+  } catch (error) {
+    console.error("Error fetching published tests:", error);
+  }
+}
+
+

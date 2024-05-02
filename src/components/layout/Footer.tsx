@@ -6,17 +6,17 @@ import { Button } from "@/components/ui/button";
 
 const Footer = () => {
   return (
-    <footer className="py-8 mt-20 bg-gradient-to-r from-accent to-violet-100">
+    <footer className="px-8 py-8 mt-20 bg-gradient-to-r from-violet-100 to-[#f6d1c5]">
       <div className="max-w-screen-xl mx-auto grid grid-cols-2 md:grid-cols-6 gap-8">
         <div className="col-span-1 md:col-span-2">
           <Image
-            src="https://i.postimg.cc/FsjsYfSW/Certi-AI-HD-Logo.png"
+            src="https://i.postimg.cc/nLFKWJ5z/Rectangle-1.png"
             alt="Company Logo"
-            className="h-16 w-auto"
+            className="h-16 w-auto "
             width={100}
             height={100}
           />
-          <p className="text-black-500 mt-2 md:mt-0 md:col-span-1 ">
+          <p className="text-black-500 pt-4 md:mt-0 md:col-span-1 ">
             Certi-AI is Pakistan’s Largest Online Mock Test Portal
             Connecting Teachers and Students within & outside the country.
           </p>

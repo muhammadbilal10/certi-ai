@@ -26,6 +26,7 @@ export default function RootLayout({
             },
           }}
         >
+          
           {children}
         </ClerkProvider>
       </body>
