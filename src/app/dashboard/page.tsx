@@ -49,7 +49,14 @@ import { getRole } from "@/actions/user";
 import { getLastFivePaymentsByUserId, getTotalPayments } from "@/actions/payment";
 import { getAllInstructors } from "@/actions/instructor";
 import DashboardStatCard from "@/components/common/DashboardStatCard";
+import { ReactElement } from "react";
 
+type CardItem = {
+  text: string;
+  amount: string | number;
+  percentage: string;
+  icon: ReactElement;
+}
 
 
 export default async function DashboardPage() {
@@ -77,7 +84,7 @@ export default async function DashboardPage() {
   const recentPurchasedTestbyStudentData = await getRecentlyPurchasedTestsByStudent(user?.id as string);
   console.log("recentPurchasedTestbyStudentData", recentPurchasedTestbyStudentData);
 
-  let cardItem = [] as any;
+  let cardItem = [];
   if (role === 'student') {
     cardItem = [
       {
@@ -120,7 +127,7 @@ export default async function DashboardPage() {
         percentage: "since last hour",
         icon: <Activity className="h-4 w-4 text-muted-foreground" />,
       },
-    ];
+    ] ;
   } else {
     cardItem = [
       {
@@ -159,7 +166,7 @@ export default async function DashboardPage() {
               <DashboardStatCard
                 key={index}
                 text={item.text}
-                amount={item.amount}
+                amount={item.amount as string}
                 percentage={item.percentage}
                 icon={item.icon}
               />
