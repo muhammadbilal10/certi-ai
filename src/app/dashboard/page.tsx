@@ -84,7 +84,7 @@ export default async function DashboardPage() {
   const recentPurchasedTestbyStudentData = await getRecentlyPurchasedTestsByStudent(user?.id as string);
   console.log("recentPurchasedTestbyStudentData", recentPurchasedTestbyStudentData);
 
-  let cardItem = [];
+  let cardItem = [] as CardItem[];
   if (role === 'student') {
     cardItem = [
       {
@@ -95,7 +95,7 @@ export default async function DashboardPage() {
       },
       {
         text: "Total Tests",
-        amount: totaltest?.length,
+        amount: totaltest?.length.toString() as string,
         percentage: "from last month",
         icon: <File className="h-4 w-4 text-muted-foreground" />,
       },
@@ -138,19 +138,19 @@ export default async function DashboardPage() {
       },
       {
         text: "Total Tests",
-        amount: totaltest?.length,
+        amount: totaltest?.length.toString() as string,
         percentage: "from last month",
         icon: <File className="h-4 w-4 text-muted-foreground" />,
       },
       {
         text: "Total Instructor",
-        amount: totalInstructor,
+        amount: totalInstructor?.toString() as string,
         percentage: "since last hour",
         icon: < User2 className="h-4 w-4 text-muted-foreground" />,
       },
       {
         text: "Total Test Takers",
-        amount: totalTestByTestTaker?.length,
+        amount: totalTestByTestTaker?.length.toString() as string,
         percentage: "since last hour",
         icon: <Users className="h-4 w-4 text-muted-foreground" />,
       }
