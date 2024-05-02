@@ -168,7 +168,7 @@ const SidebarContent = ({ role, userId }: { role: string; userId: string }) => {
   );
 };
 
-const Sidebar = async ({ role, userId }: { role: string; userId: string }) => {
+const Sidebar =  ({ role, userId }: { role: string; userId: string }) => {
   const pathName = usePathname();
   const profileRoute = role === "student" ? "test-takers" : "instructors";
 
@@ -263,6 +263,7 @@ const Sidebar = async ({ role, userId }: { role: string; userId: string }) => {
         {filteredItems.map((item, index) => (
           <Link
             href={item.href}
+            key={index}
             className={`${
               pathName === item.href
                 ? "text-foreground"
@@ -298,6 +299,7 @@ const Sidebar = async ({ role, userId }: { role: string; userId: string }) => {
             {filteredItems.map((item, index) => (
               <Link
                 href={item.href}
+                key={index}
                 className={`${
                   pathName === item.href
                     ? "text-foreground"
