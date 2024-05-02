@@ -1,5 +1,4 @@
 import { getRole } from "@/actions/user";
-import { DashboardPage } from "@/components/layout/DashboardPage";
 import Sidebar from "@/components/layout/Sidebar";
 import Topnav from "@/components/layout/Topnav";
 import { currentUser } from "@clerk/nextjs";
