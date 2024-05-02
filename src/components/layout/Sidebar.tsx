@@ -178,20 +178,19 @@ const Sidebar = async ({ role, userId }: { role: string; userId: string }) => {
       "/dashboard/instructors",
       "/dashboard/test-takers",
       "/dashboard/payments",
-      "/about",
     ],
     instructor: [
       "/dashboard",
       "/dashboard/test",
       `/dashboard/${profileRoute}/${userId}`,
-      "/about",
+     
     ],
     student: [
       "/dashboard",
       "/dashboard/test",
       "/dashboard/test-environment",
       `/dashboard/${profileRoute}/${userId}`,
-      "/about",
+     
     ],
   } as Record<string, string[]>;
   const sidebarItems = [
@@ -245,19 +244,21 @@ const Sidebar = async ({ role, userId }: { role: string; userId: string }) => {
   return (
     <header className="sticky top-0 flex h-16 items-center gap-4 border-b bg-background px-4 md:px-6 mb-10">
       <nav className="hidden flex-col gap-6 text-lg font-medium md:flex md:flex-row md:items-center md:gap-5 md:text-sm lg:gap-6">
+        <div>
         <Link
           href="#"
-          className="flex items-center gap-2 text-lg font-semibold md:text-base"
+          className="h-28 w-28 flex items-center gap-2 text-lg font-semibold md:text-base"
         >
           <Image
             src="https://i.postimg.cc/nLFKWJ5z/Rectangle-1.png"
             alt="Logo"
             width={300}
-            height={85}
+            height={300}
           />
           <Package2 className="h-6 w-6 sr-only" />
           <span className="sr-only">Acme Inc</span>
         </Link>
+        </div>
 
         {filteredItems.map((item, index) => (
           <Link

@@ -5,7 +5,7 @@ import Link from "next/link";
 
 export default function HomeNav() {
   return (
-    <div className="px-8 z-50 absolute xl:w-1/2 w-full">
+    <div className="pl-0 px-8 z-50 absolute xl:w-1/2 w-full">
       <div className="flex items-center justify-between mt-5">
         <div className="h-150px] w-[150px]">
           <Image

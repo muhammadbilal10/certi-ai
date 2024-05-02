@@ -16,8 +16,7 @@ export default async function About() {
   ];
   return (
     <section
-      id="about-us"
-      className="flex justify-between items-center max-lg:flex-col gap-10 w-full max-container min-h-screen"
+      className="grid lg:grid-cols-2 gap-10 w-full max-container "
     >
       <div className="flex-1 flex flex-col gap-6 lg:max-w-lg">
         <h2 className="text-4xl font-semibold font-palanquin capitalize">
@@ -30,7 +29,7 @@ export default async function About() {
           We offer a dynamic online environment where students can sharpen their
           skills and prepare for their exams with confidence. Our platform
           allows teachers to create and upload custom tests, which students can
-          then purchase and practice at their own pace. Whether you're gearing
+          then purchase and practice at their own pace. Whether you&apos;re gearing
           up for midterms, finals, or standardized tests, our comprehensive test
           bank is tailored to meet your needs.
         </p>
@@ -48,13 +47,13 @@ export default async function About() {
           <Button>Join us Now</Button>
         </div>
       </div>
-      <div>
+      <div className="flex justify-center">
         <Image
           src="https://images.unsplash.com/photo-1485217988980-11786ced9454?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
           alt="quality"
           height={522}
           width={570}
-          className="object-contain rounded-xl"
+          className="rounded-xl h-full w-full"
         />
       </div>
     </section>

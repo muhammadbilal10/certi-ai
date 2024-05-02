@@ -7,7 +7,7 @@ export default function Hero() {
   return (
     <div className="grid grid-cols-12  mx-auto gap-8">
       <div className="max-w-2xl pt-60 col-span-12 lg:col-span-6  px-6 mx-auto">
-        <h1 className="text-4xl sm:text-6xl font-bold mt-40px ">
+        <h1 className="text-4xl xl:text-6xl font-bold mt-40px ">
           The Best Way For Your Learning
         </h1>
         <p className="text-gray-500 mt-6">

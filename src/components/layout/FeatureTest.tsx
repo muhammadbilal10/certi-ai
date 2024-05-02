@@ -17,11 +17,12 @@ const FeatureTest = async () => {
         </p>
 
         <div
-          className="grid mt-16 lg:grid-cols-4 md:grid-cols-3
-       sm:grid-cols-2 grid-cols-1 gap-14"
+          className="grid mt-16 lg:grid-cols-3 md:grid-cols-2
+        grid-cols-1 gap-14"
         >
-          {tests?.map((test) => {
+          {tests?.map((test, index) => {
             if ("student" === "student" && !test.published) return;
+            if (index > 5) return;
             return (
               <TestCard
                 key={test.id}
@@ -32,7 +33,7 @@ const FeatureTest = async () => {
                 description={test.description as string}
                 duration={test.duration}
                 startAt={test.startAt}
-                  role={'student' as string}
+                role={'student' as string}
                 published={test.published}
                 isPurchased={false}
                 price={test.price}

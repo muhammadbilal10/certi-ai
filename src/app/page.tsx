@@ -10,10 +10,10 @@ export default function Home() {
       <section>
         <HomeNav />
       </section>
-      <section className="pb-32">
+      <section className="pb-32 px-4">
         <Hero />
       </section>
-      <section className="sm:px-16 px-8 sm:py-24 py-12">
+      <section id="about-us" className="sm:px-16 px-8 sm:py-24 py-12">
         <About />
       </section >
       <section id='feature-test' className="sm:px-16 px-8 sm:py-24 py-12">

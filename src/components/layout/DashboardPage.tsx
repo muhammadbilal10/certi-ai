@@ -50,19 +50,21 @@ import { getRole } from "@/actions/user";
 import { getLastFivePaymentsByUserId, getTotalPayments } from "@/actions/payment";
 import { getAllInstructors } from "@/actions/instructor";
 
-export async function DashboardPage() {
+
+
+export default async function DashboardPage() {
   const user = await currentUser();
 
   console.log(user?.id);
 
   const role = await getRole();
-  const teacherEarning = await getTotalEarningsByInstructor(user?.id);
-  const studentSpent = await getTotalSpentByStudent(user?.id);
-  const lastFivePayments = await getLastFivePaymentsByUserId(user?.id);
+  const teacherEarning = await getTotalEarningsByInstructor(user?.id as string);
+  const studentSpent = await getTotalSpentByStudent(user?.id as string);
+  const lastFivePayments = await getLastFivePaymentsByUserId(user?.id as string);
   const totalPayments = await getTotalPayments();
-  const totalTestByInstructor = await getTestsByUserId(user?.id);
-  const totalTestByTestTaker = await getPublishedTests(user?.id);
-  const totalTestPurchasedByStudent = await getTotalTestsPurchasedByStudent(user?.id);
+  const totalTestByInstructor = await getTestsByUserId(user?.id as string);
+  const totalTestByTestTaker = await getPublishedTests(user?.id as string);
+  const totalTestPurchasedByStudent = await getTotalTestsPurchasedByStudent(user?.id as string);
   const totaltest = await getAllTests();
   console.log("totalTestByInstructor", totalTestByInstructor);
   console.log("totalTestByTestTaker", totalTestByTestTaker);
@@ -72,13 +74,8 @@ export async function DashboardPage() {
   console.log("studentEarning", studentSpent);
   console.log("lastFivePayments", lastFivePayments);
   console.log("totalPayments", totalPayments);
-  const recentPurchasedTestbyStudentData = await getRecentlyPurchasedTestsByStudent(user?.id);
+  const recentPurchasedTestbyStudentData = await getRecentlyPurchasedTestsByStudent(user?.id as string);
   console.log("recentPurchasedTestbyStudentData", recentPurchasedTestbyStudentData);
-
-
-
-
-
   // let cardItem = [
   //   {
   //     text: "Total Revenue",
