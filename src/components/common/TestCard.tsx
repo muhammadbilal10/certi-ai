@@ -7,8 +7,18 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { useFormState, useFormStatus } from "react-dom";
 
-import { Calendar, Clock, Delete, Edit, View } from "lucide-react";
+import {
+  Calendar,
+  Clock,
+  Delete,
+  Edit,
+  Loader2,
+  Mail,
+  Send,
+  View,
+} from "lucide-react";
 import ALertDialogModel from "./ALertDialogModel";
 import Link from "next/link";
 import { Button } from "../ui/button";
@@ -24,6 +34,25 @@ interface User {
   joinedAt: Date;
   profileImage?: string;
   location?: string;
+}
+
+function SubmitButton({variant, text}: {variant: string, text:string}) {
+  const { pending } = useFormStatus();
+  console.log(variant)
+  return (
+    <Button disabled={pending} variant={variant === 'secondary' ? 'secondary' : 'default'}  type="submit" className="">
+      {!pending ? (
+        <>
+          <Send className="h-5 w-5 mr-2" /> {text}
+        </>
+      ) : (
+        <>
+          <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+          Please wait
+        </>
+      )}
+    </Button>
+  );
 }
 
 export default function TestCard({
@@ -55,7 +84,7 @@ export default function TestCard({
   canStartTest?: boolean;
   price?: number;
 }) {
-  const updateTest = publishTest.bind(null, id);
+  const [state, formAction] = useFormState(publishTest, null);
 
   function StartTest(testStartDate: Date | string) {
     const currentDate = new Date();
@@ -83,14 +112,18 @@ export default function TestCard({
         <div className="flex justify-between">
           <CardTitle className="line-clamp-2 mr-1">{title}</CardTitle>
           {role === "instructor" && (
-            <form action={updateTest}>
-              <Button
-                type="submit"
-                disabled={published}
+            <form action={formAction}>
+              <input type="hidden" name="id" value={id} />
+
+              <input
+                type="hidden"
+                name="publish"
+                value={published ? "false" : "true"}
+              />
+              <SubmitButton
                 variant={published ? "secondary" : "default"}
-              >
-                {published ? "Published" : "Publish"}
-              </Button>
+                text={published ? "unpublish" : "Publish"}
+              />
             </form>
           )}
 

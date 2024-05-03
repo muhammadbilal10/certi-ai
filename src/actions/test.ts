@@ -206,12 +206,16 @@ export async function getPublishedTests(userId: string) {
   }
 }
 
-export async function publishTest(testId: number, formData: FormData) {
+export async function publishTest(prevState: any, formData: FormData) {
+  const ispublish = formData.get('publish') as string;
+  const testId = Number(formData.get('id'));
   console.log(testId);
+  console.log(ispublish)
+  console.log('publihed')
   try {
     const updatedTest = await db.test.update({
       where: { id: testId },
-      data: { published: true },
+      data: { published: ispublish === 'true'},
     });
     console.log(`Test ${testId} published successfully`);
   } catch (error) {
@@ -219,6 +223,7 @@ export async function publishTest(testId: number, formData: FormData) {
   }
   revalidatePath("/dashboard/test");
 }
+
 
 
 //payments total countss
