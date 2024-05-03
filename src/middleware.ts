@@ -5,7 +5,7 @@ import { getUserById } from "./actions/user";
 
 export default authMiddleware({
   publicRoutes: ["/"],
-  afterAuth: async (auth, req) => {
+  afterAuth: (auth, req) => {
     if (auth.userId && auth.isPublicRoute) {
       // const existingUser = await db.user.findUnique({
       //   where: {
