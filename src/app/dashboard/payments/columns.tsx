@@ -62,10 +62,20 @@ export const columns: ColumnDef<Payment>[] = [
   {
     accessorKey: "createdAt",
     header: "Date",
+    cell: ({ row }) => {
+      const date = new Date(row.getValue("createdAt"));
+      const formatted = date.toLocaleDateString("en-US", {
+        year: "numeric",
+        month: "long",
+        day: "numeric",
+      });
+
+      return <div>{formatted}</div>;
+    },
   },
   {
     accessorKey: "userName",
-    header: "Name",
+    header: "Test Taker",
   },
   {
     accessorKey: "userMobile",
@@ -74,6 +84,14 @@ export const columns: ColumnDef<Payment>[] = [
   {
     accessorKey: "userLocation",
     header: "Location",
+  },
+  {
+    accessorKey: "testName",
+    header: "Test Name",
+  },
+  {
+    accessorKey: "instructorName",
+    header: "Instructor",
   },
   {
     accessorKey: "userEmail",

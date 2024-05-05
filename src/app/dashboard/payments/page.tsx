@@ -14,7 +14,7 @@ export default async function PaymentPage() {
   return (
     <div className="container h-screen mx-auto">
       <h1 className="text-2xl font-bold mb-5">Payments list</h1>
-      <DataTable columns={columns} data={data} filterColumn="userEmail"/>
+      <DataTable columns={columns} data={data} filterColumn="userName"/>
     </div>
   );
 }

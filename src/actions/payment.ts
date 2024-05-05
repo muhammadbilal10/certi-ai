@@ -49,7 +49,14 @@ export async function getAllPayments() {
   const payments = await db.payment.findMany({
     include: {
       user: true,
+      test: {
+        include: {
+          user: true,
+        },
+      },
     },
+    
+
   });
   return payments.map((payment) => ({
     ...payment,
@@ -57,6 +64,9 @@ export async function getAllPayments() {
     userEmail: payment.user?.email,
     userMobile: payment.user?.mobile,
     userLocation: payment.user?.location,
+    testName: payment.test?.title,
+    instructorName: payment.test?.user?.name,
+
   }));
 }
 

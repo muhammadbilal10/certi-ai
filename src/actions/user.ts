@@ -1,6 +1,6 @@
 "use server";
 import { db } from "@/lib/db";
-import { auth, currentUser } from "@clerk/nextjs";
+import { auth, clerkClient, currentUser } from "@clerk/nextjs";
 import { redirect } from "next/navigation";
 
 export async function getRole() {
@@ -84,6 +84,131 @@ export async function getUserById(id: string) {
       },
     });
     return user;
+  } catch (e) {
+    console.log("Error", e);
+  }
+}
+
+//GET recent users
+export async function getRecentUsers() {
+  try {
+    const users = await db.user.findMany({
+      where: {
+        role: {
+          not: 'admin',
+        },
+      },
+      orderBy: {
+        joinedAt: "desc",
+      },
+      take: 6,
+    });
+    return users;
+  } catch (e) {
+    console.log("Error", e);
+  }
+}
+
+//delete users by id
+export async function deleteUser(id: string) {
+  try {
+    await clerkClient.users.deleteUser(id);
+    await db.payment.deleteMany({
+      where: {
+        userId: id,
+      },
+    });
+    
+    await db.payment.deleteMany({
+      where: {
+        test: {
+          userId: id,
+        },
+      },
+    });
+
+  
+    await db.test.deleteMany({
+      where: {
+        userId: id,
+      },
+    });
+
+   
+    await db.payment.deleteMany({
+      where: {
+        userId: id,
+      },
+    });
+
+    await db.user.delete({
+      where: {
+        id: id,
+      },
+    });
+
+
+  } catch (e) {
+    console.log("Error", e);
+  }
+  redirect("/dashboard/test-takers");
+}
+
+export async function deleteInstructor(id: string) {
+  try {
+    
+    await db.question.deleteMany({
+      where: {
+        test: {
+          userId: id,
+        },
+      },
+    });
+
+  
+    await db.payment.deleteMany({
+      where: {
+        test: {
+          userId: id,
+        },
+      },
+    });
+
+  
+    await db.test.deleteMany({
+      where: {
+        userId: id,
+      },
+    });
+
+   
+    await db.payment.deleteMany({
+      where: {
+        userId: id,
+      },
+    });
+
+  await clerkClient.users.deleteUser(id);
+    await db.user.delete({
+      where: {
+        id: id,
+      },
+    });
+  } catch (e) {
+    console.log("Error", e);
+  }
+  redirect("/dashboard/instructors");
+}
+
+//find total users whose role is student
+export async function getTotalStudents() {
+  try {
+    const totalStudents = await db.user.count({
+      where: {
+        role: "student",
+      },
+    });
+    return totalStudents;
   } catch (e) {
     console.log("Error", e);
   }

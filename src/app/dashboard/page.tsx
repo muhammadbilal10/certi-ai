@@ -44,8 +44,8 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { text } from "stream/consumers";
-import { getAllTests, getPublishedTests, getSpecificTest, getTestsByUserId, getTotalEarningsByInstructor, getTotalSpentByStudent, getTotalTestsPurchasedByStudent, getRecentlyPurchasedTestsByStudent } from "@/actions/test";
-import { getRole } from "@/actions/user";
+import { getAllTests, getPublishedTests, getSpecificTest, getTestsByUserId, getTotalEarningsByInstructor, getTotalSpentByStudent, getTotalTestsPurchasedByStudent, getRecentlyPurchasedTestsByStudent, getRecentPurchasedTests } from "@/actions/test";
+import { getRecentUsers, getRole, getTotalStudents } from "@/actions/user";
 import { getLastFivePaymentsByUserId, getTotalPayments } from "@/actions/payment";
 import { getAllInstructors } from "@/actions/instructor";
 import DashboardStatCard from "@/components/common/DashboardStatCard";
@@ -73,9 +73,11 @@ export default async function DashboardPage() {
   const totalTestByTestTaker = await getPublishedTests(user?.id as string);
   const totalTestPurchasedByStudent = await getTotalTestsPurchasedByStudent(user?.id as string);
   const totaltest = await getAllTests();
+
   console.log("totalTestByInstructor", totalTestByInstructor);
   console.log("totalTestByTestTaker", totalTestByTestTaker);
   const totalInstructor = await getAllInstructors().then((data) => data?.length);
+  const totalStudent = await getTotalStudents();
   console.log("totalInstructor", totalInstructor);
   console.log("teacherEarning", teacherEarning);
   console.log("studentEarning", studentSpent);
@@ -83,26 +85,30 @@ export default async function DashboardPage() {
   console.log("totalPayments", totalPayments);
   const recentPurchasedTestbyStudentData = await getRecentlyPurchasedTestsByStudent(user?.id as string);
   console.log("recentPurchasedTestbyStudentData", recentPurchasedTestbyStudentData);
-
+  //admin page dashboard details:
+  const recentappUsers = await getRecentUsers();
+  console.log("recentappUsers", recentappUsers);
+  const recentPurchasedTest = await getRecentPurchasedTests();
+  console.log("recentPurchasedTest", recentPurchasedTest);
   let cardItem = [] as CardItem[];
   if (role === 'student') {
     cardItem = [
       {
         text: "Total Spent",
         amount: "$" + studentSpent,
-        percentage: "from last month",
+        percentage: "",
         icon: <DollarSign className="h-4 w-4 text-muted-foreground" />,
       },
       {
         text: "Total Tests",
         amount: totaltest?.length.toString() as string,
-        percentage: "from last month",
+        percentage: "",
         icon: <File className="h-4 w-4 text-muted-foreground" />,
       },
       {
         text: "Purchased Test",
-        amount: "+" + totalTestPurchasedByStudent,
-        percentage: "since last hour",
+        amount: "" + totalTestPurchasedByStudent,
+        percentage: "",
         icon: <File className="h-4 w-4 text-muted-foreground" />,
       },
     ];
@@ -111,47 +117,47 @@ export default async function DashboardPage() {
       {
         text: "Total Earnings",
         amount: "$" + teacherEarning,
-        percentage: "from last month",
+        percentage: "",
         icon: <DollarSign className="h-4 w-4 text-muted-foreground" />,
       },
       {
         text: "Total Tests",
         amount: totalTestByInstructor?.length,
-        percentage: "from last month",
+        percentage: "",
         icon: <File className="h-4 w-4 text-muted-foreground" />,
       },
 
       {
         text: "Active Test",
-        amount: "+" + totalTestByInstructor?.length,
-        percentage: "since last hour",
+        amount: "" + totalTestByInstructor?.length,
+        percentage: "",
         icon: <Activity className="h-4 w-4 text-muted-foreground" />,
       },
-    ] ;
+    ];
   } else {
     cardItem = [
-      {
-        text: "Total Revenue",
-        amount: "$" + totalPayments,
-        percentage: " from last month",
-        icon: <DollarSign className="h-4 w-4 text-muted-foreground" />,
-      },
+      // {
+      //   text: "Total Revenue",
+      //   amount: "$" + totalPayments,
+      //   percentage: " from last month",
+      //   icon: <DollarSign className="h-4 w-4 text-muted-foreground" />,
+      // },
       {
         text: "Total Tests",
         amount: totaltest?.length.toString() as string,
-        percentage: "from last month",
+        percentage: "",
         icon: <File className="h-4 w-4 text-muted-foreground" />,
       },
       {
         text: "Total Instructor",
         amount: totalInstructor?.toString() as string,
-        percentage: "since last hour",
+        percentage: "",
         icon: < User2 className="h-4 w-4 text-muted-foreground" />,
       },
       {
         text: "Total Test Takers",
-        amount: totalTestByTestTaker?.length.toString() as string,
-        percentage: "since last hour",
+        amount: totalStudent as number,
+        percentage: "",
         icon: <Users className="h-4 w-4 text-muted-foreground" />,
       }
     ];
@@ -176,153 +182,78 @@ export default async function DashboardPage() {
         <div className="grid gap-4 md:gap-8 lg:grid-cols-2 xl:grid-cols-3">
           <Card className="xl:col-span-2">
             <CardHeader className="flex flex-row items-center">
-              <div className="grid gap-2">
-                <CardTitle>Recent Attempted test </CardTitle>
-                <CardDescription>
-                  Recent Mock Test from your Environment.
-                </CardDescription>
+              {role === "admin" && <> <div className="grid gap-2">
+
+                <CardTitle>Recent Purchases</CardTitle>
+                <CardDescription>Overview of recently purchased tests.</CardDescription>
               </div>
-              <Button asChild size="sm" className="ml-auto gap-1">
-                <Link href="#">
-                  View All
-                  <ArrowUpRight className="h-4 w-4" />
-                </Link>
-              </Button>
+
+                <Button asChild size="sm" className="ml-auto gap-1">
+                  <Link href="/dashboard/payments">
+                    View All
+                    <ArrowUpRight className="h-4 w-4" />
+                  </Link>
+                </Button>
+              </>
+              }
+              {role === "student" && <> <div className="grid gap-2">
+
+                <CardTitle>Recent Test Activities</CardTitle>
+                <CardDescription>Overview of recent activities related to tests.</CardDescription>
+              </div>
+
+                <Button asChild size="sm" className="ml-auto gap-1">
+                  <Link href="/dashboard/payments">
+                    View All
+                    <ArrowUpRight className="h-4 w-4" />
+                  </Link>
+                </Button>
+              </>
+              }
             </CardHeader>
             <CardContent>
               <Table>
                 <TableHeader>
                   <TableRow>
                     <TableHead>Test</TableHead>
-                    <TableHead className="hidden xl:table-column">
-                      Type
-                    </TableHead>
-                    <TableHead className="hidden xl:table-column">
-                      Status
-                    </TableHead>
-                    <TableHead className="hidden xl:table-column">
+                    <TableHead >
                       Date
                     </TableHead>
                     <TableHead className="text-right">Amount</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  <TableRow>
-                    <TableCell>
-                      <div className="font-medium">Liam Johnson</div>
-                      <div className="hidden text-sm text-muted-foreground md:inline">
-                        liam@example.com
-                      </div>
-                    </TableCell>
-                    <TableCell className="hidden xl:table-column">
-                      Sale
-                    </TableCell>
-                    <TableCell className="hidden xl:table-column">
-                      <Badge className="text-xs" variant="outline">
-                        Approved
-                      </Badge>
-                    </TableCell>
-                    <TableCell className="hidden md:table-cell lg:hidden xl:table-column">
-                      2023-06-23
-                    </TableCell>
-                    <TableCell className="text-right">$250.00</TableCell>
-                  </TableRow>
-                  <TableRow>
-                    <TableCell>
-                      <div className="font-medium">Olivia Smith</div>
-                      <div className="hidden text-sm text-muted-foreground md:inline">
-                        olivia@example.com
-                      </div>
-                    </TableCell>
-                    <TableCell className="hidden xl:table-column">
-                      Refund
-                    </TableCell>
-                    <TableCell className="hidden xl:table-column">
-                      <Badge className="text-xs" variant="outline">
-                        Declined
-                      </Badge>
-                    </TableCell>
-                    <TableCell className="hidden md:table-cell lg:hidden xl:table-column">
-                      2023-06-24
-                    </TableCell>
-                    <TableCell className="text-right">$150.00</TableCell>
-                  </TableRow>
-                  <TableRow>
-                    <TableCell>
-                      <div className="font-medium">Noah Williams</div>
-                      <div className="hidden text-sm text-muted-foreground md:inline">
-                        noah@example.com
-                      </div>
-                    </TableCell>
-                    <TableCell className="hidden xl:table-column">
-                      Subscription
-                    </TableCell>
-                    <TableCell className="hidden xl:table-column">
-                      <Badge className="text-xs" variant="outline">
-                        Approved
-                      </Badge>
-                    </TableCell>
-                    <TableCell className="hidden md:table-cell lg:hidden xl:table-column">
-                      2023-06-25
-                    </TableCell>
-                    <TableCell className="text-right">$350.00</TableCell>
-                  </TableRow>
-                  <TableRow>
-                    <TableCell>
-                      <div className="font-medium">Emma Brown</div>
-                      <div className="hidden text-sm text-muted-foreground md:inline">
-                        emma@example.com
-                      </div>
-                    </TableCell>
-                    <TableCell className="hidden xl:table-column">
-                      Sale
-                    </TableCell>
-                    <TableCell className="hidden xl:table-column">
-                      <Badge className="text-xs" variant="outline">
-                        Approved
-                      </Badge>
-                    </TableCell>
-                    <TableCell className="hidden md:table-cell lg:hidden xl:table-column">
-                      2023-06-26
-                    </TableCell>
-                    <TableCell className="text-right">$450.00</TableCell>
-                  </TableRow>
-                  <TableRow>
-                    <TableCell>
-                      <div className="font-medium">Liam Johnson</div>
-                      <div className="hidden text-sm text-muted-foreground md:inline">
-                        liam@example.com
-                      </div>
-                    </TableCell>
-                    <TableCell className="hidden xl:table-column">
-                      Sale
-                    </TableCell>
-                    <TableCell className="hidden xl:table-column">
-                      <Badge className="text-xs" variant="outline">
-                        Approved
-                      </Badge>
-                    </TableCell>
-                    <TableCell className="hidden md:table-cell lg:hidden xl:table-column">
-                      2023-06-27
-                    </TableCell>
-                    <TableCell className="text-right">$550.00</TableCell>
-                  </TableRow>
+                  {recentPurchasedTest?.map((purchase, index) => (
+                    <TableRow>
+                      <TableCell>
+                        <div className="font-medium">{purchase.test.title}</div>
+                        <div className="hidden text-sm text-muted-foreground md:inline">
+                          {purchase?.user?.email}
+                        </div>
+                      </TableCell>
+                      <TableCell>
+                        {purchase?.createdAt.toDateString()}
+                      </TableCell>
+                      <TableCell className="text-right">${purchase.amount}</TableCell>
+                    </TableRow>
+                  ))}
+
                 </TableBody>
               </Table>
             </CardContent>
           </Card>
           <Card>
             <CardHeader>
-              <CardTitle>Recent Purchased Test</CardTitle>
+              <CardTitle>Recent  {role === "student" ? "Purchased Test" : role === "instructor" ? "Added Test" : "Users"}</CardTitle>
               <Button asChild size="sm" className="ml-auto gap-1">
-                <Link href="/dashboard/test-environment">
+                <Link href={role === "student" ? "/dashboard/test-environment" : role === "instructor" ? "Added Test" : "/dashboard/instructors"}>
                   View All
                   <ArrowUpRight className="h-4 w-4" />
                 </Link>
               </Button>
             </CardHeader>
             <CardContent className="grid gap-8">
-              {recentPurchasedTestbyStudentData?.map((purchase, index) => (
+              {role === "student" && recentPurchasedTestbyStudentData?.map((purchase, index) => (
                 <div key={purchase.id} className="flex items-center gap-4">
                   <Avatar className="hidden h-9 w-9 sm:flex">
                     <AvatarImage src={`/avatars/0${index + 1}.png`} alt="Avatar" />
@@ -336,7 +267,24 @@ export default async function DashboardPage() {
                       {purchase.test.description}
                     </p>
                   </div>
-                  <div className="ml-auto font-medium">+${purchase.test.price.toFixed(2)}</div>
+                  <div className="ml-auto font-medium">${purchase.test.price}</div>
+                </div>
+              ))}
+              {role === "admin" && recentappUsers?.map((recentUsers, index) => (
+                <div key={recentUsers.id} className="flex items-center gap-4">
+                  <Avatar className="hidden h-9 w-9 sm:flex">
+                    <AvatarImage src={recentUsers?.profileImage || ""} alt="Avatar" />
+                    <AvatarFallback>{recentUsers?.name?.slice(0, 2).toUpperCase()}</AvatarFallback>
+                  </Avatar>
+                  <div className="grid gap-1">
+                    <p className="text-sm font-medium leading-none">
+                      {recentUsers?.name}
+                    </p>
+                    <p className="text-sm text-muted-foreground" style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                      {recentUsers.email}
+                    </p>
+                  </div>
+                  <div className="ml-auto font-medium">{recentUsers.role}</div>
                 </div>
               ))}
             </CardContent>

@@ -101,7 +101,7 @@ export default function TestCard({
       startDate.getDate()
     );
 
-    return normalizedCurrentDate.getTime() === normalizedStartDate.getTime();
+    return normalizedCurrentDate >= normalizedStartDate;
   }
 
   const start = canStartTest ? StartTest(startAt) : false;

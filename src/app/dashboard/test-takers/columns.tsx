@@ -1,7 +1,7 @@
 "use client";
 
 import { ColumnDef } from "@tanstack/react-table";
-import { ArrowUpDown, MoreHorizontal } from "lucide-react";
+import { ArrowUpDown, Delete, DeleteIcon, MoreHorizontal } from "lucide-react";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
@@ -15,6 +15,20 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import Link from "next/link";
+import { deleteUser } from "@/actions/user";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog"
+import { useState } from "react";
+import { ReloadIcon } from "@radix-ui/react-icons";
 
 // This type is used to define the shape of our data.
 // You can use a Zod schema here if you want.
@@ -92,6 +106,7 @@ export const columns: ColumnDef<TestTaker>[] = [
     header: "Location",
   },
 
+
   // {
   //   accessorKey: "amount",
   //   header: () => <div className="text-right">Amount</div>,
@@ -106,37 +121,56 @@ export const columns: ColumnDef<TestTaker>[] = [
   //   },
   // },
 
-  // {
-  //   id: "actions",
-  //   cell: ({ row }) => {
-  //     const payment = row.original;
-  //     return (
-  //       <DropdownMenu>
-  //         <DropdownMenuTrigger asChild>
-  //           <Button variant="ghost" className="h-8 w-8 p-0">
-  //             <span className="sr-only">Open menu</span>
-  //             <MoreHorizontal className="h-4 w-4" />
-  //           </Button>
-  //         </DropdownMenuTrigger>
-  //         <DropdownMenuContent align="end">
-  //           <DropdownMenuLabel>Actions</DropdownMenuLabel>
-  //           <DropdownMenuItem
-  //             onClick={() => navigator.clipboard.writeText(payment.id)}
-  //           >
-  //             Copy payment ID
-  //           </DropdownMenuItem>
-  //           <DropdownMenuSeparator />
-  //           <DropdownMenuItem
-  //             onClick={() =>
-  //               navigator.clipboard.writeText(payment?.status as string)
-  //             }
-  //           >
-  //             View customer
-  //           </DropdownMenuItem>
-  //           <DropdownMenuItem>View payment details</DropdownMenuItem>
-  //         </DropdownMenuContent>
-  //       </DropdownMenu>
-  //     );
-  //   },
-  // },
+  {
+    id: "actions",
+    cell: ({ row }) => {
+      const data = row.original;
+      const [opens, setOpens] = useState(false);
+      const [isLoading, setIsLoading] = useState(false);
+      return (
+        <>
+          {/* <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button variant="ghost" className="h-8 w-8 p-0">
+              <span className="sr-only">Open menu</span>
+              <MoreHorizontal className="h-4 w-4" />
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end">
+            <DropdownMenuLabel>Actions</DropdownMenuLabel>
+            <DropdownMenuItem
+            >
+            </DropdownMenuItem>
+          
+          </DropdownMenuContent>
+        </DropdownMenu> */}
+          <AlertDialog open={opens} onOpenChange={setOpens}>
+          {!isLoading ?    <div style={{
+              cursor
+                : "pointer"
+            }} onClick={() => { setOpens(true) }}><DeleteIcon className="text-primary" /> 
+              </div>:<ReloadIcon className="mr-2 h-4 w-4 animate-spin" /> }
+
+            <AlertDialogContent>
+              <AlertDialogHeader>
+                <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+                <AlertDialogDescription>
+                  This action cannot be undone. This will permanently delete your
+                  account and remove your data from our servers.
+                </AlertDialogDescription>
+              </AlertDialogHeader>
+              <AlertDialogFooter>
+                <AlertDialogCancel>Cancel</AlertDialogCancel>
+                <AlertDialogAction onClick={async () => {
+                  setIsLoading(true);
+                  await deleteUser(data.id as string);
+                  setIsLoading(false);
+                }}>Continue</AlertDialogAction>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialog>
+        </>
+      );
+    },
+  },
 ];

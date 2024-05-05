@@ -259,8 +259,10 @@ const Sidebar =  ({ role, userId }: { role: string; userId: string }) => {
           <span className="sr-only">Acme Inc</span>
         </Link>
         </div>
-
-        {filteredItems.map((item, index) => (
+ 
+       <div className="flex-1 flex gap-4 w-[400px]">
+       {filteredItems.map((item, index) => (
+          
           <Link
             href={item.href}
             key={index}
@@ -273,6 +275,7 @@ const Sidebar =  ({ role, userId }: { role: string; userId: string }) => {
             {item.title}
           </Link>
         ))}
+        </div>
       </nav>
       <Sheet>
         <SheetTrigger asChild>

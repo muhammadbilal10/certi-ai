@@ -348,4 +348,28 @@ export async function getAllPublishedTests() {
   }
 }
 
+//recent purcahed test
+export async function getRecentPurchasedTests() {
+  try {
+    const payments = await db.payment.findMany({
+      where: {
+        status: "completed",
+      },
+      orderBy: {
+        createdAt: "desc",
+      },
+      take: 5,
+      include: {
+        test: true,
+        user: true,
+        
+      },
+    });
+
+    return payments;
+  } catch (error) {
+    console.error(error);
+  }
+}
+
 

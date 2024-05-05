@@ -4,7 +4,7 @@ export interface Question {
   options: string[];
   answer: number;
   testId: number;
-  // Assuming you don't need a direct reference to the Test object from a Question in your component
+  
 }
 
 export interface Payment {
@@ -12,9 +12,13 @@ export interface Payment {
   userId: string;
   testId: number;
   amount: number;
-  status: "pending" | "completed" | "failed"; // Use a union type for known values
+  status: "pending" | "completed" | "failed"; 
   createdAt: Date;
-  // Here as well, assuming direct references to User and Test objects are not needed in your component
+  // userName: string; 
+  instructorName:string;
+  testName: string;
+
+
 }
 
 export interface Test {

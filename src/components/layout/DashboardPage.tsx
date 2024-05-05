@@ -108,13 +108,13 @@ export default async function DashboardPage() {
       {
         text: "Total Spent",
         amount: "$" + studentSpent,
-        percentage: "from last month",
+        percentage: "",
         icon: <DollarSign className="h-4 w-4 text-muted-foreground" />,
       },
       {
         text: "Total Tests",
         amount: totaltest?.length,
-        percentage: "from last month",
+        percentage: "",
         icon: <File className="h-4 w-4 text-muted-foreground" />,
       },
       {
@@ -129,47 +129,47 @@ export default async function DashboardPage() {
       {
         text: "Total Earnings",
         amount: "$" + teacherEarning,
-        percentage: "from last month",
+        percentage: "",
         icon: <DollarSign className="h-4 w-4 text-muted-foreground" />,
       },
       {
         text: "Total Tests",
         amount: totalTestByInstructor?.length,
-        percentage: "from last month",
+        percentage: "",
         icon: <File className="h-4 w-4 text-muted-foreground" />,
       },
 
       {
         text: "Active Test",
         amount: "+" + totalTestByInstructor?.length,
-        percentage: "since last hour",
+        percentage: "",
         icon: <Activity className="h-4 w-4 text-muted-foreground" />,
       },
     ];
   } else {
     cardItem = [
-      {
-        text: "Total Revenue",
-        amount: "$" + totalPayments,
-        percentage: " from last month",
-        icon: <DollarSign className="h-4 w-4 text-muted-foreground" />,
-      },
+      // {
+      //   text: "Total Revenue",
+      //   amount: "$" + totalPayments,
+      //   percentage: "",
+      //   icon: <DollarSign className="h-4 w-4 text-muted-foreground" />,
+      // },
       {
         text: "Total Tests",
         amount: totaltest?.length,
-        percentage: "from last month",
+        percentage: "",
         icon: <File className="h-4 w-4 text-muted-foreground" />,
       },
       {
         text: "Total Instructor",
         amount: totalInstructor,
-        percentage: "since last hour",
+        percentage: "",
         icon: < User2 className="h-4 w-4 text-muted-foreground" />,
       },
       {
         text: "Total Test Takers",
         amount: totalTestByTestTaker?.length,
-        percentage: "since last hour",
+        percentage: "",
         icon: <Users className="h-4 w-4 text-muted-foreground" />,
       }
     ];
