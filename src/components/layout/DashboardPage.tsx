@@ -45,7 +45,7 @@ import {
 } from "@/components/ui/table";
 import DashboardStatCard from "../common/DashboardStatCard";
 import { text } from "stream/consumers";
-import { getAllTests, getPublishedTests, getSpecificTest, getTestsByUserId, getTotalEarningsByInstructor, getTotalSpentByStudent, getTotalTestsPurchasedByStudent, getRecentlyPurchasedTestsByStudent } from "@/actions/test";
+import { getAllTests, getPublishedTests, getSpecificTest, getTestsByUserId, getTotalEarningsByInstructor, getTotalSpentByStudent, getTotalTestsPurchasedByStudent, getRecentlyPurchasedTestsByStudent, countPublishedTests } from "@/actions/test";
 import { getRole } from "@/actions/user";
 import { getLastFivePaymentsByUserId, getTotalPayments } from "@/actions/payment";
 import { getAllInstructors } from "@/actions/instructor";
@@ -66,16 +66,17 @@ export default async function DashboardPage() {
   const totalTestByTestTaker = await getPublishedTests(user?.id as string);
   const totalTestPurchasedByStudent = await getTotalTestsPurchasedByStudent(user?.id as string);
   const totaltest = await getAllTests();
-  console.log("totalTestByInstructor", totalTestByInstructor);
-  console.log("totalTestByTestTaker", totalTestByTestTaker);
+  const totalPublishedTestByInstructor = await countPublishedTests(user?.id as string);
+  // console.log("totalTestByInstructor", totalTestByInstructor);
+  // console.log("totalTestByTestTaker", totalTestByTestTaker);
   const totalInstructor = await getAllInstructors().then((data) => data?.length);
-  console.log("totalInstructor", totalInstructor);
-  console.log("teacherEarning", teacherEarning);
-  console.log("studentEarning", studentSpent);
-  console.log("lastFivePayments", lastFivePayments);
-  console.log("totalPayments", totalPayments);
+  // console.log("totalInstructor", totalInstructor);
+  // console.log("teacherEarning", teacherEarning);
+  // console.log("studentEarning", studentSpent);
+  // console.log("lastFivePayments", lastFivePayments);
+  // console.log("totalPayments", totalPayments);
   const recentPurchasedTestbyStudentData = await getRecentlyPurchasedTestsByStudent(user?.id as string);
-  console.log("recentPurchasedTestbyStudentData", recentPurchasedTestbyStudentData);
+  // console.log("recentPurchasedTestbyStudentData", recentPurchasedTestbyStudentData);
   // let cardItem = [
   //   {
   //     text: "Total Revenue",
@@ -141,7 +142,7 @@ export default async function DashboardPage() {
 
       {
         text: "Active Test",
-        amount: "+" + totalTestByInstructor?.length,
+        amount: "" + totalPublishedTestByInstructor,
         percentage: "",
         icon: <Activity className="h-4 w-4 text-muted-foreground" />,
       },

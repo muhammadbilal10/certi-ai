@@ -31,12 +31,22 @@ export default async function CreateTestPage() {
       <div className="flex justify-between pr-4">
         <h1 className="text-2xl font-semibold mb-10">Test List</h1>
         {role === "instructor" && (
-          <Button asChild>
+          
+          <div className="space-x-2">
+            <Button asChild >
+            <Link href="/dashboard/chat">
+              <Plus size={24} />
+              Create AI Test
+            </Link>
+          </Button>
+            <Button asChild variant="secondary">
             <Link href="/dashboard/test/create-test">
               <Plus size={24} />
               Create Test
             </Link>
           </Button>
+          </div>
+          
         )}
       </div>
       <div className="grid xl:grid-cols-3 lg:grid-cols-2 grid-cols-1 gap-4">

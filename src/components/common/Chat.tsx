@@ -13,6 +13,7 @@ import { ToastAction } from "../ui/toast";
 import { useToast } from "../ui/use-toast";
 import { useFormState, useFormStatus } from "react-dom";
 import { createAiTest } from "@/actions/test";
+import { useUser } from "@clerk/nextjs";
 // import { useClerk, useUser } from "@clerk/nextjs";
 // import { toast } from "sonner";
 // import { AddFreeCredits } from "@/lib/actions";
@@ -47,6 +48,8 @@ export default function Chat() {
 
   const { toast } = useToast();
   const [state, formAction] = useFormState(createAiTest, null);
+  const { user,  } = useUser();
+
 
   const ref = useRef<HTMLDivElement>(null);
   const { messages, input, handleInputChange, handleSubmit, isLoading, error } =
@@ -129,11 +132,17 @@ export default function Chat() {
   // }
 
   return (
-    <section className="pt-0 text-zinc-700">
-      <div className="container max-w-3xl">
+    <section className="pt-0 text-zinc-700 h-[500px] ">
+      <div className="max-w-4xl mx-auto">
         {/* Credits section */}
-        <div className="mx-auto flex max-w-lg items-center justify-between px-1">
-          <h1 className="font-serif text-2xl font-medium">AI Chatbot</h1>
+        <div className="mx-auto flex max-w-2xl items-center justify-between px-1">
+         {
+          messages.length < 2 && <div className="space-y-4 absolute top-[20%]">
+          <h1 className="font-serif text-2xl font-medium">Certi-AI Chatbot</h1>
+           <h1 className="font-serif text-3xl md:text-5xl font-semibold text-transparent bg-clip-text bg-gradient-to-r from-primary via-green-500 to-indigo-400">Hello, {user?.fullName}</h1>
+          <p className="font-serif text-3xl font-semibold text-gray-400">How can I help you today?</p>
+          </div>
+         }
 
           {/* <div>
             {isSignedIn && newUser && (
@@ -167,9 +176,9 @@ export default function Chat() {
         </div>
 
         {/* Chat area */}
-        <div className="mx-auto mt-3 w-full max-w-[1400px]">
+        <div className="mx-auto  mt-3 w-full">
           <ScrollArea
-            className="mb-2 h-[500px]  rounded-md border p-4"
+            className="mb-2 h-[500px] p-4 border-b-2"
             // ref={ref}
           >
             {messages.map((m) => (
@@ -221,13 +230,13 @@ export default function Chat() {
             ))}
           </ScrollArea>
 
-          <form onSubmit={onSubmit} className="relative">
+          <form onSubmit={onSubmit} className="relative w-full">
             <Input
               name="message"
               value={input}
               onChange={handleInputChange}
-              placeholder={"Ask me anything..."}
-              className="pr-12 placeholder:italic placeholder:text-zinc-600/75 focus-visible:ring-zinc-500"
+              placeholder={"Type your message here..."}
+              className="pr-12 placeholder:italic placeholder:text-zinc-600/75 focus-visible:ring-zinc-500 border-2"
             />
             <Button
               size="icon"
@@ -236,7 +245,7 @@ export default function Chat() {
               disabled={isLoading}
               className="absolute right-1 top-1 h-8 w-10"
             >
-              <SendHorizontalIcon className="h-5 w-5 text-emerald-500" />
+              <SendHorizontalIcon className="h-5 w-5 text-primary" />
             </Button>
           </form>
         </div>

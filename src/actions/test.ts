@@ -43,7 +43,7 @@ export async function createAiTest(prevState: any, formData: FormData) {
     const systemMessage =
       "You are an educational assistant skilled formatting various types of educational tests. Convert test descriptions into a JSON structured format . Each multiple-choice question should include 'type': 'MCQS', 'question': the question text, and 'options': a list of choices. Each descriptive question should include 'type': 'descriptive', 'question': the question text.";
 
-    const prompt = `Please provide details for the following test in a structured format, including title, description, time duration (in minutes as a numeric value), price (as a numeric value), and an array of questions with their respective options and category. If any field is missing, please add a default value:\n\n${test}`;
+    const prompt = `Please provide details for the following test in a structured format, including title, description, duration (if not specified then set default value 30 in minutes as a numeric value), price (as a numeric value), and questions (an array of questions with their respective options and type). If any field is missing, please add a default value:\n\n${test}`;
 
     const response = await openai.chat.completions.create({
       model: "gpt-3.5-turbo-1106",
@@ -442,4 +442,16 @@ export async function getRecentPurchasedTests() {
   } catch (error) {
     console.error(error);
   }
+}
+
+export async function countPublishedTests(userId: string) {
+  const totalPublishedTests = await db.test.count({
+    where: {
+      userId: userId,
+      published: true,
+    },
+  });
+
+  console.log(`\n\n instructor count : ${totalPublishedTests}`);
+  return totalPublishedTests;
 }

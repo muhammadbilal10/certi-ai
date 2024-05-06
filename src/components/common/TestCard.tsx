@@ -109,8 +109,8 @@ export default function TestCard({
   return (
     <Card>
       <CardHeader>
-        <div className="flex justify-between">
-          <CardTitle className="line-clamp-2 mr-1">{title}</CardTitle>
+        <div className="flex justify-between items-center">
+          <CardTitle className="line-clamp-1 leading-1 mr-1">{title}</CardTitle>
           {role === "instructor" && (
             <form action={formAction}>
               <input type="hidden" name="id" value={id} />

@@ -44,7 +44,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { text } from "stream/consumers";
-import { getAllTests, getPublishedTests, getSpecificTest, getTestsByUserId, getTotalEarningsByInstructor, getTotalSpentByStudent, getTotalTestsPurchasedByStudent, getRecentlyPurchasedTestsByStudent, getRecentPurchasedTests } from "@/actions/test";
+import { getAllTests, getPublishedTests, getSpecificTest, getTestsByUserId, getTotalEarningsByInstructor, getTotalSpentByStudent, getTotalTestsPurchasedByStudent, getRecentlyPurchasedTestsByStudent, getRecentPurchasedTests, countPublishedTests } from "@/actions/test";
 import { getRecentUsers, getRole, getTotalStudents } from "@/actions/user";
 import { getLastFivePaymentsByUserId, getTotalPayments } from "@/actions/payment";
 import { getAllInstructors } from "@/actions/instructor";
@@ -90,6 +90,8 @@ export default async function DashboardPage() {
   console.log("recentappUsers", recentappUsers);
   const recentPurchasedTest = await getRecentPurchasedTests();
   console.log("recentPurchasedTest", recentPurchasedTest);
+  const totalPublishedTestbyInstructor = await countPublishedTests(user?.id as string);
+  
   let cardItem = [] as CardItem[];
   if (role === 'student') {
     cardItem = [
@@ -129,7 +131,7 @@ export default async function DashboardPage() {
 
       {
         text: "Active Test",
-        amount: "" + totalTestByInstructor?.length,
+        amount: "" + totalPublishedTestbyInstructor,
         percentage: "",
         icon: <Activity className="h-4 w-4 text-muted-foreground" />,
       },
