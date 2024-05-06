@@ -4,11 +4,17 @@ import { db } from "@/lib/db";
 import { auth } from "@clerk/nextjs";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
+import OpenAI from "openai";
+
+const openai = new OpenAI({
+  apiKey: process.env.OPENAI_API_KEY,
+});
 
 type Question = {
   id: number;
   question: string;
   options: string[];
+  type: string;
   answer: number;
   testId: number;
 };
@@ -25,6 +31,63 @@ type TestDetails = {
   questions: Question[];
 };
 
+export async function createAiTest(prevState: any, formData: FormData) {
+  try {
+    if (!process.env.OPENAI_API_KEY) {
+      return "missing api key";
+    }
+
+    const test = formData.get("test");
+    console.log(`test ${test}`);
+
+    const systemMessage =
+      "You are an educational assistant skilled formatting various types of educational tests. Convert test descriptions into a JSON structured format . Each multiple-choice question should include 'type': 'MCQS', 'question': the question text, and 'options': a list of choices. Each descriptive question should include 'type': 'descriptive', 'question': the question text.";
+
+    const prompt = `Please provide details for the following test in a structured format, including title, description, time duration (in minutes as a numeric value), price (as a numeric value), and an array of questions with their respective options and category. If any field is missing, please add a default value:\n\n${test}`;
+
+    const response = await openai.chat.completions.create({
+      model: "gpt-3.5-turbo-1106",
+      response_format: { type: "json_object" },
+      messages: [
+        {
+          role: "system",
+          content: systemMessage,
+        },
+        {
+          role: "user",
+          content: prompt,
+        },
+      ],
+    });
+
+    const result = response.choices[0].message.content;
+    const finalresult = JSON.parse(result || "{}");
+    const { userId } = auth();
+
+    const res = await db.test.create({
+      data: {
+        title: finalresult.title as string,
+         startAt: new Date(),
+          userId: userId as string,
+        description: finalresult.description as string,
+        duration: finalresult.duration as number,
+        price: finalresult.price as number,
+        questions: {
+          create: finalresult.questions.map((ques: Question) => ({
+            question: ques.question as string,
+            type: ques.type,
+            options: ques.options as string[],
+          })),
+        },
+      },
+    });
+    console.log(`result ${JSON.stringify(finalresult)}`);
+  } catch (error) {
+    console.log(error);
+    return "Failed to add into";
+  }
+  redirect("/dashboard/test");
+}
 export async function createTest({
   testDetails,
 }: {
@@ -75,6 +138,7 @@ export async function updateTest({
         data: {
           title: testDetails.title,
           description: testDetails.description,
+          price: testDetails?.price,
           duration: testDetails.duration,
           startAt: testDetails.startAt,
           userId: userId as string,
@@ -169,7 +233,6 @@ export async function getTestsByUserId(userId: string) {
   return userWithTests ? userWithTests.test : [];
 }
 
-
 export async function getPublishedTests(userId: string) {
   try {
     const tests = await db.test.findMany({
@@ -207,15 +270,15 @@ export async function getPublishedTests(userId: string) {
 }
 
 export async function publishTest(prevState: any, formData: FormData) {
-  const ispublish = formData.get('publish') as string;
-  const testId = Number(formData.get('id'));
+  const ispublish = formData.get("publish") as string;
+  const testId = Number(formData.get("id"));
   console.log(testId);
-  console.log(ispublish)
-  console.log('publihed')
+  console.log(ispublish);
+  console.log("publihed");
   try {
     const updatedTest = await db.test.update({
       where: { id: testId },
-      data: { published: ispublish === 'true'},
+      data: { published: ispublish === "true" },
     });
     console.log(`Test ${testId} published successfully`);
   } catch (error) {
@@ -223,8 +286,6 @@ export async function publishTest(prevState: any, formData: FormData) {
   }
   revalidatePath("/dashboard/test");
 }
-
-
 
 //payments total countss
 
@@ -239,7 +300,10 @@ export async function getTotalEarningsByInstructor(userId: string) {
       },
     });
 
-    const totalEarnings = payments.reduce((total, payment) => total + payment.amount, 0);
+    const totalEarnings = payments.reduce(
+      (total, payment) => total + payment.amount,
+      0
+    );
     return totalEarnings;
   } catch (error) {
     console.error(error);
@@ -257,7 +321,10 @@ export async function getTotalSpentByStudent(userId: string) {
     });
     console.log(payments);
 
-    const totalSpent = payments.reduce((total, payment) => total + payment.amount, 0);
+    const totalSpent = payments.reduce(
+      (total, payment) => total + payment.amount,
+      0
+    );
     return totalSpent;
   } catch (error) {
     console.error(error);
@@ -279,7 +346,6 @@ export async function getTotalTestsPurchasedByStudent(userId: string) {
     console.error(error);
   }
 }
-
 
 //recently purchased test by student
 export async function getRecentlyPurchasedTestsByStudent(userId: string) {
@@ -304,7 +370,6 @@ export async function getRecentlyPurchasedTestsByStudent(userId: string) {
   }
 }
 
-
 export async function storeTestResult(result: {
   userId: string;
   testId: number;
@@ -314,7 +379,15 @@ export async function storeTestResult(result: {
   wrongAnswers: number;
   overallResult: number;
 }) {
-  const { userId, testId, timeTaken, questionsAttempted, correctAnswers, wrongAnswers, overallResult } = result;
+  const {
+    userId,
+    testId,
+    timeTaken,
+    questionsAttempted,
+    correctAnswers,
+    wrongAnswers,
+    overallResult,
+  } = result;
 
   const testResult = await db.testResult.create({
     data: {
@@ -338,9 +411,9 @@ export async function getAllPublishedTests() {
         published: true,
       },
       include: {
-        questions: true,  // Include questions if needed
-        user: true         // Include user details if needed
-      }
+        questions: true, // Include questions if needed
+        user: true, // Include user details if needed
+      },
     });
     return tests;
   } catch (error) {
@@ -362,7 +435,6 @@ export async function getRecentPurchasedTests() {
       include: {
         test: true,
         user: true,
-        
       },
     });
 
@@ -371,5 +443,3 @@ export async function getRecentPurchasedTests() {
     console.error(error);
   }
 }
-
-

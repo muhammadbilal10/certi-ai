@@ -29,12 +29,12 @@ model User {
 }
 model Test {
   id          Int        @id @default(autoincrement())
-  title        String
+  title       String
   description String?
   duration    Int
   price       Int
   userId     String
-  startAt     DateTime
+  startAt    DateTime
   published  Boolean    @default(false)
 
   user User @relation(fields: [userId], references: [id])
@@ -47,10 +47,12 @@ model Question {
   id      Int    @id @default(autoincrement())
   question String
   options  String[]
-  answer   Int
+  type     String?
+  answer   Int?
   testId   Int
   test     Test   @relation(fields: [testId], references: [id])
 }
+
 
 
 // 

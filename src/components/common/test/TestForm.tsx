@@ -47,10 +47,7 @@ const formSchema = z.object({
   description: z.string().min(10, {
     message: "Description must be at least 10 characters.",
   })
-  .refine(value => /^[A-Za-z0-9\s]+$/.test(value), {
-    message: "Invalid description. Only alphabets, numbers, and spaces are allowed",
-    params: {},
-  }),
+  ,
   duration: z.coerce
     .number({
       required_error: "Duration is required",
