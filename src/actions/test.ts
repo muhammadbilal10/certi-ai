@@ -67,8 +67,8 @@ export async function createAiTest(prevState: any, formData: FormData) {
     const res = await db.test.create({
       data: {
         title: finalresult.title as string,
-         startAt: new Date(),
-          userId: userId as string,
+        startAt: new Date(),
+        userId: userId as string,
         description: finalresult.description as string,
         duration: finalresult.duration as number,
         price: finalresult.price as number,
@@ -454,4 +454,41 @@ export async function countPublishedTests(userId: string) {
 
   console.log(`\n\n instructor count : ${totalPublishedTests}`);
   return totalPublishedTests;
+}
+
+export async function getPurchasedTests(instructorId: string) {
+  const payments = await db.payment.findMany({
+    where: {
+      status: "completed",
+      test: {
+        userId: instructorId,
+      }
+    },
+    include: {
+      user: true,
+      test: true,
+    },
+    orderBy: {
+      createdAt: "desc",
+    },
+    take: 5,
+  });
+
+  console.log(`f: ${JSON.stringify(payments)}`);
+
+  return payments;
+}
+
+export async function getRecentAddedTestsbyInstructor(userId: string) {
+  const tests = await db.test.findMany({
+    where: {
+      userId: userId
+    },
+    orderBy: {
+      id: 'desc'
+    },
+    take: 5
+  });
+
+  return tests;
 }

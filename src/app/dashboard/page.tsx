@@ -44,9 +44,25 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { text } from "stream/consumers";
-import { getAllTests, getPublishedTests, getSpecificTest, getTestsByUserId, getTotalEarningsByInstructor, getTotalSpentByStudent, getTotalTestsPurchasedByStudent, getRecentlyPurchasedTestsByStudent, getRecentPurchasedTests, countPublishedTests } from "@/actions/test";
+import {
+  getAllTests,
+  getPublishedTests,
+  getSpecificTest,
+  getTestsByUserId,
+  getTotalEarningsByInstructor,
+  getTotalSpentByStudent,
+  getTotalTestsPurchasedByStudent,
+  getRecentlyPurchasedTestsByStudent,
+  getRecentPurchasedTests,
+  countPublishedTests,
+  getPurchasedTests,
+  getRecentAddedTestsbyInstructor,
+} from "@/actions/test";
 import { getRecentUsers, getRole, getTotalStudents } from "@/actions/user";
-import { getLastFivePaymentsByUserId, getTotalPayments } from "@/actions/payment";
+import {
+  getLastFivePaymentsByUserId,
+  getTotalPayments,
+} from "@/actions/payment";
 import { getAllInstructors } from "@/actions/instructor";
 import DashboardStatCard from "@/components/common/DashboardStatCard";
 import { ReactElement } from "react";
@@ -56,8 +72,7 @@ type CardItem = {
   amount: string | number;
   percentage: string;
   icon: ReactElement;
-}
-
+};
 
 export default async function DashboardPage() {
   const user = await currentUser();
@@ -67,33 +82,50 @@ export default async function DashboardPage() {
   const role = await getRole();
   const teacherEarning = await getTotalEarningsByInstructor(user?.id as string);
   const studentSpent = await getTotalSpentByStudent(user?.id as string);
-  const lastFivePayments = await getLastFivePaymentsByUserId(user?.id as string);
+  const lastFivePayments = await getLastFivePaymentsByUserId(
+    user?.id as string
+  );
   const totalPayments = await getTotalPayments();
   const totalTestByInstructor = await getTestsByUserId(user?.id as string);
   const totalTestByTestTaker = await getPublishedTests(user?.id as string);
-  const totalTestPurchasedByStudent = await getTotalTestsPurchasedByStudent(user?.id as string);
+  const totalTestPurchasedByStudent = await getTotalTestsPurchasedByStudent(
+    user?.id as string
+  );
+
+  const recentAddedTestsbyInstructor = await getRecentAddedTestsbyInstructor(user?.id as string);
   const totaltest = await getAllTests();
 
   console.log("totalTestByInstructor", totalTestByInstructor);
   console.log("totalTestByTestTaker", totalTestByTestTaker);
-  const totalInstructor = await getAllInstructors().then((data) => data?.length);
+  const totalInstructor = await getAllInstructors().then(
+    (data) => data?.length
+  );
   const totalStudent = await getTotalStudents();
-  console.log("totalInstructor", totalInstructor);
-  console.log("teacherEarning", teacherEarning);
-  console.log("studentEarning", studentSpent);
-  console.log("lastFivePayments", lastFivePayments);
-  console.log("totalPayments", totalPayments);
-  const recentPurchasedTestbyStudentData = await getRecentlyPurchasedTestsByStudent(user?.id as string);
-  console.log("recentPurchasedTestbyStudentData", recentPurchasedTestbyStudentData);
+  const recentPurchasedTestbyStudent = await getPurchasedTests(
+    user?.id as string
+  );
+  // console.log("totalInstructor", totalInstructor);
+  // console.log("teacherEarning", teacherEarning);
+  // console.log("studentEarning", studentSpent);
+  // console.log("lastFivePayments", lastFivePayments);
+  // console.log("totalPayments", totalPayments);
+  const recentPurchasedTestbyStudentData =
+    await getRecentlyPurchasedTestsByStudent(user?.id as string);
+  console.log(
+    "recentPurchasedTestbyStudentData",
+    recentPurchasedTestbyStudentData
+  );
   //admin page dashboard details:
   const recentappUsers = await getRecentUsers();
   console.log("recentappUsers", recentappUsers);
   const recentPurchasedTest = await getRecentPurchasedTests();
   console.log("recentPurchasedTest", recentPurchasedTest);
-  const totalPublishedTestbyInstructor = await countPublishedTests(user?.id as string);
-  
+  const totalPublishedTestbyInstructor = await countPublishedTests(
+    user?.id as string
+  );
+
   let cardItem = [] as CardItem[];
-  if (role === 'student') {
+  if (role === "student") {
     cardItem = [
       {
         text: "Total Spent",
@@ -114,7 +146,7 @@ export default async function DashboardPage() {
         icon: <File className="h-4 w-4 text-muted-foreground" />,
       },
     ];
-  } else if (role === 'instructor') {
+  } else if (role === "instructor") {
     cardItem = [
       {
         text: "Total Earnings",
@@ -138,12 +170,6 @@ export default async function DashboardPage() {
     ];
   } else {
     cardItem = [
-      // {
-      //   text: "Total Revenue",
-      //   amount: "$" + totalPayments,
-      //   percentage: " from last month",
-      //   icon: <DollarSign className="h-4 w-4 text-muted-foreground" />,
-      // },
       {
         text: "Total Tests",
         amount: totaltest?.length.toString() as string,
@@ -154,14 +180,14 @@ export default async function DashboardPage() {
         text: "Total Instructor",
         amount: totalInstructor?.toString() as string,
         percentage: "",
-        icon: < User2 className="h-4 w-4 text-muted-foreground" />,
+        icon: <User2 className="h-4 w-4 text-muted-foreground" />,
       },
       {
         text: "Total Test Takers",
         amount: totalStudent as number,
         percentage: "",
         icon: <Users className="h-4 w-4 text-muted-foreground" />,
-      }
+      },
     ];
   }
 
@@ -184,111 +210,292 @@ export default async function DashboardPage() {
         <div className="grid gap-4 md:gap-8 lg:grid-cols-2 xl:grid-cols-3">
           <Card className="xl:col-span-2">
             <CardHeader className="flex flex-row items-center">
-              {role === "admin" && <> <div className="grid gap-2">
-
-                <CardTitle>Recent Purchases</CardTitle>
-                <CardDescription>Overview of recently purchased tests.</CardDescription>
-              </div>
-
-                <Button asChild size="sm" className="ml-auto gap-1">
-                  <Link href="/dashboard/payments">
-                    View All
-                    <ArrowUpRight className="h-4 w-4" />
-                  </Link>
-                </Button>
-              </>
-              }
-              {role === "student" && <> <div className="grid gap-2">
-
-                <CardTitle>Recent Test Activities</CardTitle>
-                <CardDescription>Overview of recent activities related to tests.</CardDescription>
-              </div>
-
-                <Button asChild size="sm" className="ml-auto gap-1">
-                  <Link href="/dashboard/payments">
-                    View All
-                    <ArrowUpRight className="h-4 w-4" />
-                  </Link>
-                </Button>
-              </>
-              }
+              {role === "admin" && (
+                <>
+                  {" "}
+                  <div className="grid gap-2">
+                    <CardTitle>Recent Purchases</CardTitle>
+                    <CardDescription>
+                      Overview of recently purchased tests.
+                    </CardDescription>
+                  </div>
+                  <Button asChild size="sm" className="ml-auto gap-1">
+                    <Link href="/dashboard/payments">
+                      View All
+                      <ArrowUpRight className="h-4 w-4" />
+                    </Link>
+                  </Button>
+                </>
+              )}
+              {role === "student" && (
+                <>
+                  {" "}
+                  <div className="grid gap-2">
+                    <CardTitle>Recent Test Activities</CardTitle>
+                    <CardDescription>
+                      Overview of recent activities related to tests.
+                    </CardDescription>
+                  </div>
+                  <Button asChild size="sm" className="ml-auto gap-1">
+                    <Link href="/dashboard/payments">
+                      View All
+                      <ArrowUpRight className="h-4 w-4" />
+                    </Link>
+                  </Button>
+                </>
+              )}
+              {role === "instructor" && (
+                <>
+                  {" "}
+                  <div className="grid gap-2">
+                    <CardTitle>Recent Test Purchases</CardTitle>
+                    <CardDescription>
+                      Overview of the most recent tests purchased by the
+                      student.
+                    </CardDescription>
+                  </div>
+                  <Button asChild size="sm" className="ml-auto gap-1">
+                    <Link href="/dashboard/payments">
+                      View All
+                      <ArrowUpRight className="h-4 w-4" />
+                    </Link>
+                  </Button>
+                </>
+              )}
             </CardHeader>
             <CardContent>
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>Test</TableHead>
-                    <TableHead >
-                      Date
-                    </TableHead>
-                    <TableHead className="text-right">Amount</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {recentPurchasedTest?.map((purchase, index) => (
+              {role == "admin" && (
+                <Table>
+                  <TableHeader>
                     <TableRow>
-                      <TableCell>
-                        <div className="font-medium">{purchase.test.title}</div>
-                        <div className="hidden text-sm text-muted-foreground md:inline">
-                          {purchase?.user?.email}
-                        </div>
-                      </TableCell>
-                      <TableCell>
-                        {purchase?.createdAt.toDateString()}
-                      </TableCell>
-                      <TableCell className="text-right">${purchase.amount}</TableCell>
+                      <TableHead>Test</TableHead>
+                      <TableHead>Date</TableHead>
+                      <TableHead className="text-right">Amount</TableHead>
                     </TableRow>
-                  ))}
-
-                </TableBody>
-              </Table>
+                  </TableHeader>
+                  <TableBody>
+                    {recentPurchasedTest?.map((purchase, index) => (
+                      <TableRow>
+                        <TableCell>
+                          <div className="font-medium">
+                            {purchase.test.title}
+                          </div>
+                          <div className="hidden text-sm text-muted-foreground md:inline">
+                            {purchase?.user?.email}
+                          </div>
+                        </TableCell>
+                        <TableCell>
+                          {purchase?.createdAt.toDateString()}
+                        </TableCell>
+                        <TableCell className="text-right">
+                          ${purchase.amount}
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              )}
+              {role == "student" && (
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>Test</TableHead>
+                      <TableHead>Date</TableHead>
+                      <TableHead className="text-right">Score</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {recentPurchasedTest?.map((purchase, index) => (
+                      <TableRow>
+                        <TableCell>
+                          <div className="font-medium">
+                            {purchase.test.title}
+                          </div>
+                          <div className="hidden text-sm text-muted-foreground md:inline">
+                            {purchase?.user?.email}
+                          </div>
+                        </TableCell>
+                        <TableCell>
+                          {purchase?.createdAt.toDateString()}
+                        </TableCell>
+                        <TableCell className="text-right">
+                          ${purchase.amount}
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              )}
+              {role == "instructor" && (
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>Test Taker</TableHead>
+                      <TableHead>Test Name</TableHead>
+                      <TableHead>Purchase Date</TableHead>
+                      <TableHead className="text-right">Amount</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {recentPurchasedTestbyStudent?.map((purchase, index) => (
+                      <TableRow key={index + 1}>
+                        <TableCell className="flex items-center gap-4">
+                          <div className="">
+                            <Avatar className="hidden h-9 w-9 sm:flex">
+                              <AvatarImage
+                                src={`${purchase.user.profileImage}`}
+                                alt="Avatar"
+                              />
+                              <AvatarFallback>
+                                {purchase.test.title.slice(0, 2).toUpperCase()}
+                              </AvatarFallback>
+                            </Avatar>
+                          </div>
+                          <div>
+                            <div className="font-medium">
+                              {purchase.user?.name}
+                            </div>
+                            <div className="hidden text-sm text-muted-foreground md:inline">
+                              {purchase?.user?.email}
+                            </div>
+                          </div>
+                        </TableCell>
+                        <TableCell>{purchase?.test.title}</TableCell>
+                        <TableCell>
+                          {purchase?.createdAt.toDateString()}
+                        </TableCell>
+                        <TableCell className="text-right">
+                          ${purchase.amount}
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              )}
             </CardContent>
           </Card>
           <Card>
             <CardHeader>
-              <CardTitle>Recent  {role === "student" ? "Purchased Test" : role === "instructor" ? "Added Test" : "Users"}</CardTitle>
+              <CardTitle>
+                Recent{" "}
+                {role === "student"
+                  ? "Purchased Test"
+                  : role === "instructor"
+                  ? "Added Test"
+                  : "Users"}
+              </CardTitle>
               <Button asChild size="sm" className="ml-auto gap-1">
-                <Link href={role === "student" ? "/dashboard/test-environment" : role === "instructor" ? "Added Test" : "/dashboard/instructors"}>
+                <Link
+                  href={
+                    role === "student"
+                      ? "/dashboard/test-environment"
+                      : role === "instructor"
+                      ? "/dashboard/test"
+                      : "/dashboard/instructors"
+                  }
+                >
                   View All
                   <ArrowUpRight className="h-4 w-4" />
                 </Link>
               </Button>
             </CardHeader>
             <CardContent className="grid gap-8">
-              {role === "student" && recentPurchasedTestbyStudentData?.map((purchase, index) => (
-                <div key={purchase.id} className="flex items-center gap-4">
-                  <Avatar className="hidden h-9 w-9 sm:flex">
-                    <AvatarImage src={`/avatars/0${index + 1}.png`} alt="Avatar" />
-                    <AvatarFallback>{purchase.test.title.slice(0, 2).toUpperCase()}</AvatarFallback>
-                  </Avatar>
-                  <div className="grid gap-1">
-                    <p className="text-sm font-medium leading-none">
-                      {purchase.test.title}
-                    </p>
-                    <p className="text-sm text-muted-foreground" style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-                      {purchase.test.description}
-                    </p>
+              {role === "student" &&
+                recentPurchasedTestbyStudentData?.map((purchase, index) => (
+                  <div key={purchase.id} className="flex items-center gap-4">
+                    <Avatar className="hidden h-9 w-9 sm:flex">
+                      <AvatarImage
+                        src={`/avatars/0${index + 1}.png`}
+                        alt="Avatar"
+                      />
+                      <AvatarFallback>
+                        {purchase.test.title.slice(0, 2).toUpperCase()}
+                      </AvatarFallback>
+                    </Avatar>
+                    <div className="grid gap-1">
+                      <p className="text-sm font-medium leading-none">
+                        {purchase.test.title}
+                      </p>
+                      <p
+                        className="text-sm text-muted-foreground"
+                        style={{
+                          overflow: "hidden",
+                          textOverflow: "ellipsis",
+                          whiteSpace: "nowrap",
+                        }}
+                      >
+                        {purchase.test.description}
+                      </p>
+                    </div>
+                    <div className="ml-auto font-medium">
+                      ${purchase.test.price}
+                    </div>
                   </div>
-                  <div className="ml-auto font-medium">${purchase.test.price}</div>
-                </div>
-              ))}
-              {role === "admin" && recentappUsers?.map((recentUsers, index) => (
-                <div key={recentUsers.id} className="flex items-center gap-4">
-                  <Avatar className="hidden h-9 w-9 sm:flex">
-                    <AvatarImage src={recentUsers?.profileImage || ""} alt="Avatar" />
-                    <AvatarFallback>{recentUsers?.name?.slice(0, 2).toUpperCase()}</AvatarFallback>
-                  </Avatar>
-                  <div className="grid gap-1">
-                    <p className="text-sm font-medium leading-none">
-                      {recentUsers?.name}
-                    </p>
-                    <p className="text-sm text-muted-foreground" style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-                      {recentUsers.email}
-                    </p>
+                ))}
+              {role === "admin" &&
+                recentappUsers?.map((recentUsers, index) => (
+                  <div key={recentUsers.id} className="flex items-center gap-4">
+                    <Avatar className="hidden h-9 w-9 sm:flex">
+                      <AvatarImage
+                        src={recentUsers?.profileImage || ""}
+                        alt="Avatar"
+                      />
+                      <AvatarFallback>
+                        {recentUsers?.name?.slice(0, 2).toUpperCase()}
+                      </AvatarFallback>
+                    </Avatar>
+                    <div className="grid gap-1">
+                      <p className="text-sm font-medium leading-none">
+                        {recentUsers?.name}
+                      </p>
+                      <p
+                        className="text-sm text-muted-foreground"
+                        style={{
+                          overflow: "hidden",
+                          textOverflow: "ellipsis",
+                          whiteSpace: "nowrap",
+                        }}
+                      >
+                        {recentUsers.email}
+                      </p>
+                    </div>
+                    <div className="ml-auto font-medium">
+                      {recentUsers.role}
+                    </div>
                   </div>
-                  <div className="ml-auto font-medium">{recentUsers.role}</div>
-                </div>
-              ))}
+                ))}
+                {role === "instructor" &&
+                recentAddedTestsbyInstructor?.map((test, index) => (
+                  <div key={test.id} className="flex items-center gap-4">
+                    <Avatar className="hidden h-9 w-9 sm:flex">
+                      <AvatarImage
+                        src={""}
+                        alt="Avatar"
+                      />
+                      <AvatarFallback>
+                        {test?.title?.slice(0, 2).toUpperCase()}
+                      </AvatarFallback>
+                    </Avatar>
+                    <div className="grid gap-1">
+                      <p className="text-sm font-medium leading-none">
+                        {test?.title}
+                      </p>
+                      <p
+                        className="text-sm text-muted-foreground"
+                        style={{
+                          overflow: "hidden",
+                          textOverflow: "ellipsis",
+                          whiteSpace: "nowrap",
+                        }}
+                      >
+                        {test?.description}
+                      </p>
+                    </div>
+                    <div className="ml-auto font-medium">
+                      ${test.price}
+                    </div>
+                  </div>
+                ))}
             </CardContent>
           </Card>
           {/* <Card>
@@ -378,7 +585,6 @@ export default async function DashboardPage() {
     </div>
   );
 }
-
 
 // import StatCard from "@/components/common/StatCard";
 // import { FilePen, HandCoins, PersonStandingIcon } from "lucide-react";

@@ -101,7 +101,7 @@ export async function getRecentUsers() {
       orderBy: {
         joinedAt: "desc",
       },
-      take: 6,
+      take: 5,
     });
     return users;
   } catch (e) {
