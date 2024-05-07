@@ -59,7 +59,7 @@ export default function Chat() {
           id: Date.now().toString(),
           role: "system",
           content:
-            "Ditch the test writing grind! Let me, your AI Test Generator buddy, handle it.  Provide details about your test: title, description, duration (seconds), and an optional price. I'll use my AI magic to generate a well-structured, time-efficient test specification that saves you precious time!",
+            "Ditch the test writing grind! Let me, your AI Test Generator buddy, handle it.  Provide details about your test: title, description, duration,  price. I'll use my AI magic to generate a well-structured, time-efficient test specification that saves you precious time!",
         },
       ],
       onResponse: (response) => {
@@ -104,10 +104,22 @@ export default function Chat() {
       },
     });
 
-  useEffect(() => {
-    if (ref.current === null) return;
-    ref.current.scrollTo(0, ref.current.scrollHeight);
-  }, [messages]);
+  // useEffect(() => {
+  //   if (ref.current === null) return;
+  //   ref.current.scrollTo(0, ref.current.scrollHeight);
+  //   // if (state?.message)
+  //   //   {
+  //   //     toast({
+  //   //       variant: "destructive",
+  //   //       title: "Uh oh! Something went wrong.",
+  //   //       description: state?.message || "Something went wrong!",
+  //   //       action: (
+  //   //         <ToastAction altText="Try again">Try again</ToastAction>
+  //   //       ),
+  //   //     });
+  //   //   }
+    
+  // }, []);
 
   function onSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -177,6 +189,7 @@ export default function Chat() {
 
         {/* Chat area */}
         <div className="mx-auto  mt-3 w-full">
+          
           <ScrollArea
             className="mb-2 h-[500px] p-4 border-b-2"
             // ref={ref}

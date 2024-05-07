@@ -54,8 +54,7 @@ const formSchema = z.object({
       invalid_type_error: "Duration is required",
     })
     .positive("Duration must be a positive number")
-    .min(5, "Duration must be at least 5 minutes")
-    .max(180, "Duration cannot exceed 180 minutes"),
+    .min(0, "Duration must be at least 5 minutes"),
   price: z.coerce
     .number({
       required_error: "price is required",

@@ -22,7 +22,7 @@ import {
 
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Plus } from "lucide-react";
+import { Delete, DeleteIcon, Edit, Plus, Trash } from "lucide-react";
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
@@ -39,30 +39,29 @@ import {
 } from "@/components/ui/card";
 import { createTest, updateTest } from "@/actions/test";
 
-const formSchema = z
-  .object({
-    question: z.string().min(2, {
-      message: "Question must be at least 2 characters.",
-    }),
-    options: z.array(z.string()),
-    answer: z.coerce
-      .number({
-        required_error: "Answer is required",
-        invalid_type_error: "Answer must be a number",
-      })
-      .positive({
-        message: "Answer must be a positive integer.",
-      }),
-  })
-  .refine((data) => data.answer <= data.options.length, {
-    message: "Answer must not be greater than the number of options.",
-  });
+const formSchema = z.object({
+  question: z.string().min(2, {
+    message: "Question must be at least 2 characters.",
+  }),
+  options: z.array(z.string()),
+  // answer: z.coerce
+  //   .number({
+  //     required_error: "Answer is required",
+  //     invalid_type_error: "Answer must be a number",
+  //   })
+  //   .positive({
+  //     message: "Answer must be a positive integer.",
+  //   }),
+});
+// .refine((data) => data.answer <= data.options.length, {
+//   message: "Answer must not be greater than the number of options.",
+// });
 
 type Question = {
   id: number;
   question: string;
   options: string[];
-  answer: number;
+  answer?: number;
   testId: number;
 };
 
@@ -92,41 +91,49 @@ export default function TestQuestionForm({
 }) {
   console.log(type);
   const [loading, setLoading] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const [options, setOptions] = useState<string[]>([]);
+  const [editingQuestionIndex, setEditingQuestionIndex] = useState<
+    number | null
+  >(null);
+
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       question: "",
       options: [],
-      answer: 1,
+      // answer: 0,
     },
   });
 
+  const handleEditQuestion = (index: number, question: Question) => {
+    setEditingQuestionIndex(index);
+    // alert(JSON.stringify(question.answer));
+    form.setValue("question", question.question);
+    setOptions(question.options);
+    // form.setValue("answer", question.answer);
+    setIsModalOpen(true);
+  };
+
   function onSubmit(values: z.infer<typeof formSchema>) {
     console.log(values);
-    console.log(testDetails);
-    if (testDetails?.questions) {
-      console.log("testDetails.questions");
-      const updatedTestDetails = {
-        ...testDetails,
-        questions: [
-          ...testDetails.questions,
-          {
-            question: values.question,
-            options: values.options,
-            answer: values.answer,
-          },
-        ],
+    if (editingQuestionIndex !== null && testDetails?.questions) {
+      const updatedQuestions = [...testDetails.questions];
+      updatedQuestions[editingQuestionIndex] = {
+        ...updatedQuestions[editingQuestionIndex],
+        question: values.question,
+        options: values.options,
       };
-      setTestDetails(updatedTestDetails as TestDetails);
+      setTestDetails({ ...testDetails, questions: updatedQuestions });
+      setEditingQuestionIndex(null);
     } else {
       const updatedTestDetails = {
         ...testDetails,
         questions: [
+          ...(testDetails?.questions || []),
           {
             question: values.question,
             options: values.options,
-            answer: values.answer,
           },
         ],
       };
@@ -143,14 +150,25 @@ export default function TestQuestionForm({
   };
 
   const handleOptionChange = (index: number, value: string) => {
-    const updatedOptions = options.map((option, i) =>
-      i === index ? value : option
-    );
+    const updatedOptions = [...options];
+    updatedOptions[index] = value;
     setOptions(updatedOptions);
     form.setValue("options", updatedOptions);
   };
 
-  console.log(testDetails);
+  const handleRemoveOption = (indexToRemove: number) => {
+    const newOptions = options.filter((_, index) => index !== indexToRemove);
+    setOptions(newOptions);
+    form.setValue("options", newOptions);
+  };
+
+  const handleRemoveQuestion = (index: number) => {
+    if (testDetails?.questions) {
+      const updatedQuestions = [...testDetails.questions];
+      updatedQuestions.splice(index, 1);
+      setTestDetails({ ...testDetails, questions: updatedQuestions });
+    }
+  };
 
   return (
     <Card className="w-full">
@@ -170,6 +188,20 @@ export default function TestQuestionForm({
                 <div className="text-xl font-medium text-gray-900 mb-4 flex space-x-2">
                   <span>{index + 1}.</span>
                   <span>{question.question}</span>
+                  <div className="flex items-center space-x-4">
+                    <span
+                      className="cursor-pointer "
+                      onClick={() => handleEditQuestion(index, question)}
+                    >
+                      <Edit className="h-5 w-5 text-primary" />
+                    </span>
+                    <span
+                      className="cursor-pointer "
+                      onClick={() => handleRemoveQuestion(index)}
+                    >
+                      <Delete className="h-5 w-5 text-primary" />
+                    </span>
+                  </div>
                 </div>
 
                 <div className="space-y-2 ml-4">
@@ -192,14 +224,12 @@ export default function TestQuestionForm({
             </div>
           ))}
         </div>
-
-        <Dialog>
-          <DialogTrigger asChild>
-            <Button type="button">
-              <Plus className="h-4 w-4 mr-2" />
-              Add question
-            </Button>
-          </DialogTrigger>
+        <Button type="button" onClick={() => setIsModalOpen(true)}>
+          <Plus className="h-4 w-4 mr-2" />
+          Add question
+        </Button>
+        <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
+          <DialogTrigger asChild></DialogTrigger>
 
           <DialogContent className="sm:max-w-[425px]">
             <DialogHeader>
@@ -210,11 +240,11 @@ export default function TestQuestionForm({
                 done.
               </DialogDescription>
             </DialogHeader>
-            <div className="grid gap-4 py-4">
+            <div className="grid py-4">
               <Form {...form}>
                 <form
                   onSubmit={form.handleSubmit(onSubmit)}
-                  className="space-y-8 w-full"
+                  className="space-y-2 w-full"
                 >
                   <FormField
                     control={form.control}
@@ -233,7 +263,7 @@ export default function TestQuestionForm({
                     )}
                   />
 
-                  <FormField
+                  {/* <FormField
                     control={form.control}
                     name="answer"
                     render={({ field }) => (
@@ -248,10 +278,10 @@ export default function TestQuestionForm({
                         <FormMessage />
                       </FormItem>
                     )}
-                  />
+                  /> */}
 
                   {options.map((option, index) => (
-                    <div key={index}>
+                    <div key={index} className="space-y-0">
                       <Input
                         placeholder={`Option ${index + 1}`}
                         value={option}
@@ -259,23 +289,40 @@ export default function TestQuestionForm({
                           handleOptionChange(index, e.target.value)
                         }
                       />
+                      <div
+                        className="flex justify-end pt-2 cursor-pointer"
+                        onClick={() => handleRemoveOption(index)}
+                      >
+                        <span className="text-primary ">
+                          <Trash className="h-3 w-3" />
+                        </span>
+                      </div>
                     </div>
                   ))}
 
-                  <Button type="button" variant="secondary" onClick={addOption}>
+                  <Button
+                    disabled={options.length > 4}
+                    type="button"
+                    className=""
+                    variant="secondary"
+                    onClick={addOption}
+                  >
                     <Plus className="h-4 w-4 mr-2" />
                     Options
                   </Button>
 
                   <DialogFooter>
-                    <DialogClose asChild>
-                      <Button
-                        disabled={form.getValues("question") === ""}
-                        type="submit"
-                      >
-                        Add
-                      </Button>
-                    </DialogClose>
+                    <Button
+                      disabled={form.getValues("question") === ""}
+                      type="submit"
+                      onClick={() => {
+                        if (form.getValues("question") !== "")
+                          setIsModalOpen(false);
+                      }}
+                    >
+                      Add
+                    </Button>
+                    <DialogClose asChild></DialogClose>
                   </DialogFooter>
                 </form>
               </Form>
@@ -288,9 +335,12 @@ export default function TestQuestionForm({
           <Button
             disabled={testDetails?.questions?.length === 0}
             onClick={() =>
+             {
+              
               type !== "edit"
-                ? createTest({ testDetails })
-                : updateTest({ testDetails })
+              ? createTest({ testDetails })
+              : updateTest({ testDetails })
+             }
             }
           >
             {type !== "edit" ? "Submit" : "edit"}

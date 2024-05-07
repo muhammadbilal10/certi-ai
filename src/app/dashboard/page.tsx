@@ -34,6 +34,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Input } from "@/components/ui/input";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
+
 import { currentUser } from "@clerk/nextjs";
 import {
   Table,
@@ -413,7 +414,7 @@ export default async function DashboardPage() {
                       </AvatarFallback>
                     </Avatar>
                     <div className="grid gap-1">
-                      <p className="text-sm font-medium leading-none">
+                      <p className="text-sm line-clamp-1 font-medium leading-none">
                         {purchase.test.title}
                       </p>
                       <p
@@ -445,7 +446,7 @@ export default async function DashboardPage() {
                       </AvatarFallback>
                     </Avatar>
                     <div className="grid gap-1">
-                      <p className="text-sm font-medium leading-none">
+                      <p className="text-sm line-clamp-1 font-medium leading-none">
                         {recentUsers?.name}
                       </p>
                       <p
@@ -477,7 +478,7 @@ export default async function DashboardPage() {
                       </AvatarFallback>
                     </Avatar>
                     <div className="grid gap-1">
-                      <p className="text-sm font-medium leading-none">
+                      <p className="text-sm line-clamp-1 font-medium leading-none">
                         {test?.title}
                       </p>
                       <p

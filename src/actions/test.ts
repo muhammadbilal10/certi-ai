@@ -41,9 +41,9 @@ export async function createAiTest(prevState: any, formData: FormData) {
     console.log(`test ${test}`);
 
     const systemMessage =
-      "You are an educational assistant skilled formatting various types of educational tests. Convert test descriptions into a JSON structured format . Each multiple-choice question should include 'type': 'MCQS', 'question': the question text, and 'options': a list of choices. Each descriptive question should include 'type': 'descriptive', 'question': the question text.";
+      "You are an educational assistant skilled formatting various types of educational tests. Convert test into a JSON structured format.";
 
-    const prompt = `Please provide details for the following test in a structured format, including title, description, duration (if not specified then set default value 30 in minutes as a numeric value), price (as a numeric value), and questions (an array of questions with their respective options and type). If any field is missing, please add a default value:\n\n${test}`;
+    const prompt = `Please provide details for the test in a structured format (title, test description as description, price, questions, duration), including title, description, duration (if not specified then set default value 30 in minutes as a numeric value), price (as a numeric value), and questions (an array of questions with their only respective fileds  options, type and question). If any field is missing, add a default value. Include only the specified fields and do not add any additional information:${test}`;
 
     const response = await openai.chat.completions.create({
       model: "gpt-3.5-turbo-1106",
@@ -62,6 +62,7 @@ export async function createAiTest(prevState: any, formData: FormData) {
 
     const result = response.choices[0].message.content;
     const finalresult = JSON.parse(result || "{}");
+    console.log("FinalResult", result);
     const { userId } = auth();
 
     const res = await db.test.create({
@@ -84,7 +85,6 @@ export async function createAiTest(prevState: any, formData: FormData) {
     console.log(`result ${JSON.stringify(finalresult)}`);
   } catch (error) {
     console.log(error);
-    return "Failed to add into";
   }
   redirect("/dashboard/test");
 }
@@ -132,43 +132,36 @@ export async function updateTest({
   try {
     const { userId } = auth();
     const testId = testDetails?.id;
-    if (testDetails) {
-      const updatedTest = await db.test.update({
-        where: { id: testId },
-        data: {
-          title: testDetails.title,
-          description: testDetails.description,
-          price: testDetails?.price,
-          duration: testDetails.duration,
-          startAt: testDetails.startAt,
-          userId: userId as string,
-        },
-      });
 
-      testDetails.questions.forEach(async (question) => {
-        if (question.id) {
-          await db.question.update({
-            where: { id: question.id },
-            data: {
-              question: question.question,
-              options: question.options,
-              answer: question.answer,
-            },
-          });
-        } else {
-          await db.question.create({
-            data: {
-              question: question.question,
-              options: question.options,
-              answer: question.answer,
-              testId: updatedTest.id,
-            },
-          });
-        }
-      });
-    }
+    console.log("testDetials UPdated", testDetails)
+
+    // First, delete all questions associated with the test
+    await db.question.deleteMany({
+      where: { testId: testId },
+    });
+
+    // Then, update the test and create new questions
+    const result = await db.test.update({
+      where: { id: testId },
+      data: {
+        title: testDetails?.title,
+        description: testDetails?.description,
+        duration: testDetails?.duration,
+        startAt: testDetails?.startAt,
+        userId: userId as string,
+        price: testDetails?.price,
+        questions: {
+          create: testDetails?.questions.map((question) => ({
+            question: question.question,
+            options: question.options,
+            answer: question.answer,
+          })),
+        },
+      },
+    });
   } catch (error) {
-    console.error(error);
+    console.error("Update Test Error:", error);
+    // Handle error
   }
   redirect("/dashboard/test");
 }
@@ -226,8 +219,13 @@ export async function getTestsByUserId(userId: string) {
     where: {
       id: userId,
     },
+
     include: {
-      test: true,
+      test: {
+        orderBy: {
+          id: "desc",
+        },
+      },
     },
   });
   return userWithTests ? userWithTests.test : [];
@@ -462,7 +460,7 @@ export async function getPurchasedTests(instructorId: string) {
       status: "completed",
       test: {
         userId: instructorId,
-      }
+      },
     },
     include: {
       user: true,
@@ -482,12 +480,12 @@ export async function getPurchasedTests(instructorId: string) {
 export async function getRecentAddedTestsbyInstructor(userId: string) {
   const tests = await db.test.findMany({
     where: {
-      userId: userId
+      userId: userId,
     },
     orderBy: {
-      id: 'desc'
+      id: "desc",
     },
-    take: 5
+    take: 5,
   });
 
   return tests;
