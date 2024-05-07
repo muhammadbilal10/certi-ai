@@ -43,7 +43,7 @@ export async function createAiTest(prevState: any, formData: FormData) {
     const systemMessage =
       "You are an educational assistant skilled formatting various types of educational tests. Convert test into a JSON structured format.";
 
-    const prompt = `Please provide details for the test in a structured format (title, test description as description, price, questions, duration), including title, description, duration (if not specified then set default value 30 in minutes as a numeric value), price (as a numeric value), and questions (an array of questions with their only respective fileds  options, type and question). If any field is missing, add a default value. Include only the specified fields and do not add any additional information:${test}`;
+    const prompt = `Please provide details for the test in a structured format (title (string), test description as description(string), price(numeric value), questions, duration(min)), including title, description, duration (if not specified then set default value 30 in minutes as a numeric value), price (as a numeric value), and questions (an array of questions with their only respective fileds  options (string[]), type(string) and question(string)). If any field is missing, add a default value. Include only the specified fields and do not add any additional information:${test}`;
 
     const response = await openai.chat.completions.create({
       model: "gpt-3.5-turbo-1106",

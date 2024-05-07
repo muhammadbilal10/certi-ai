@@ -1,6 +1,7 @@
 import { getPublishedTests, getTestsByUserId } from "@/actions/test";
 import { getRole, getUserById } from "@/actions/user";
 import TestCard from "@/components/common/TestCard";
+import FilterTest from "@/components/common/test/FilterTest";
 import { Button } from "@/components/ui/button";
 import { Test } from "@/types/types";
 import { auth } from "@clerk/nextjs";
@@ -28,28 +29,37 @@ export default async function CreateTestPage() {
 
   return (
     <div>
-      <div className="flex justify-between pr-4">
-        <h1 className="text-2xl font-semibold mb-10">Test List</h1>
-        {role === "instructor" && (
-          
+      <div className="flex flex-col justify-between pr-4">
+        <div className="flex max-sm:flex-col justify-between">
+          <h1 className="text-2xl font-semibold mb-2 sm:mb-10">Test List</h1>
           <div className="space-x-2">
-            <Button asChild >
-            <Link href="/dashboard/chat">
-              <Plus size={24} />
-              Create AI Test
-            </Link>
-          </Button>
+            <Button asChild>
+              <Link href="/dashboard/chat">
+                <Plus size={24} />
+                Create AI Test
+              </Link>
+            </Button>
             <Button asChild variant="secondary">
-            <Link href="/dashboard/test/create-test">
-              <Plus size={24} />
-              Create Test
-            </Link>
-          </Button>
+              <Link href="/dashboard/test/create-test">
+                <Plus size={24} />
+                Create Test
+              </Link>
+            </Button>
           </div>
-          
+        </div>
+        {role === "instructor" && (
+          <div className="">
+            <div>
+              <FilterTest
+                role={role}
+                tests={tests}
+                username={user?.name as string}
+              />
+            </div>
+          </div>
         )}
       </div>
-      <div className="grid xl:grid-cols-3 lg:grid-cols-2 grid-cols-1 gap-4">
+      {/* <div className="grid xl:grid-cols-3 lg:grid-cols-2 grid-cols-1 gap-4">
         {tests?.map((test) => {
           if (role === "student" && !test.published) return;
           return (
@@ -73,7 +83,7 @@ export default async function CreateTestPage() {
             />
           );
         })}
-      </div>
+      </div> */}
     </div>
 
     // <form action={testhandler}>

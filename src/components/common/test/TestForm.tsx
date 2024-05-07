@@ -37,13 +37,14 @@ import {
 import { Test } from "@/types/types";
 
 const formSchema = z.object({
-  title: z.string().min(2, {
-    message: "Title must be at least 2 characters.",
+  title: z.string().min(4, {
+    message: "Title must be at least 4 characters.",
   })
-  .refine(value => /^[A-Za-z\s]+$/.test(value), {
-    message: "Invalid title. Only alphabets and spaces are allowed",
-    params: {},
-  }),
+  // .refine(value => /^[A-Za-z\s]+$/.test(value), {
+  //   message: "Invalid title. Only alphabets and spaces are allowed",
+  //   params: {},
+  // }),
+  ,
   description: z.string().min(10, {
     message: "Description must be at least 10 characters.",
   })

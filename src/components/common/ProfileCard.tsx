@@ -53,7 +53,7 @@ export default function ProfileCard({
       ? [
           {
             title: "Earning",
-            value: totalEarning || "0$",
+            value: "$"+totalEarning || "0$",
           },
         ]
       : []),

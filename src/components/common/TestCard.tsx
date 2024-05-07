@@ -159,7 +159,7 @@ export default function TestCard({
             ))}
         </div>
         <CardDescription>
-          <span className="mb-4 line-clamp-2">{description}</span>
+          <span className="mb-4 h-10 line-clamp-2">{description}</span>
           {instructor}
           <span className="flex max-sm:flex-col sm:space-x-6 mt-2">
             <span className="flex items-center gap-2">
