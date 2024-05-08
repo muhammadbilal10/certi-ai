@@ -3,7 +3,7 @@
 import { db } from "@/lib/db";
 import { auth } from "@clerk/nextjs";
 import { revalidatePath } from "next/cache";
-import { redirect } from "next/navigation";
+import { permanentRedirect, redirect } from "next/navigation";
 import OpenAI from "openai";
 
 const openai = new OpenAI({
@@ -15,7 +15,7 @@ type Question = {
   question: string;
   options: string[];
   type: string;
-  answer: number;
+  answer?: number;
   testId: number;
 };
 
@@ -27,9 +27,230 @@ type TestDetails = {
   price: number;
   startAt: Date;
   userId: string;
-
   questions: Question[];
 };
+
+type AttemptedQuestion = {
+  id: number;
+  question: string;
+  options?: string[];
+  type: string;
+  attemptedUserAnswer: string;
+};
+
+// export async function shuffleQuestion(questions: Question[]) {
+//   try {
+//     if (!process.env.OPENAI_API_KEY) {
+//       return [];
+//     }
+
+//     if (!questions) {
+//       return [];
+//     }
+
+//     console.log("start shuffling ", questions);
+
+//     const systemMessage =
+//       "Convert test into a JSON structured format and provide data will be remained same.";
+//     const response = await openai.chat.completions.create({
+//       model: "gpt-3.5-turbo-1106",
+//       messages: [
+//         {
+//           role: "user",
+//           content: `reorder of the following questions array while keeping them unchanged: \n\n${questions}\n\n`,
+//         },
+//       ],
+//       tools: [
+//         {
+//           type: "function",
+//           function: {
+//             name: "get_test_details",
+//             description: "Get the test detail from the user prompt",
+//             parameters: {
+//               type: "object",
+//               properties: {
+//                 questions: {
+//                   type: "array",
+//                   description: "The list of questions for the test",
+//                   items: {
+//                     type: "object",
+//                     properties: {
+//                       question: {
+//                         type: "string",
+//                         description: "The question text",
+//                       },
+//                       options: {
+//                         type: "array",
+//                         description: "The options for the question",
+//                         items: {
+//                           type: "string",
+//                         },
+//                       },
+//                       type: {
+//                         type: "string",
+//                         enum: ["MCQS", "Descriptive", "True/False"],
+//                         description: "The type of the question",
+//                       },
+//                     },
+//                   },
+//                 },
+//               },
+//             },
+//           },
+//         },
+//       ],
+//       tool_choice: "auto",
+//     });
+
+//     const result = response?.choices[0]?.message.tool_calls?.[0]?.function.arguments;
+//     const finalresult = JSON.parse(result || "{}");
+//     console.log(`Shuffle Questions ${JSON.stringify(finalresult)}`);
+//     return (finalresult?.questions as Question[]) || "[]";
+//   } catch (error) {
+//     console.log(error);
+//   }
+// }
+
+export async function getRecentTestResult(testId: number) {
+  const { userId } = auth();
+  const result = await db.testResult.findFirst({
+    where: {
+      testId: Number(testId),
+      userId: userId as string,
+    },
+    include: {
+      questions: true,
+    },
+    orderBy: {
+      createdAt: "desc",
+    },
+  });
+
+  return result;
+}
+export async function submitTestResult(
+  finalresult: any,
+  testId: number,
+  totalScore: number,
+  gotScore: number
+) {
+  try {
+    const { userId } = auth();
+    const res = await db.testResult.create({
+      data: {
+        userId: userId as string,
+        testId: testId as number,
+        gotScore: gotScore.toString(),
+        totalScore: totalScore.toString(),
+        questions: {
+          create: finalresult?.map((ques: any) => ({
+            question: ques.question as string,
+            userAnswer: ques.answer as string,
+            options: ques.options as string[],
+            correctAnswer: ques.correct as string,
+            score: ques.score.toString(),
+            description: ques.correctAnswerDescription as string,
+          })),
+        },
+      },
+    });
+
+    console.log("result Submitted");
+    return res;
+  } catch (error) {
+    console.log(error);
+  }
+  permanentRedirect(`/dashboard/test-result/${testId}`);
+}
+
+export async function submitAiTest(attemptedQuestions: string, testId: number) {
+  try {
+    if (!process.env.OPENAI_API_KEY) {
+      return "missing api key";
+    }
+
+    console.log(`Evaluate Questions ${attemptedQuestions}`);
+
+    const prompt = `Please evaluate the user's attempted test questions and provide the correct answer if the user's answer is incorrect.\n\n:${attemptedQuestions}`;
+    if (attemptedQuestions) {
+      const response = await openai.chat.completions.create({
+        model: "gpt-3.5-turbo",
+        messages: [
+          {
+            role: "user",
+            content: prompt,
+          },
+        ],
+        tools: [
+          {
+            type: "function",
+            function: {
+              name: "evaluate_questions",
+              description:
+                "Evaluate a list of test questions and provide result feeback.",
+              parameters: {
+                type: "object",
+                properties: {
+                  questions: {
+                    type: "array",
+                    items: {
+                      type: "object",
+                      properties: {
+                        type: {
+                          type: "string",
+                          description:
+                            "The type of question (e.g., MCQS, True/False, Descriptive etc.)",
+                        },
+                        question: {
+                          type: "string",
+                          description: "The test question",
+                        },
+                        answer: {
+                          type: "string",
+                          description: "The user's answer to the question",
+                        },
+                        options: {
+                          type: "array",
+                          description: "The options for the question",
+                          items: {
+                            type: "string",
+                          },
+                        },
+                        correct: {
+                          type: "string",
+                          description:
+                            "The correct description for the question if not correct",
+                        },
+                        score: {
+                          type: "number",
+                          description: "The total score for the question",
+                        },
+                        correctAnswerDescription: {
+                          type: "string",
+                          description:
+                            "The correct answer description for the question",
+                        },
+                      },
+                    },
+                  },
+                },
+              },
+            },
+          },
+        ],
+        tool_choice: "auto",
+      });
+      const result =
+        response?.choices[0]?.message.tool_calls?.[0]?.function.arguments;
+      const finalresult = JSON.parse(result || "{}");
+      console.log("FinalResult", result);
+      return finalresult?.questions || [];
+    }
+  } catch (error) {
+    console.log(error);
+  }
+  // redirect("/dashboard/test");
+}
 
 export async function createAiTest(prevState: any, formData: FormData) {
   try {
@@ -40,54 +261,107 @@ export async function createAiTest(prevState: any, formData: FormData) {
     const test = formData.get("test");
     console.log(`test ${test}`);
 
-    const systemMessage =
-      "You are an educational assistant skilled formatting various types of educational tests. Convert test into a JSON structured format.";
+    const prompt = `${test}`;
+    if (test) {
+      const response = await openai.chat.completions.create({
+        model: "gpt-3.5-turbo-1106",
+        messages: [
+          {
+            role: "user",
+            content: prompt,
+          },
+        ],
+        tools: [
+          {
+            type: "function",
+            function: {
+              name: "get_test_details",
+              description: "Get the test detail from the user prompt",
+              parameters: {
+                type: "object",
+                properties: {
+                  title: {
+                    type: "string",
+                    description: "The test name",
+                  },
+                  description: {
+                    type: "string",
+                    description: "The test description",
+                  },
+                  duration: {
+                    type: "number",
+                    description:
+                      "The test time duration and convert test time into minutes",
+                  },
+                  price: {
+                    type: "number",
+                    description:
+                      "The price of the test. if test price in other currency format then convert it into dollar",
+                  },
+                  questions: {
+                    type: "array",
+                    description: "The list of questions for the test",
+                    items: {
+                      type: "object",
+                      properties: {
+                        question: {
+                          type: "string",
+                          description: "The question text",
+                        },
+                        options: {
+                          type: "array",
+                          description: "The options for the question",
+                          items: {
+                            type: "string",
+                          },
+                        },
+                        type: {
+                          type: "string",
+                          enum: ["MCQS", "Descriptive", "True/False"],
+                          description: "The type of the question",
+                        },
+                      },
+                    },
+                  },
+                },
+              },
+            },
+          },
+        ],
+        tool_choice: "auto",
+      });
 
-    const prompt = `Please provide details for the test in a structured format (title (string), test description as description(string), price(numeric value), questions, duration(min)), including title, description, duration (if not specified then set default value 30 in minutes as a numeric value), price (as a numeric value), and questions (an array of questions with their only respective fileds  options (string[]), type(string) and question(string)). If any field is missing, add a default value. Include only the specified fields and do not add any additional information:${test}`;
+      const result =
+        response?.choices[0]?.message.tool_calls?.[0]?.function.arguments;
+      const finalresult = JSON.parse(result || "{}");
+      console.log("FinalResult", result);
+      const { userId } = auth();
 
-    const response = await openai.chat.completions.create({
-      model: "gpt-3.5-turbo-1106",
-      response_format: { type: "json_object" },
-      messages: [
-        {
-          role: "system",
-          content: systemMessage,
+      const res = await db.test.create({
+        data: {
+          title: finalresult.title as string,
+          startAt: new Date(),
+          userId: userId as string,
+          description: finalresult.description as string,
+          duration: finalresult.duration as number,
+          price: finalresult.price as number,
+          questions: {
+            create: finalresult.questions.map((ques: Question) => ({
+              question: ques.question as string,
+              type: ques.type,
+              options: ques.options as string[],
+            })),
+          },
         },
-        {
-          role: "user",
-          content: prompt,
-        },
-      ],
-    });
-
-    const result = response.choices[0].message.content;
-    const finalresult = JSON.parse(result || "{}");
-    console.log("FinalResult", result);
-    const { userId } = auth();
-
-    const res = await db.test.create({
-      data: {
-        title: finalresult.title as string,
-        startAt: new Date(),
-        userId: userId as string,
-        description: finalresult.description as string,
-        duration: finalresult.duration as number,
-        price: finalresult.price as number,
-        questions: {
-          create: finalresult.questions.map((ques: Question) => ({
-            question: ques.question as string,
-            type: ques.type,
-            options: ques.options as string[],
-          })),
-        },
-      },
-    });
-    console.log(`result ${JSON.stringify(finalresult)}`);
+      });
+      console.log(`result ${JSON.stringify(finalresult)}`);
+    }
   } catch (error) {
     console.log(error);
   }
   redirect("/dashboard/test");
 }
+
 export async function createTest({
   testDetails,
 }: {
@@ -133,7 +407,7 @@ export async function updateTest({
     const { userId } = auth();
     const testId = testDetails?.id;
 
-    console.log("testDetials UPdated", testDetails)
+    console.log("testDetials UPdated", testDetails);
 
     // First, delete all questions associated with the test
     await db.question.deleteMany({
@@ -286,7 +560,6 @@ export async function publishTest(prevState: any, formData: FormData) {
 }
 
 //payments total countss
-
 export async function getTotalEarningsByInstructor(userId: string) {
   try {
     const payments = await db.payment.findMany({
@@ -368,39 +641,39 @@ export async function getRecentlyPurchasedTestsByStudent(userId: string) {
   }
 }
 
-export async function storeTestResult(result: {
-  userId: string;
-  testId: number;
-  timeTaken: string;
-  questionsAttempted: number;
-  correctAnswers: number;
-  wrongAnswers: number;
-  overallResult: number;
-}) {
-  const {
-    userId,
-    testId,
-    timeTaken,
-    questionsAttempted,
-    correctAnswers,
-    wrongAnswers,
-    overallResult,
-  } = result;
+// export async function storeTestResult(result: {
+//   userId: string;
+//   testId: number;
+//   timeTaken: string;
+//   questionsAttempted: number;
+//   correctAnswers: number;
+//   wrongAnswers: number;
+//   overallResult: number;
+// }) {
+//   const {
+//     userId,
+//     testId,
+//     timeTaken,
+//     questionsAttempted,
+//     correctAnswers,
+//     wrongAnswers,
+//     overallResult,
+//   } = result;
 
-  const testResult = await db.testResult.create({
-    data: {
-      userId,
-      testId,
-      timeTaken,
-      questionsAttempted,
-      correctAnswers,
-      wrongAnswers,
-      overallResult,
-    },
-  });
+//   const testResult = await db.testResult.create({
+//     data: {
+//       userId,
+//       testId,
+//       timeTaken,
+//       questionsAttempted,
+//       correctAnswers,
+//       wrongAnswers,
+//       overallResult,
+//     },
+//   });
 
-  return testResult;
-}
+//   return testResult;
+// }
 
 export async function getAllPublishedTests() {
   try {

@@ -34,16 +34,18 @@ export default function FilterTest({
   return (
     <div className="mb-10">
       <div className="flex justify-end my-4">
-        <Select value={filter} onValueChange={setFilter}>
-          <SelectTrigger className="w-[180px]">
-            <SelectValue placeholder="" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="all">All</SelectItem>
-            <SelectItem value="publish">Publish</SelectItem>
-            <SelectItem value="unpublish">unpublish</SelectItem>
-          </SelectContent>
-        </Select>
+        {role === "instructor" && (
+          <Select value={filter} onValueChange={setFilter}>
+            <SelectTrigger className="w-[180px]">
+              <SelectValue placeholder="" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">All</SelectItem>
+              <SelectItem value="publish">Publish</SelectItem>
+              <SelectItem value="unpublish">unpublish</SelectItem>
+            </SelectContent>
+          </Select>
+        )}
       </div>
 
       <div className="grid xl:grid-cols-3 lg:grid-cols-2 grid-cols-1 gap-4">

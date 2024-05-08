@@ -61,6 +61,7 @@ type Question = {
   id: number;
   question: string;
   options: string[];
+  type?: string;
   answer?: number;
   testId: number;
 };
@@ -123,6 +124,7 @@ export default function TestQuestionForm({
         ...updatedQuestions[editingQuestionIndex],
         question: values.question,
         options: values.options,
+        type: values.options.length > 0 ? "MCQS" : "Descriptive",
       };
       setTestDetails({ ...testDetails, questions: updatedQuestions });
       setEditingQuestionIndex(null);
@@ -134,6 +136,7 @@ export default function TestQuestionForm({
           {
             question: values.question,
             options: values.options,
+            type: values.options.length > 0 ? "MCQS" : "Descriptive",
           },
         ],
       };

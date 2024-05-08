@@ -1,17 +1,27 @@
 "use client";
-import React, { useState, useEffect } from "react";
-
-import { Progress } from "@/components/ui/progress"
-
+import { useEffect, useState } from "react";
 import { Button } from "../ui/button";
+import { Progress } from "../ui/progress";
+import { useFormState, useFormStatus } from "react-dom";
+import { Loader2, Send } from "lucide-react";
+import { submitAiTest, submitTestResult } from "@/actions/test";
 
-interface Question {
+type Question = {
   id: number;
   question: string;
-  options: string[];
-  answer: number;
+  options?: string[];
+  type: string;
+  answer?: string;
   testId: number;
-}
+};
+
+type AttemptedQuestion = {
+  id: number;
+  question: string;
+  options?: string[];
+  type: string;
+  attemptedUserAnswer: string;
+};
 
 interface TestPageProps {
   questions: Question[];
@@ -19,6 +29,25 @@ interface TestPageProps {
   duration: number;
   title: string;
   description: string;
+  testId: number;
+}
+
+export function SubmitButton() {
+  const { pending } = useFormStatus();
+  return (
+    <Button disabled={pending} type="submit" className="w-full">
+      {!pending ? (
+        <>
+          <Send className="h-5 w-5 mr-2" /> Submit
+        </>
+      ) : (
+        <>
+          <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+          Please wait
+        </>
+      )}
+    </Button>
+  );
 }
 
 const TestPage: React.FC<TestPageProps> = ({
@@ -27,23 +56,18 @@ const TestPage: React.FC<TestPageProps> = ({
   duration,
   description,
   title,
+  testId,
 }) => {
-  const [time, setTime] = useState<number>(0);
-  const [stoppedtime, setStoppedTime] = useState<string>("");
-  const [answers, setAnswers] = useState<number[]>(
-    new Array(questions.length).fill(-1)
-  );
-  const [result, setResult] = useState<any>({}); // [timeTaken,questionsAttempted,correctAnswers,overallResult,wrongAnswers
-  const [showResult, setShowResult] = useState<boolean>(false);
-  const [progress, setProgress] = useState<number>(0);
-  useEffect(() => {
-    const attemptedQuestions = answers.filter((answer) => answer !== -1).length;
-    setProgress((attemptedQuestions / questions.length) * 100);
-  }, [answers, questions.length]);
-  
+  const [time, setTime] = useState(0);
+  const [progress, setProgress] = useState(0);
+  const [attemptedQuestions, setAttemptedQuestions] = useState<
+    AttemptedQuestion[]
+  >([]);
+  // const [state, formAction] = useFormState(submitAiTest, null);
+
   useEffect(() => {
     const timer = setInterval(() => {
-      setTime((prevTime) => {
+      setTime((prevTime: any) => {
         if (prevTime >= testTime) {
           handleSubmit();
           clearInterval(timer);
@@ -56,130 +80,78 @@ const TestPage: React.FC<TestPageProps> = ({
     return () => clearInterval(timer);
   }, [testTime]);
 
-  const formatTime = (totalSeconds: number) => {
-    const hours = Math.floor(totalSeconds / 3600);
-    const minutes = Math.floor((totalSeconds % 3600) / 60);
-    const seconds = totalSeconds % 60;
-    return `${hours}hr ${minutes}min ${seconds}sec`;
-  };
+  useEffect(() => {
+    const totalQuestions = questions.length;
+    const answeredQuestions = attemptedQuestions.length;
+    const calculatedProgress = (answeredQuestions / totalQuestions) * 100;
+    setProgress(calculatedProgress);
+  }, [attemptedQuestions, questions]);
 
   const handleAnswerChange = (
-    questionIndex: number,
-    selectedOptionIndex: number
+    id: number,
+    question: string,
+    type: string,
+    answer: string,
+    options?: string[]
   ) => {
-    const newAnswers = [...answers];
-    newAnswers[questionIndex] = selectedOptionIndex;
-    setAnswers(newAnswers);
-  };
+    const newQuestion: AttemptedQuestion = {
+      id,
+      question,
+      options: options ? options : undefined,
+      type: type,
+      attemptedUserAnswer: answer,
+    };
 
-  const handleSubmit = () => {
-    if (!showResult) {
-      const {timeTaken,questionsAttempted,correctAnswers,overallResult,wrongAnswers} = calculateResult();
-      console.log("timeTaken", timeTaken );
-      console.log("questionsAttempted", questionsAttempted);
-      console.log("correctAnswers", correctAnswers);
-      console.log("overallResult", overallResult);
-      console.log("wrongAnswers", wrongAnswers);
-      
-      setResult({
-        timeTaken,
-        questionsAttempted,
-        correctAnswers,
-        overallResult,
-        wrongAnswers,
-      });
-      setShowResult(true);
+    const existingIndex = attemptedQuestions.findIndex((q) => q.id === id);
+
+    if (existingIndex !== -1) {
+      const updatedQuestions = [...attemptedQuestions];
+      updatedQuestions[existingIndex] = newQuestion;
+      setAttemptedQuestions(updatedQuestions);
+    } else {
+      setAttemptedQuestions((prevQuestions) => [...prevQuestions, newQuestion]);
     }
   };
 
-  const calculateResult = () => {
-    const correctAnswers = answers.reduce(
-      (total, answer, index) =>
-        answer === questions[index].answer-1 ? total + 1 : total,
-      0
-    );
+  const handleSubmit = () => {
+    let prompt =
+      "Please evaluate the user's attempted test questions and provide the correct answer if the user's answer is incorrect.\n\n";
 
-    const overallResult = ((correctAnswers / questions.length) * 100).toFixed(
-      2
-    );
-    
-    return {
-      timeTaken: formatTime(time),
-      questionsAttempted: answers.filter((answer) => answer !== -1).length,
-      correctAnswers,
-      wrongAnswers: questions.length - correctAnswers,
-      overallResult,
-    };
-  };
+    questions.forEach((question, index) => {
+      const attemptedQuestion = attemptedQuestions.find(
+        (q) => q.id === question.id
+      );
+      if (attemptedQuestion) {
+        prompt += `Q${index + 1}: ${question.question}\n Options: ${question.options}\n`;
+        if (
+          attemptedQuestion.type === "MCQS" ||
+          attemptedQuestion.type === "True/False"
+        ) {
+          prompt += `User's Answer: ${attemptedQuestion.attemptedUserAnswer}\n\n`;
+        } else if (attemptedQuestion.type === "Descriptive") {
+          prompt += `User's Answer: ${attemptedQuestion.attemptedUserAnswer}\n\n`;
+        }
+      } else {
+        prompt += `Q${index + 1}: ${question.question}\nUnattempted\n\n`;
+      }
+    });
 
-  const resetQuiz = () => {
-    setTime(0);
-    setAnswers(new Array(questions.length).fill(-1));
-    setShowResult(false);
-  };
-
-  const renderResultCircle = () => {
-    const { questionsAttempted } = calculateResult() || {
-      questionsAttempted: 0,
-    };
-    const totalQuestions = questions.length;
-    return (
-      <div
-        className="flex items-center justify-center w-24 h-24 rounded-full border-2 border-solid border-gray-300"
-        style={{ borderColor: "#CF4F41" }}
-      >
-        <p className="text-lg font-semibold">
-          {questionsAttempted}/{totalQuestions}
-        </p>
-      </div>
-    );
+    return prompt;
   };
 
   return (
     <div className="container mx-auto py-8">
-      {showResult ? (
-        <div className="bg-white shadow-md p-6 rounded-lg text-center">
-          <h1 className="text-3xl font-semibold mb-1">{title}</h1>
-          <p className="mb-8">{description}</p>
-          <h2 className="text-lg font-semibold mb-4">Test Result</h2>
-          {calculateResult() && (
-            <>
-              <div className="flex items-center justify-center mb-4">
-                {renderResultCircle()}
-              </div>
-              <p>Test : {title}</p>
-              <p>Time taken : {result?.timeTaken}</p>
-              <p>
-                Questions attempted : {result?.questionsAttempted}/{questions.length}
-              </p>
-              <p>Correct answers : {result?.correctAnswers}</p>
-              <p>Wrong answers : {result?.wrongAnswers}</p>
-              <p>Overall result : {result?.overallResult}%</p>
-            </>
-          )}
-          
-          <Button onClick={resetQuiz} className=" mt-4">
-            Retake Test
-          </Button>
-          <script
-        async
-        src="https://api.cronbot.ai/v1/widgets/app/app_dqxltxzqsal5"
-      ></script>
-        </div>
-      ) : (
-        <div className="grid gap-6">
-          
-          <Progress value={progress} max={100} />
-          <h1 className="text-3xl font-semibold mb-1">{title}</h1>
-          
-          <p className="mb-8">{description}</p>
-          {questions.map((questionData, index) => (
-            <div key={index} className="bg-white shadow-md p-6 rounded-lg">
-              <h2 className="text-lg font-semibold mb-4">{`Q${index + 1}. ${
-                questionData.question
-              }`}</h2>
+      <div className="grid gap-6 mb-20 mt-10">
+        <h1 className="text-3xl font-semibold mb-1">{title}</h1>
+        <p className="mb-8">{description}</p>
+        {questions.map((questionData, index) => (
+          <div key={index} className="bg-white shadow-md p-6 rounded-lg">
+            <h3 className="text-lg font-semibold mb-4">{`Q${index + 1}. ${
+              questionData.question
+            }`}</h3>
+            {questionData.type === "MCQS" && (
               <ul className="list-none pl-0">
-                {questionData.options.map((option, optionIndex) => (
+                {questionData.options?.map((option, optionIndex) => (
                   <li key={optionIndex} className="mb-2">
                     <label className="inline-flex items-center">
                       <input
@@ -187,30 +159,98 @@ const TestPage: React.FC<TestPageProps> = ({
                         name={`question-${index}`}
                         value={optionIndex}
                         className="form-radio text-black"
-                        onChange={() => handleAnswerChange(index, optionIndex)}
+                        onChange={() =>
+                          handleAnswerChange(
+                            questionData.id,
+                            questionData.question,
+                            questionData.type,
+                            option,
+                            questionData.options
+                          )
+                        }
                       />
-
                       <span className="ml-2">{option}</span>
                     </label>
                   </li>
                 ))}
               </ul>
-            </div>
-          ))}
-        </div>
-      )}
-      {!showResult && (
-        <div className="flex justify-between items-center mt-8">
-          <div>
+            )}
+            {questionData.type === "True/False" && (
+              <div className="flex space-x-2 items-center mb-2">
+                <input
+                  type="radio"
+                  name={`question-${index}`}
+                  value="True"
+                  className="form-radio text-black"
+                  onChange={() =>
+                    handleAnswerChange(
+                      questionData.id,
+                      questionData.question,
+                      questionData.type,
+                      "True",
+                      ["True", "False"]
+                    )
+                  }
+                />
+                <span className="ml-2">True</span>
+                <input
+                  type="radio"
+                  name={`question-${index}`}
+                  value="False"
+                  className="form-radio text-black"
+                  onChange={() =>
+                    handleAnswerChange(
+                      questionData.id,
+                      questionData.question,
+
+                      questionData.type,
+                      "False",
+                      ["True", "False"]
+                    )
+                  }
+                />
+                <span className="ml-2">False</span>
+              </div>
+            )}
+            {questionData.type === "Descriptive" && (
+              <textarea
+                className="border border-gray-300 rounded-lg p-2 w-full"
+                placeholder="Your answer here..."
+                onChange={(e) =>
+                  handleAnswerChange(
+                    questionData.id,
+                    questionData.question,
+                    questionData.type,
+                    e.target.value
+                  )
+                }
+              ></textarea>
+            )}
+          </div>
+        ))}
+      </div>
+      <div className="fixed top-16 left-0 right-0 shadow-lg bg-white  z-50 py-2 px-4">
+        <div className="flex  items-center space-x-4 w-full">
+          <Progress value={progress} className="max-w-4xl" />
+          <div className="flex-1 flex flex-col justify-center">
             <p className="text-gray-600">{`Time elapsed: ${Math.floor(
               time / 3600
             )} hr ${Math.floor((time % 3600) / 60)} min ${time % 60} sec`}</p>
             <p className="text-gray-600">Duration: {duration} min</p>
           </div>
-         
-          <Button onClick={handleSubmit}>Submit</Button>
+          <form
+            action={async () => {
+              const prompt = handleSubmit();
+             const result =  await submitAiTest(prompt, testId);
+             
+             const gotScore = result?.reduce((total: number, question:any) => total + question.score, 0);
+             await submitTestResult(result, testId, questions.length, gotScore );
+            }}
+          >
+            <SubmitButton />
+          </form>
         </div>
-      )}
+      </div>
     </div>
   );
 };

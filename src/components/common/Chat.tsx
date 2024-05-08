@@ -27,10 +27,10 @@ export function SubmitButton() {
           <SendHorizontalIcon className="h-5 w-5 mr-2 text-primary" />
         </>
       ) : (
-        <>
+        <div className="flex items-center">
           <Loader2 className="mr-2 h-4 w-4 animate-spin" />
           Please wait
-        </>
+        </div>
       )}
     </button>
   );

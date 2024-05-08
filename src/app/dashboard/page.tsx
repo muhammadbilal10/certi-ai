@@ -58,6 +58,7 @@ import {
   countPublishedTests,
   getPurchasedTests,
   getRecentAddedTestsbyInstructor,
+  getAllPublishedTests,
 } from "@/actions/test";
 import { getRecentUsers, getRole, getTotalStudents } from "@/actions/user";
 import {
@@ -95,6 +96,7 @@ export default async function DashboardPage() {
 
   const recentAddedTestsbyInstructor = await getRecentAddedTestsbyInstructor(user?.id as string);
   const totaltest = await getAllTests();
+  const totalPublishedTest = await getAllPublishedTests();
 
   console.log("totalTestByInstructor", totalTestByInstructor);
   console.log("totalTestByTestTaker", totalTestByTestTaker);
@@ -135,8 +137,8 @@ export default async function DashboardPage() {
         icon: <DollarSign className="h-4 w-4 text-muted-foreground" />,
       },
       {
-        text: "Total Tests",
-        amount: totaltest?.length.toString() as string,
+        text: "Active Tests",
+        amount: totalPublishedTest?.length.toString() as string,
         percentage: "",
         icon: <File className="h-4 w-4 text-muted-foreground" />,
       },
@@ -255,12 +257,12 @@ export default async function DashboardPage() {
                       student.
                     </CardDescription>
                   </div>
-                  <Button asChild size="sm" className="ml-auto gap-1">
+                  {/* <Button asChild size="sm" className="ml-auto gap-1">
                     <Link href="/dashboard/payments">
                       View All
                       <ArrowUpRight className="h-4 w-4" />
                     </Link>
-                  </Button>
+                  </Button> */}
                 </>
               )}
             </CardHeader>

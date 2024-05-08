@@ -40,7 +40,8 @@ model Test {
   user User @relation(fields: [userId], references: [id])
   questions   Question[]
   payment     Payment[]
-   testResults TestResult[]
+  testResult TestResult[]
+
 }
 
 model Question {
@@ -52,8 +53,6 @@ model Question {
   testId   Int
   test     Test   @relation(fields: [testId], references: [id])
 }
-
-
 
 // 
 model Payment {
@@ -68,15 +67,25 @@ model Payment {
 }
 
 model TestResult {
-  id                Int      @id @default(autoincrement())
-  userId            String
-  testId            Int
-  timeTaken         String
-  questionsAttempted Int
-  correctAnswers    Int
-  wrongAnswers      Int
-  overallResult     Float
-  createdAt         DateTime @default(now())
-  user              User     @relation(fields: [userId], references: [id])
-  test              Test     @relation(fields: [testId], references: [id])
+  id         Int       @id @default(autoincrement())
+  userId     String
+  testId     Int
+  totalScore String
+  gotScore   String
+  createdAt  DateTime  @default(now())
+  user       User      @relation(fields: [userId], references: [id])
+  test       Test      @relation(fields: [testId], references: [id])
+  questions  QuestionResult[]
+}
+
+model QuestionResult {
+  id         Int      @id @default(autoincrement())
+  question String
+  userAnswer String
+  correctAnswer String
+  options  String[]
+  score String
+  description String
+  testResultId Int
+  testResult TestResult @relation(fields: [testResultId], references: [id])
 }

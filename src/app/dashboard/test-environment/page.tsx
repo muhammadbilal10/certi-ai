@@ -11,6 +11,7 @@ interface Test {
   title: string;
   description?: string;
   duration: number;
+  price:number;
   userId: string;
   startAt: Date;
   published: boolean;
@@ -68,6 +69,7 @@ export default async function TestEnvironmentPage() {
             duration={test.duration}
             startAt={test.startAt}
             published={test.published}
+            price={test.price}
             isPurchased={true}
             role={role as string}
             canStartTest={true}

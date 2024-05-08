@@ -25,6 +25,7 @@ export default async function CreateTestPage() {
   const user = await getUserById(userId as string);
 
   const tests = await getTests(userId as string, role as string);
+
   console.log(tests);
 
   return (
@@ -32,22 +33,27 @@ export default async function CreateTestPage() {
       <div className="flex flex-col justify-between pr-4">
         <div className="flex max-sm:flex-col justify-between">
           <h1 className="text-2xl font-semibold mb-2 sm:mb-10">Test List</h1>
-          <div className="space-x-2">
-            <Button asChild>
-              <Link href="/dashboard/chat">
-                <Plus size={24} />
-                Create AI Test
-              </Link>
-            </Button>
-            <Button asChild variant="secondary">
-              <Link href="/dashboard/test/create-test">
-                <Plus size={24} />
-                Create Test
-              </Link>
-            </Button>
-          </div>
+          {
+            (role === "instructor" && (
+              <div className="space-x-2">
+                <Button asChild>
+                  <Link href="/dashboard/chat">
+                    <Plus size={24} />
+                    Create AI Test
+                  </Link>
+                </Button>
+                <Button asChild variant="secondary">
+                  <Link href="/dashboard/test/create-test">
+                    <Plus size={24} />
+                    Create Test
+                  </Link>
+                </Button>
+              </div>
+            ))
+          }
+        
         </div>
-        {role === "instructor" && (
+        {role && (
           <div className="">
             <div>
               <FilterTest
