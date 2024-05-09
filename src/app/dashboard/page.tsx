@@ -59,6 +59,7 @@ import {
   getPurchasedTests,
   getRecentAddedTestsbyInstructor,
   getAllPublishedTests,
+  getRecentTestResultsbyTestTaker,
 } from "@/actions/test";
 import { getRecentUsers, getRole, getTotalStudents } from "@/actions/user";
 import {
@@ -97,6 +98,7 @@ export default async function DashboardPage() {
   const recentAddedTestsbyInstructor = await getRecentAddedTestsbyInstructor(user?.id as string);
   const totaltest = await getAllTests();
   const totalPublishedTest = await getAllPublishedTests();
+  const lastFiveTestResultByTestTaker = await getRecentTestResultsbyTestTaker();
 
   console.log("totalTestByInstructor", totalTestByInstructor);
   console.log("totalTestByTestTaker", totalTestByTestTaker);
@@ -239,12 +241,12 @@ export default async function DashboardPage() {
                       Overview of recent activities related to tests.
                     </CardDescription>
                   </div>
-                  <Button asChild size="sm" className="ml-auto gap-1">
+                  {/* <Button asChild size="sm" className="ml-auto gap-1">
                     <Link href="/dashboard/payments">
                       View All
                       <ArrowUpRight className="h-4 w-4" />
                     </Link>
-                  </Button>
+                  </Button> */}
                 </>
               )}
               {role === "instructor" && (
@@ -303,26 +305,26 @@ export default async function DashboardPage() {
                   <TableHeader>
                     <TableRow>
                       <TableHead>Test</TableHead>
-                      <TableHead>Date</TableHead>
+                      <TableHead>Attempted Date</TableHead>
                       <TableHead className="text-right">Score</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
-                    {recentPurchasedTest?.map((purchase, index) => (
+                    {lastFiveTestResultByTestTaker?.map((testResult, index) => (
                       <TableRow>
                         <TableCell>
                           <div className="font-medium">
-                            {purchase.test.title}
+                            {testResult.test.title}
                           </div>
-                          <div className="hidden text-sm text-muted-foreground md:inline">
-                            {purchase?.user?.email}
-                          </div>
+                          {/* <div className="hidden text-sm text-muted-foreground md:inline">
+                            {testResult?.user?.email}
+                          </div> */}
                         </TableCell>
                         <TableCell>
-                          {purchase?.createdAt.toDateString()}
+                          {testResult?.createdAt.toDateString()}
                         </TableCell>
                         <TableCell className="text-right">
-                          ${purchase.amount}
+                          {testResult.gotScore}/{testResult.totalScore}
                         </TableCell>
                       </TableRow>
                     ))}
@@ -363,7 +365,12 @@ export default async function DashboardPage() {
                             </div>
                           </div>
                         </TableCell>
-                        <TableCell>{purchase?.test.title}</TableCell>
+                        <TableCell>
+                          <div className="">
+                            {purchase?.test.title}
+                          </div>
+
+                        </TableCell>
                         <TableCell>
                           {purchase?.createdAt.toDateString()}
                         </TableCell>
@@ -384,8 +391,8 @@ export default async function DashboardPage() {
                 {role === "student"
                   ? "Purchased Test"
                   : role === "instructor"
-                  ? "Added Test"
-                  : "Users"}
+                    ? "Added Test"
+                    : "Users"}
               </CardTitle>
               <Button asChild size="sm" className="ml-auto gap-1">
                 <Link
@@ -393,8 +400,8 @@ export default async function DashboardPage() {
                     role === "student"
                       ? "/dashboard/test-environment"
                       : role === "instructor"
-                      ? "/dashboard/test"
-                      : "/dashboard/instructors"
+                        ? "/dashboard/test"
+                        : "/dashboard/instructors"
                   }
                 >
                   View All
@@ -467,7 +474,7 @@ export default async function DashboardPage() {
                     </div>
                   </div>
                 ))}
-                {role === "instructor" &&
+              {role === "instructor" &&
                 recentAddedTestsbyInstructor?.map((test, index) => (
                   <div key={test.id} className="flex items-center gap-4">
                     <Avatar className="hidden h-9 w-9 sm:flex">

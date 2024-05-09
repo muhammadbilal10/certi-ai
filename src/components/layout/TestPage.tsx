@@ -63,6 +63,7 @@ const TestPage: React.FC<TestPageProps> = ({
   const [attemptedQuestions, setAttemptedQuestions] = useState<
     AttemptedQuestion[]
   >([]);
+  const [shuffledQuestions, setShuffledQuestions] = useState<Question[]>([]);
   // const [state, formAction] = useFormState(submitAiTest, null);
 
   useEffect(() => {
@@ -86,6 +87,21 @@ const TestPage: React.FC<TestPageProps> = ({
     const calculatedProgress = (answeredQuestions / totalQuestions) * 100;
     setProgress(calculatedProgress);
   }, [attemptedQuestions, questions]);
+
+  useEffect(() => {
+    const mcqs = questions.filter((q) => q.type === 'MCQS' || q.type === 'True/False');
+    // const trueFalse = questions.filter((q) => q.type === 'True/False');
+    const descriptive = questions.filter((q) => q.type === 'Descriptive');
+  
+    const shuffledMcqs = [...mcqs].sort(() => Math.random() - 0.5);
+    // const shuffledTrueFalse = [...trueFalse].sort(() => Math.random() - 0.5);
+    const shuffledDescriptive = [...descriptive].sort(() => Math.random() - 0.5);
+    const shuffledQuestions = [...shuffledMcqs, ...shuffledDescriptive];
+    setShuffledQuestions(shuffledQuestions);
+  }, [questions]);
+  
+
+
 
   const handleAnswerChange = (
     id: number,
@@ -132,7 +148,7 @@ const TestPage: React.FC<TestPageProps> = ({
           prompt += `User's Answer: ${attemptedQuestion.attemptedUserAnswer}\n\n`;
         }
       } else {
-        prompt += `Q${index + 1}: ${question.question}\nUnattempted\n\n`;
+        prompt += `Q${index + 1}: ${question.question}\n Options: ${question.options}\n type: ${question.type}\n User's Answer: ${""}\n\n`;
       }
     });
 
@@ -144,11 +160,10 @@ const TestPage: React.FC<TestPageProps> = ({
       <div className="grid gap-6 mb-20 mt-10">
         <h1 className="text-3xl font-semibold mb-1">{title}</h1>
         <p className="mb-8">{description}</p>
-        {questions.map((questionData, index) => (
+        {shuffledQuestions?.map((questionData, index) => (
           <div key={index} className="bg-white shadow-md p-6 rounded-lg">
-            <h3 className="text-lg font-semibold mb-4">{`Q${index + 1}. ${
-              questionData.question
-            }`}</h3>
+            <h3 className="text-lg font-semibold mb-4">{`Q${index + 1}. ${questionData.question
+              }`}</h3>
             {questionData.type === "MCQS" && (
               <ul className="list-none pl-0">
                 {questionData.options?.map((option, optionIndex) => (
@@ -241,10 +256,13 @@ const TestPage: React.FC<TestPageProps> = ({
           <form
             action={async () => {
               const prompt = handleSubmit();
-             const result =  await submitAiTest(prompt, testId);
-             
-             const gotScore = result?.reduce((total: number, question:any) => total + question.score, 0);
-             await submitTestResult(result, testId, questions.length, gotScore );
+              const result = await submitAiTest(prompt, testId);
+
+              // const gotScore = result?.reduce((total: number, question: any) => total + question.score, 0);
+              const totalCorrectAnswers = result?.questions?.filter(
+                (question: any) => question.correctAnswer === question.userAnswer
+              ).length || 0;
+              await submitTestResult(result, testId);
             }}
           >
             <SubmitButton />

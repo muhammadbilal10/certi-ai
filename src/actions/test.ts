@@ -111,6 +111,24 @@ type AttemptedQuestion = {
 //   }
 // }
 
+export async function getRecentTestResultsbyTestTaker() {
+  const { userId } = auth();
+  const results = await db.testResult.findMany({
+    where: {
+      userId: userId as string,
+    },
+    include: {
+      test: true,
+    },
+    orderBy: {
+      createdAt: "desc",
+    },
+    take: 5,
+  });
+
+  return results;
+}
+
 export async function getRecentTestResult(testId: number) {
   const { userId } = auth();
   const result = await db.testResult.findFirst({
@@ -131,32 +149,34 @@ export async function getRecentTestResult(testId: number) {
 export async function submitTestResult(
   finalresult: any,
   testId: number,
-  totalScore: number,
-  gotScore: number
 ) {
+
   try {
+    const totalScore = finalresult.reduce((total: number, ques: any) => {
+      return total + (ques.answer === ques.correct ? 1 : 0);
+    }, 0);
     const { userId } = auth();
     const res = await db.testResult.create({
       data: {
         userId: userId as string,
         testId: testId as number,
-        gotScore: gotScore.toString(),
-        totalScore: totalScore.toString(),
+        gotScore: totalScore ? totalScore.toString() : "",
+        totalScore: finalresult.length ? finalresult.length.toString() : "",
         questions: {
           create: finalresult?.map((ques: any) => ({
-            question: ques.question as string,
-            userAnswer: ques.answer as string,
-            options: ques.options as string[],
-            correctAnswer: ques.correct as string,
-            score: ques.score.toString(),
-            description: ques.correctAnswerDescription as string,
+            question: ques?.question as string || "",
+            userAnswer: ques?.answer as string || "",
+            type: ques?.type as string || "",
+            options: ques?.options as string[] || [],
+            correctAnswer: ques?.correct as string || "",
+            score: (ques?.score && ques?.score.toString())  || "",
+            description: ques?.correctAnswerDescription as string || "",
           })),
         },
       },
     });
 
     console.log("result Submitted");
-    return res;
   } catch (error) {
     console.log(error);
   }
@@ -174,7 +194,7 @@ export async function submitAiTest(attemptedQuestions: string, testId: number) {
     const prompt = `Please evaluate the user's attempted test questions and provide the correct answer if the user's answer is incorrect.\n\n:${attemptedQuestions}`;
     if (attemptedQuestions) {
       const response = await openai.chat.completions.create({
-        model: "gpt-3.5-turbo",
+        model: "gpt-3.5-turbo-0125",
         messages: [
           {
             role: "user",
@@ -198,8 +218,9 @@ export async function submitAiTest(attemptedQuestions: string, testId: number) {
                       properties: {
                         type: {
                           type: "string",
+                          enum: ["MCQS", "Descriptive", "True/False"],
                           description:
-                            "The type of question (e.g., MCQS, True/False, Descriptive etc.)",
+                            "The type of question",
                         },
                         question: {
                           type: "string",
@@ -219,7 +240,7 @@ export async function submitAiTest(attemptedQuestions: string, testId: number) {
                         correct: {
                           type: "string",
                           description:
-                            "The correct description for the question if not correct",
+                            "The correct answer for the question",
                         },
                         score: {
                           type: "number",
@@ -264,7 +285,7 @@ export async function createAiTest(prevState: any, formData: FormData) {
     const prompt = `${test}`;
     if (test) {
       const response = await openai.chat.completions.create({
-        model: "gpt-3.5-turbo-1106",
+        model: "gpt-3.5-turbo-0125",
         messages: [
           {
             role: "user",

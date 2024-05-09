@@ -84,6 +84,7 @@ model QuestionResult {
   userAnswer String
   correctAnswer String
   options  String[]
+  type String
   score String
   description String
   testResultId Int
