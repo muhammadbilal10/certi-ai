@@ -10,6 +10,7 @@ interface Test {
   id: number;
   title: string;
   description?: string;
+  price?: number;
   duration: number;
   userId: string;
   startAt: Date;
@@ -74,6 +75,7 @@ export default async function ProfileDetailsPage({
             userId={test.userId}
             startAt={test.startAt}
             published={test.published}
+            price={test?.price}
             instructor={test.creatorName}
             isPurchased={test.purchased}
           />
