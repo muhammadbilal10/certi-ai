@@ -110,43 +110,115 @@ export async function getRecentUsers() {
 }
 
 //delete users by id
+// export async function deleteUser(id: string) {
+//   try {
+//     await clerkClient.users.deleteUser(id);
+//     await db.payment.deleteMany({
+//       where: {
+//         userId: id,
+//       },
+//     });
+    
+//     await db.payment.deleteMany({
+//       where: {
+//         test: {
+//           userId: id,
+//         },
+//       },
+//     });
+
+  
+//     await db.test.deleteMany({
+//       where: {
+//         userId: id,
+//       },
+//     });
+
+   
+//     await db.payment.deleteMany({
+//       where: {
+//         userId: id,
+//       },
+//     });
+
+//     await db.user.delete({
+//       where: {
+//         id: id,
+//       },
+//     });
+
+
+//   } catch (e) {
+//     console.log("Error", e);
+//   }
+//   redirect("/dashboard/test-takers");
+  
+// }
+
+
+//
+
 export async function deleteUser(id: string) {
   try {
-    await clerkClient.users.deleteUser(id);
+    // Delete all payments related to the user
     await db.payment.deleteMany({
       where: {
         userId: id,
       },
     });
-    
-    await db.payment.deleteMany({
+
+    // Get all test results related to the user
+    const testResults = await db.testResult.findMany({
       where: {
-        test: {
-          userId: id,
-        },
+        userId: id,
       },
     });
 
-  
+    // Delete all question results related to each test result
+    for (let testResult of testResults) {
+      await db.questionResult.deleteMany({
+        where: {
+          testResultId: testResult.id,
+        },
+      });
+    }
+
+    // Now delete all test results related to the user
+    await db.testResult.deleteMany({
+      where: {
+        userId: id,
+      },
+    });
+
+    // Get all tests related to the user
+    const tests = await db.test.findMany({
+      where: {
+        userId: id,
+      },
+    });
+
+    // Delete all questions related to each test
+    for (let test of tests) {
+      await db.question.deleteMany({
+        where: {
+          testId: test.id,
+        },
+      });
+    }
+
+    // Delete all tests related to the user
     await db.test.deleteMany({
       where: {
         userId: id,
       },
     });
 
-   
-    await db.payment.deleteMany({
-      where: {
-        userId: id,
-      },
-    });
-
+    // Finally, delete the user
     await db.user.delete({
       where: {
         id: id,
       },
     });
-
 
   } catch (e) {
     console.log("Error", e);
@@ -154,41 +226,70 @@ export async function deleteUser(id: string) {
   redirect("/dashboard/test-takers");
 }
 
+
 export async function deleteInstructor(id: string) {
   try {
-    
-    await db.question.deleteMany({
+    // Get all tests related to the instructor
+    const tests = await db.test.findMany({
       where: {
-        test: {
-          userId: id,
-        },
+        userId: id,
       },
     });
 
-  
-    await db.payment.deleteMany({
-      where: {
-        test: {
-          userId: id,
+    // Delete all questions and payments related to each test
+    for (let test of tests) {
+      await db.question.deleteMany({
+        where: {
+          testId: test.id,
         },
+      });
+
+      await db.payment.deleteMany({
+        where: {
+          testId: test.id,
+        },
+      });
+    }
+
+    // Delete all test results related to the instructor
+    const testResults = await db.testResult.findMany({
+      where: {
+        userId: id,
       },
     });
 
-  
+    // Delete all question results related to each test result
+    for (let testResult of testResults) {
+      await db.questionResult.deleteMany({
+        where: {
+          testResultId: testResult.id,
+        },
+      });
+    }
+
+    // Now delete all test results related to the instructor
+    await db.testResult.deleteMany({
+      where: {
+        userId: id,
+      },
+    });
+
+    // Delete all tests related to the instructor
     await db.test.deleteMany({
       where: {
         userId: id,
       },
     });
 
-   
+    // Delete all payments related to the instructor
     await db.payment.deleteMany({
       where: {
         userId: id,
       },
     });
 
-  await clerkClient.users.deleteUser(id);
+    // Finally, delete the instructor
+    await clerkClient.users.deleteUser(id);
     await db.user.delete({
       where: {
         id: id,
