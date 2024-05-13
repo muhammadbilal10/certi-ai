@@ -1,5 +1,7 @@
 import { getRecentTestResult } from "@/actions/test";
+import { Button } from "@/components/ui/button";
 import { Dot } from "lucide-react";
+import Link from "next/link";
 import React from "react";
 
 interface TestResultPageProps {
@@ -78,6 +80,16 @@ export default async function TestResultPage({ params }: TestResultPageProps) {
             </div>
           </div>
         ))}
+        <div className="flex justify-center space-x-2">
+          <Button asChild>
+            <Link href={`/dashboard/test-environment/${id}`}>Retake</Link>
+          </Button>
+          <Button asChild>
+            <Link href={`/dashboard/test-environment`}>Back</Link>
+          </Button>
+        </div>
+  
+
       </div>
     </div>
   );
