@@ -91,6 +91,10 @@ export default async function TestResultPage({ params }: TestResultPageProps) {
   
 
       </div>
+      <script
+        async
+        src="https://api.cronbot.ai/v1/widgets/app/app_dqxltxzqsal5"
+      ></script>
     </div>
   );
 }
