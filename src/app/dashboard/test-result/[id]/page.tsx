@@ -1,4 +1,5 @@
 import { getRecentTestResult } from "@/actions/test";
+import BotChat from "@/components/common/BotChat";
 import { Button } from "@/components/ui/button";
 import { Dot } from "lucide-react";
 import Link from "next/link";
@@ -88,8 +89,7 @@ export default async function TestResultPage({ params }: TestResultPageProps) {
             <Link href={`/dashboard/test-environment`}>Back</Link>
           </Button>
         </div>
-  
-
+        <BotChat id={id}/>
       </div>
     </div>
   );

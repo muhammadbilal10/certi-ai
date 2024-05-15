@@ -194,7 +194,7 @@ export async function submitAiTest(attemptedQuestions: string, testId: number) {
     const prompt = `Please evaluate the user's attempted test questions and provide the correct answer if the user's answer is incorrect.\n\n:${attemptedQuestions}`;
     if (attemptedQuestions) {
       const response = await openai.chat.completions.create({
-        model: "gpt-3.5-turbo-0125",
+        model: "gpt-4-turbo",
         messages: [
           {
             role: "user",
