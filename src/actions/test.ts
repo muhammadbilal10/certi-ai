@@ -406,6 +406,7 @@ export async function createTest({
             create: testDetails.questions.map((question) => ({
               question: question.question,
               options: question.options,
+              type: question.type,
               answer: question.answer,
             })),
           },
@@ -449,6 +450,7 @@ export async function updateTest({
           create: testDetails?.questions.map((question) => ({
             question: question.question,
             options: question.options,
+            type: question.type,
             answer: question.answer,
           })),
         },

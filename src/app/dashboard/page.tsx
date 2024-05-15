@@ -139,7 +139,7 @@ export default async function DashboardPage() {
         icon: <DollarSign className="h-4 w-4 text-muted-foreground" />,
       },
       {
-        text: "Active Tests",
+        text: "Available Tests",
         amount: totalPublishedTest?.length.toString() as string,
         percentage: "",
         icon: <File className="h-4 w-4 text-muted-foreground" />,

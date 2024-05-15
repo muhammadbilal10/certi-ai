@@ -148,7 +148,7 @@ export default function CreateUserForm({
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
-                      <SelectItem value="student">Student</SelectItem>
+                      <SelectItem value="student">Test Taker</SelectItem>
                       <SelectItem value="instructor">Instructor</SelectItem>
                     </SelectContent>
                   </Select>
